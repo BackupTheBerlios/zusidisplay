@@ -28,7 +28,10 @@ namespace MMI.ET42X
 
 		private DateTime vtime;
 
+		public bool GLOBAL_SOUND = true;
 		private bool CONNECTED = false;
+		int stoerung_counter = 0;
+		SoundInterface Sound;
 
 		Color STÖRUNG_BG = Color.Gold, STÖRUNG_FG = Color.Black;
 		Color BRIGHT = Color.WhiteSmoke; 
@@ -39,6 +42,8 @@ namespace MMI.ET42X
 		Hashtable ht = new Hashtable(), ht2 = new Hashtable();
 		ISphere uhrsec, uhrmin, uhrstd, uhrInnengr, uhrInnenkl, uhrAußen, uhrrest;
 		Point center;
+
+		public Network m_net;
 
 		/*bool first_time_tacho = true;
 		bool first_time_zugkraft = true;
@@ -104,9 +109,11 @@ namespace MMI.ET42X
 		bool on = true;
 
 		#endregion
-		public ET42XControl(MMI.EBuLa.Tools.XMLLoader conf)
+		public ET42XControl(MMI.EBuLa.Tools.XMLLoader conf, ref Network net)
 		{
 			InitializeComponent();
+
+			m_net = net;
 
 			uhrAußen = new ISphere(508+60, 41+60, 57);
 			uhrInnengr = new ISphere(508+60, 41+60, 45);			
@@ -125,6 +132,19 @@ namespace MMI.ET42X
 
 			SetButtons();
 
+			switch (m_conf.Sound)
+			{
+				case 1:
+					Sound = new APISound();
+					break;
+				case 2:
+					Sound = new DxSound();
+					break;
+				default:
+					Sound = new NullSound();
+					break;
+			}
+
 			vtime = DateTime.Now;
 
 			zugkraft_thread = new Thread(new ThreadStart(MoveZugkraft));
@@ -132,7 +152,11 @@ namespace MMI.ET42X
 			int interval = Convert.ToInt32(Math.Round((1d/(double)conf.FramesPerSecond)*1000d));
 			timer1.Interval = interval;
 			timer1.Enabled = true;
-			
+
+			Button_SW_Pressed(this, new EventArgs());						
+
+			if (localstate.ET42Xtype1 == ET42XTYPE.ET423)
+				localstate.FISType = FIS_TYPE.FIS;
 		}
 
 		protected override void Dispose( bool disposing )
@@ -191,6 +215,7 @@ namespace MMI.ET42X
 			this.l_Button4 = new System.Windows.Forms.Label();
 			this.p_Dark5 = new System.Windows.Forms.Panel();
 			this.p_Button3 = new System.Windows.Forms.Panel();
+			this.p_Light1 = new System.Windows.Forms.Panel();
 			this.l_Button3 = new System.Windows.Forms.Label();
 			this.p_Dark4 = new System.Windows.Forms.Panel();
 			this.p_Button2 = new System.Windows.Forms.Panel();
@@ -201,7 +226,6 @@ namespace MMI.ET42X
 			this.l_Button1 = new System.Windows.Forms.Label();
 			this.p_UpperLine = new System.Windows.Forms.Panel();
 			this.timer_st = new System.Windows.Forms.Timer(this.components);
-			this.p_Light1 = new System.Windows.Forms.Panel();
 			this.p_Buttons.SuspendLayout();
 			this.p_extra.SuspendLayout();
 			this.p_Button0.SuspendLayout();
@@ -556,6 +580,15 @@ namespace MMI.ET42X
 			this.p_Button3.Size = new System.Drawing.Size(61, 64);
 			this.p_Button3.TabIndex = 4;
 			// 
+			// p_Light1
+			// 
+			this.p_Light1.BackColor = System.Drawing.SystemColors.ControlLight;
+			this.p_Light1.Dock = System.Windows.Forms.DockStyle.Left;
+			this.p_Light1.Location = new System.Drawing.Point(0, 0);
+			this.p_Light1.Name = "p_Light1";
+			this.p_Light1.Size = new System.Drawing.Size(2, 64);
+			this.p_Light1.TabIndex = 5;
+			// 
 			// l_Button3
 			// 
 			this.l_Button3.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
@@ -598,9 +631,9 @@ namespace MMI.ET42X
 			// l_Button2
 			// 
 			this.l_Button2.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button2.Location = new System.Drawing.Point(6, 8);
+			this.l_Button2.Location = new System.Drawing.Point(5, 8);
 			this.l_Button2.Name = "l_Button2";
-			this.l_Button2.Size = new System.Drawing.Size(48, 48);
+			this.l_Button2.Size = new System.Drawing.Size(50, 48);
 			this.l_Button2.TabIndex = 3;
 			this.l_Button2.Text = "Button Zwei";
 			this.l_Button2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -645,17 +678,8 @@ namespace MMI.ET42X
 			// timer_st
 			// 
 			this.timer_st.Enabled = true;
-			this.timer_st.Interval = 750;
+			this.timer_st.Interval = 1000;
 			this.timer_st.Tick += new System.EventHandler(this.timer_st_Tick);
-			// 
-			// p_Light1
-			// 
-			this.p_Light1.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light1.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light1.Location = new System.Drawing.Point(0, 0);
-			this.p_Light1.Name = "p_Light1";
-			this.p_Light1.Size = new System.Drawing.Size(2, 64);
-			this.p_Light1.TabIndex = 5;
 			// 
 			// ET42XControl
 			// 
@@ -694,18 +718,42 @@ namespace MMI.ET42X
 		#region Buttons
 		public void Button_Up_Pressed(object sender, System.EventArgs e)
 		{
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.FIS_ROUTE:
+					localstate.fis.NextEntry();
+					break;
+				case CURRENT_DISPLAY.FIS_HK:
+					Send(FIS_DATA.Next_Entry);
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
 
 		public void Button_Down_Pressed(object sender, System.EventArgs e)
 		{
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.FIS_ROUTE:
+					localstate.fis.PrevEntry();
+					break;
+				case CURRENT_DISPLAY.FIS_HK:
+					Send(FIS_DATA.Prev_Entry);
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
 
 		public void Button_E_Pressed(object sender, System.EventArgs e)
 		{
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.FIS_ROUTE:
+					localstate.fis.NextFISPos((IFISNetwork)m_net);
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
@@ -735,30 +783,94 @@ namespace MMI.ET42X
 
 		public void Button_1_Pressed(object sender, System.EventArgs e)
 		{
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.OBERSTROM:
+					localstate.OberstromGrenze = 1000f;
+					break;
+				case CURRENT_DISPLAY.Info:
+					localstate.DISPLAY = CURRENT_DISPLAY.Besetz;
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
 
 		public void Button_2_Pressed(object sender, System.EventArgs e)
 		{
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.OBERSTROM:
+					localstate.OberstromGrenze = 900f;
+					break;
+				case CURRENT_DISPLAY.Info:
+					localstate.DISPLAY = CURRENT_DISPLAY.Vist;
+					break;
+				case CURRENT_DISPLAY.FIS:
+					if (localstate.FISType == FIS_TYPE.FIS)
+					{
+						localstate.fis.position = FIS_POS.LINIE;
+						localstate.DISPLAY = CURRENT_DISPLAY.FIS_ROUTE;
+					}
+					//else
+						//localstate.DISPLAY = CURRENT_DISPLAY.FIS_ZUGNR;
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
 
 		public void Button_3_Pressed(object sender, System.EventArgs e)
 		{
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.S:
+					localstate.Kuehlung = !localstate.Kuehlung;
+					break;
+				case CURRENT_DISPLAY.OBERSTROM:
+					localstate.OberstromGrenze = 600f;
+					break;
+				case CURRENT_DISPLAY.FIS:
+					if (localstate.fis.Status) localstate.DISPLAY = CURRENT_DISPLAY.FIS_HK;
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
 
 		public void Button_4_Pressed(object sender, System.EventArgs e)
 		{
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.G:
+					//localstate.DISPLAY = CURRENT_DISPLAY.Zugbesy;
+					break;
+				case CURRENT_DISPLAY.S:
+					localstate.DISPLAY = CURRENT_DISPLAY.OBERSTROM;
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
 
 		public void Button_5_Pressed(object sender, System.EventArgs e)
 		{
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.G:
+					localstate.DISPLAY = CURRENT_DISPLAY.B;
+					break;
+				case CURRENT_DISPLAY.FIS:
+					if (localstate.FISType != FIS_TYPE.FIS)
+					{
+						localstate.fis.position = FIS_POS.LINIE;
+						localstate.DISPLAY = CURRENT_DISPLAY.FIS_ROUTE;
+					}
+					break;
+				case CURRENT_DISPLAY.FIS_ROUTE:
+					localstate.fis.Delete();
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
@@ -773,6 +885,17 @@ namespace MMI.ET42X
 
 		public void Button_7_Pressed(object sender, System.EventArgs e)
 		{
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.G:
+					localstate.DISPLAY = CURRENT_DISPLAY.Spg;
+					break;
+				case CURRENT_DISPLAY.FIS:
+//OLD					if (localstate.fis.ShowEntry()) localstate.fis.FISAnAus();
+					if (l_Button7.Text.IndexOf("FIS") > -1)
+						Send(FIS_DATA.FIS_Aus);
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
@@ -783,6 +906,16 @@ namespace MMI.ET42X
 			{
 				case CURRENT_DISPLAY.G:
 					localstate.DISPLAY = CURRENT_DISPLAY.FIS;
+					Send(FIS_DATA.Status);
+					Send(FIS_DATA.GPS_Status);
+					Send(FIS_DATA.Naechster_Halt);
+					Send(FIS_DATA.Route_Data);
+					break;
+				case CURRENT_DISPLAY.FIS:
+					Send(FIS_DATA.FIS_Start);
+					break;
+				case CURRENT_DISPLAY.FIS_ROUTE:
+					Send(FIS_DATA.FIS_Start);
 					break;
 			}
 			something_changed = true;
@@ -791,6 +924,16 @@ namespace MMI.ET42X
 
 		public void Button_9_Pressed(object sender, System.EventArgs e)
 		{
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.G:
+					localstate.DISPLAY = CURRENT_DISPLAY.S;
+					break;
+				case CURRENT_DISPLAY.FIS:
+					if (l_Button9.Text.IndexOf("FIS") > -1)
+						Send(FIS_DATA.FIS_Ausloesen);
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
@@ -800,6 +943,33 @@ namespace MMI.ET42X
 			switch(localstate.DISPLAY)
 			{
 				case CURRENT_DISPLAY.FIS:
+					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					break;
+				case CURRENT_DISPLAY.FIS_HK:
+					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					break;
+				case CURRENT_DISPLAY.FIS_ROUTE:
+					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					break;
+				case CURRENT_DISPLAY.S:
+					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					break;
+				case CURRENT_DISPLAY.OBERSTROM:
+					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					break;
+				case CURRENT_DISPLAY.Spg:
+					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					break;
+				case CURRENT_DISPLAY.Info:
+					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					break;
+				case CURRENT_DISPLAY.Vist:
+					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					break;
+				case CURRENT_DISPLAY.Besetz:
+					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					break;
+				case CURRENT_DISPLAY.B:
 					localstate.DISPLAY = CURRENT_DISPLAY.G;
 					break;
 				case CURRENT_DISPLAY.ST:
@@ -824,6 +994,23 @@ namespace MMI.ET42X
 		{
 			Switcher s = new Switcher(ref localstate, m_conf.TopMost);
 			s.ShowDialog();
+			if (localstate.ET42Xtype1 == ET42XTYPE.ET423 || localstate.ET42Xtype1 == ET42XTYPE.ET424 || localstate.ET42Xtype1 == ET42XTYPE.ET426)
+				localstate.FISType = FIS_TYPE.FIS;
+			else
+				localstate.FISType = FIS_TYPE.GPS_FIS;
+
+			something_changed = true;
+			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
+		}
+
+		public void Button_I_Pressed(object sender, System.EventArgs e)
+		{
+			switch(localstate.DISPLAY)
+			{
+				default:
+					localstate.DISPLAY = CURRENT_DISPLAY.Info;
+					break;
+			}
 			something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
 		}
@@ -881,54 +1068,65 @@ namespace MMI.ET42X
 					if (CONNECTED != value)
 					{
 						localstate.störungmgr.Add(new Störung(ENUMStörung.S01_ZUSIKomm));
+						if (m_conf.Sound != 0 && GLOBAL_SOUND)
+						{
+							switch (m_conf.Sound)
+							{
+								case 1:
+									Sound.PlayMalfunctionBombardierSound();
+									Sound.PlayMalfunctionBombardierSound();
+									Sound.PlayMalfunctionBombardierSound();
+									break;
+								case 2:
+									Sound.PlayMalfunctionBombardierSound();
+									Sound.PlayMalfunctionBombardierSound();
+									Sound.PlayMalfunctionBombardierSound();
+									break;
+							}
+						}
 					}
 				}
 				CONNECTED = value;
 				something_changed = true;
+
 			}
 		}
+
+		private void Send(FIS_DATA type)
+		{
+			if (m_net != null) m_net.SendData(type, "");
+		}
+
 		private void DrawFrame(ref Graphics pg, int x, int y, int width, int height)
 		{
+			// old Style
+			DrawFrameRaised(ref pg, x, y, width, height);
+			DrawFrameSunken(ref pg, x+2, y+2, width-4, height-4);
+
+			// new Style
+			//DrawFrameSunken(ref pg, x, y, width, height);
+			//DrawFrameRaised(ref pg, x+2, y+2, width-3, height-3);
+		}
+
+		private void DrawFrameNewStyle(ref Graphics pg, int x, int y, int width, int height)
+		{
+			// new Style
 			DrawFrameSunken(ref pg, x, y, width, height);
 			DrawFrameRaised(ref pg, x+2, y+2, width-3, height-3);
 		}
 
 		private void DrawFrameRaised(ref Graphics pg, int x, int y, int width, int height)
 		{
-			// Stift
-			Pen pen_dg = new Pen(DARK, 1);
-			Pen pen_ws = new Pen(BRIGHT, 1);
-
-			pg.DrawLine(pen_ws, x, y, x+width, y);
-			pg.DrawLine(pen_ws, x, y, x,       y+height);
-
-			pg.DrawLine(pen_dg, x+width, y,        x+width, y+height);
-			pg.DrawLine(pen_dg, x,       y+height, x+width, y+height);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameRaised(ref pg, x, y, width, height, DARK, BRIGHT);
 		}
 
 		private void DrawFrameSunken(ref Graphics pg, int x, int y, int width, int height)
 		{
-			// Stift
-			Pen pen_dg = new Pen(DARK, 1);
-			Pen pen_ws = new Pen(BRIGHT, 2);
-
-			pg.DrawLine(pen_dg, x, y, x+width, y);
-			pg.DrawLine(pen_dg, x, y, x,       y+height);
-
-			pg.DrawLine(pen_ws, x+width, y,        x+width, y+height);
-			pg.DrawLine(pen_ws, x,       y+height, x+width, y+height);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunken(ref pg, x, y, width, height, DARK, BRIGHT);
 		}
 		private void DrawFrameSunkenSmall(ref Graphics pg, int x, int y, int width, int height)
 		{
-			// Stift
-			Pen pen_dg = new Pen(DARK, 1);
-			Pen pen_ws = new Pen(BRIGHT, 1);
-
-			pg.DrawLine(pen_dg, x, y, x+width, y);
-			pg.DrawLine(pen_dg, x, y, x,       y+height);
-
-			pg.DrawLine(pen_ws, x+width, y,        x+width, y+height);
-			pg.DrawLine(pen_ws, x,       y+height, x+width, y+height);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, x, y, width, height, DARK, BRIGHT);
 		}
 
 		public void FillFields(ref Graphics pg)
@@ -1048,6 +1246,57 @@ namespace MMI.ET42X
 			localstate.LM_INTEGRA_ROT = state;
 			something_changed = true;
 		}
+		public void SetFIS_Status(bool state)
+		{
+			localstate.fis.Status = state;
+			something_changed = true;
+		}
+		public void SetFIS_GPSStatus(bool state)
+		{
+			localstate.fis.GPSStatus = state;
+			something_changed = true;
+		}
+		public void SetFIS_NaechsterHalt(string data)
+		{
+			localstate.fis.NaechsterHalt = data;
+			something_changed = true;
+		}
+
+		public void SetFIS_Netz(string data)
+		{
+			localstate.fis.CreateNetz(data);
+		}
+
+		public void SetFIS_Linie(string data)
+		{
+			localstate.fis.SetLinie(data);
+		}
+
+		public void SetFIS_Start(string data)
+		{
+			localstate.fis.CreateStart(data);
+		}
+
+		public void SetFIS_Ziel(string data)
+		{
+			localstate.fis.CreateZiel(data);
+		}
+
+		public void SetFIS_NoMoreData()
+		{
+			localstate.fis.NoMoreData();
+		}
+
+		public void SetFIS_NoMoreZiel()
+		{
+			localstate.fis.NoMoreZiel();
+		}
+
+		public void SetFIS_NoMoreStart()
+		{
+			localstate.fis.NoMoreStart();
+		}
+
 		public void SetReisezug(bool state)
 		{
 			localstate.Reisezug = state;
@@ -1137,6 +1386,11 @@ namespace MMI.ET42X
 			}
 			// else localstate.Bremsstellung = BREMSSTELLUNG.G
 			
+			something_changed = true;
+		}
+		public void SetFahrstufenSchalter(float valu)
+		{
+			localstate.FahrstufenSchalter = Convert.ToInt32(valu);
 			something_changed = true;
 		}
 		public void SetAFB_LZB_SollGeschwindigkeit(float valu)
@@ -1234,7 +1488,7 @@ namespace MMI.ET42X
 		public void DrawZugkraft(ref Graphics pg)
 		{
 			// Rahmen
-			DrawFrame(ref pg, 508, 281, 120, 38);
+			DrawFrame(ref pg, 508, 281, 120, 44);
 
 			float zugkraft = localstate.ZugkraftGesammt;
 
@@ -1250,9 +1504,11 @@ namespace MMI.ET42X
 
 			string s = Convert.ToInt32(zugkraft).ToString();
 
-			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
 
-			pg.DrawString("Gesamtkraft", f, new SolidBrush(BLACK), 526, 258);
+			pg.DrawString("Gesamtkraft", f, new SolidBrush(BLACK), 510, 256);
+
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 			pg.DrawString("kN", f, new SolidBrush(BLACK), 590, 293);
 			if (zugkraft >= 100)
 				pg.DrawString(s, f, new SolidBrush(BLACK), 564, 293);
@@ -1362,7 +1618,7 @@ namespace MMI.ET42X
 			if (inverse_display) StTextColor = MMI_BLUE;
 
 
-			if (localstate.DISPLAY == CURRENT_DISPLAY.G && localstate.störungmgr.Current.Type != ENUMStörung.NONE)
+			if (localstate.störungmgr.Current.Type != ENUMStörung.NONE)
 			{
 				if (STÖRUNG_BG == Color.Gold)
 				{
@@ -1397,6 +1653,78 @@ namespace MMI.ET42X
 			*/
 			pg.SmoothingMode = SMOOTHING_MODE;
 
+		}
+		public void DrawZugbeeinflussungssysteme(ref Graphics pg)
+		{
+			// Rahmen
+			DrawFrame(ref pg, 5, 5, 420, 240);
+			DrawFrame(ref pg, 5, 250, 420, 50);
+			DrawFrame(ref pg, 5, 305, 420, 30);
+
+			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			pg.DrawString("Wirksame Zugdaten:", f, new SolidBrush(BLACK), 30, 20);
+
+			string text = "", info = "";
+			for(int i = 0; i < 4; i++)
+			{
+				DrawFrame(ref pg, 30+i*80, 80, 70, 40);
+				if (i == 0)
+				{
+					text = "BRA"; info = "6";
+				}
+				else if (i == 1)
+				{
+					text = "BRH"; 
+					if (localstate.Brh < 10)
+						info = "00"+localstate.Brh.ToString();
+					else if (localstate.Brh < 100)
+						info = "0"+localstate.Brh.ToString();
+					else
+						info = localstate.Brh.ToString();
+				}
+				else if (i == 2) 
+				{
+					text = "ZL"; info = "400";
+				}
+				else
+				{
+					text = "VMZ"; info = "120";
+				}
+				pg.DrawString(text, f, new SolidBrush(BLACK), 30+i*80, 55);
+				pg.DrawString(info, f, new SolidBrush(BLACK), 38+i*80, 90);
+			}
+
+			pg.DrawString("Eingestellte Daten", f, new SolidBrush(BLACK), 110, 185);
+			if (localstate.LM_LZB_Ü)
+				pg.DrawString("LZB-Betrieb", f, new SolidBrush(BLACK), 140, 265);
+			else
+				pg.DrawString("Kein LZB-Betrieb", f, new SolidBrush(BLACK), 110, 265);
+			if (localstate.DSK_Gesperrt)
+				pg.DrawString("DSK Kurzzeitspeicher geperrt", f, new SolidBrush(BLACK), 60, 310);
+		}
+
+		public void DrawZug(ref Graphics pg)
+		{
+			// Zugnummer
+			DrawFrame(ref pg, 468, 189, 160, 30);
+
+			string help = localstate.Zugnummer;
+			int length = help.Length;
+
+			for (int i = 0; i < length; i++)
+			{
+				if (help[0] != '0') break;
+				help = help.Remove(0,1);
+			}
+
+			string s = "Zug " + help;
+
+			if (localstate.Zugnummer == "<INIT>") return;
+
+			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			pg.DrawString(s, f, new SolidBrush(BLACK), 510, 196);
 		}
 		public void UpdateScreen()
 		{
@@ -1462,18 +1790,7 @@ namespace MMI.ET42X
 				// Datum oben rechts
 				DrawFrame(ref pg, 508, 1, 120, 38);
 
-				string s = "";
-
-				s = DayOfWeekGerman(vtime.DayOfWeek).Substring(0, 2) + ", ";	
-				if (vtime.DayOfYear < 10)
-					s += "0"+vtime.DayOfYear.ToString() + ".";
-				else
-					s += vtime.DayOfYear.ToString() + ".";
-				if (vtime.Month < 10)
-					s += "0"+vtime.Month.ToString() + ".";
-				else
-					s += vtime.Month.ToString() + ".";
-				s += vtime.Year.ToString();
+				string s = MMI.EBuLa.Tools.Misc.getDateString(vtime);
 
 				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
@@ -1484,18 +1801,7 @@ namespace MMI.ET42X
 				// Datum oben links
 				DrawFrame(ref pg, 1, 1, 120, 38);
 
-				string s = "";
-
-				s = DayOfWeekGerman(vtime.DayOfWeek).Substring(0, 2) + ", ";	
-				if (vtime.DayOfYear < 10)
-					s += "0"+vtime.DayOfYear.ToString() + ".";
-				else
-					s += vtime.DayOfYear.ToString() + ".";
-				if (vtime.Month < 10)
-					s += "0"+vtime.Month.ToString() + ".";
-				else
-					s += vtime.Month.ToString() + ".";
-				s += vtime.Year.ToString();
+				string s = MMI.EBuLa.Tools.Misc.getDateString(vtime);
 
 				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
@@ -1503,12 +1809,14 @@ namespace MMI.ET42X
 			}
 
 		}
-		public void DrawLinie(ref Graphics pg)
+		public void DrawFISLinie(ref Graphics pg)
 		{
 			// Rahmen oben
 			DrawFrame(ref pg, 1, 1, 505, 38);
 
-			string s = "  nicht Einsteigen / Werkstatt";
+			string s = localstate.fis.Linie + " / "+ localstate.fis.Ziel + " / " + localstate.fis.NaechsterHalt;
+
+			if (!localstate.fis.ShowEntry()) s = "";
 
 			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
@@ -1524,23 +1832,116 @@ namespace MMI.ET42X
 					l_Button2.Text = "";//"W";
 					l_Button3.Text = "";//"ZUG";
 					l_Button4.Text = "";//"Zug-Besy";
-					l_Button5.Text = "";//"B";
+					l_Button5.Text = "B";//"B";
 					l_Button6.Text = "";//"V/A";
-					l_Button7.Text = "";//"Spg";
+					l_Button7.Text = "Spg";//"Spg";
 					l_Button8.Text = "FIS";
-					l_Button9.Text = "";//"S";
+					l_Button9.Text = "S";//"S";
 					l_Button0.Text = "";
+					break;
+				case CURRENT_DISPLAY.S:
+					l_Button1.Text = "";//"An- trieb";
+					l_Button2.Text = "";//"Zug- Absp.";
+					if (localstate.Kuehlung)
+						l_Button3.Text = "Kühl Aus";
+					else
+						l_Button3.Text = "Kühl Ein";
+					l_Button4.Text = "Ober- strom";
+					l_Button5.Text = "";
+					l_Button6.Text = "";
+					l_Button7.Text = "";
+					l_Button8.Text = "";
+					l_Button9.Text = "";//"Ver- sch.";
+					l_Button0.Text = "G";
 					break;
 				case CURRENT_DISPLAY.FIS:
 					l_Button1.Text = "";
-					l_Button2.Text = "";//"Rout. Eing.";
-					l_Button3.Text = "";//"Halt. Korr.";
+					if (localstate.FISType == FIS_TYPE.FIS)
+                        l_Button2.Text = "Rout. Eing.";
+					else
+						l_Button2.Text = "Flüg. Zugnr"; 						
+					if (localstate.fis.Status)
+                        l_Button3.Text = "Halt. Korr.";
+					else
+						l_Button3.Text = "";						
 					l_Button4.Text = "";//"Zug verl.";
+					if (localstate.FISType == FIS_TYPE.FIS)
+						l_Button5.Text = "";
+					else
+						l_Button5.Text = "Rout. Eing.";
+					l_Button6.Text = "";
+					if (localstate.fis.Status)
+					{
+						l_Button7.Text = "FIS aus";
+						l_Button8.Text = "FIS Start";
+						l_Button9.Text = "FIS ausl.";
+					}
+					else
+					{
+						l_Button7.Text = "";
+						l_Button8.Text = "";
+						l_Button9.Text = "";
+					}
+					l_Button0.Text = "G";
+					break;
+				case CURRENT_DISPLAY.FIS_ROUTE:
+					l_Button1.Text = "";
+					l_Button2.Text = "";
+					l_Button3.Text = "";
+					l_Button4.Text = "";
+					l_Button5.Text = "lösch";
+					l_Button6.Text = "";
+					l_Button7.Text = "";
+					l_Button8.Text = "FIS Start";
+					l_Button9.Text = "";
+					l_Button0.Text = "G";
+					break;
+				case CURRENT_DISPLAY.OBERSTROM:
+					l_Button1.Text = "1000";
+					l_Button2.Text = "900";
+					l_Button3.Text = "600";
+					l_Button4.Text = "";
 					l_Button5.Text = "";
 					l_Button6.Text = "";
-					l_Button7.Text = "";//"FIS aus";
-					l_Button8.Text = "";//"FIS Start";
-					l_Button9.Text = "";//"FIS ausl.";
+					l_Button7.Text = "";
+					l_Button8.Text = "";
+					l_Button9.Text = "";
+					l_Button0.Text = "G";
+					break;
+				case CURRENT_DISPLAY.Info:
+					l_Button1.Text = "Bes.- Grad";
+					l_Button2.Text = "V ist";
+					l_Button3.Text = "";
+					l_Button4.Text = "";
+					l_Button5.Text = "";
+					l_Button6.Text = "";
+					l_Button7.Text = "";
+					l_Button8.Text = "";
+					l_Button9.Text = "";
+					l_Button0.Text = "G";
+					break;
+				case CURRENT_DISPLAY.Besetz:
+					l_Button1.Text = "";
+					l_Button2.Text = "";
+					l_Button3.Text = "";
+					l_Button4.Text = "";
+					l_Button5.Text = "";
+					l_Button6.Text = "";
+					l_Button7.Text = "";
+					l_Button8.Text = "";
+					l_Button9.Text = "";
+					l_Button0.Text = "G";
+					break;
+				case CURRENT_DISPLAY.Vist:
+					l_Button1.Text = "";
+					l_Button2.Text = "";
+					l_Button3.Text = "";
+					l_Button4.Text = "";
+					l_Button5.Text = "";
+					l_Button6.Text = "";
+					l_Button7.Text = "";
+					l_Button8.Text = "";
+					l_Button9.Text = "";
 					l_Button0.Text = "G";
 					break;
 				default:
@@ -1571,39 +1972,39 @@ namespace MMI.ET42X
 				zugkraft *= -1;
 			}
 
-			DrawFrame(ref pg, 1+(tz-1)*105+tz, 41, 105, 205);
+			DrawFrameNewStyle(ref pg, 1+(tz-1)*110+tz, 46, 105, 205);
 
 			int height = Convert.ToInt32(zugkraft * 1.5d);
 			if (height > 150) height = 150;
 
-			pg.FillRectangle(new SolidBrush(color), 08+(tz-1)*105+tz, 150 - height + 74, 30, height);
-			pg.FillRectangle(new SolidBrush(color), 68+(tz-1)*105+tz, 150 - height + 74, 30, height);
+			pg.FillRectangle(new SolidBrush(color), 08+(tz-1)*110+tz, 155 - height + 74, 30, height);
+			pg.FillRectangle(new SolidBrush(color), 68+(tz-1)*110+tz, 155 - height + 74, 30, height);
 
-			DrawFrameSunkenSmall(ref pg, 08+(tz-1)*105+tz, 74, 30, 150);
-			DrawFrameSunkenSmall(ref pg, 68+(tz-1)*105+tz, 74, 30, 150);
+			DrawFrameSunkenSmall(ref pg, 08+(tz-1)*110+tz, 79, 30, 150);
+			DrawFrameSunkenSmall(ref pg, 68+(tz-1)*110+tz, 79, 30, 150);
 
 			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
-			pg.DrawString("kN", f, new SolidBrush(BLACK), 40+(tz-1)*105+tz, 47);
+			pg.DrawString("kN", f, new SolidBrush(BLACK), 40+(tz-1)*110+tz, 52);
 
 			f = new Font("Arial", 3, FontStyle.Bold, GraphicsUnit.Millimeter);
 
 			for (int i = 0; i < 110; i+=10)
 			{           
                 if (i <= 0)
-                    pg.DrawString(i.ToString(), f, new SolidBrush(BLACK), 54+(tz-1)*105+tz, 66 + (150 - i * 1.5f));
+                    pg.DrawString(i.ToString(), f, new SolidBrush(BLACK), 54+(tz-1)*110+tz, 66 + (155 - i * 1.5f));
 				else if (i < 100)
-					pg.DrawString(i.ToString(), f, new SolidBrush(BLACK), 48+(tz-1)*105+tz, 66 + (150 - i * 1.5f));
+					pg.DrawString(i.ToString(), f, new SolidBrush(BLACK), 48+(tz-1)*110+tz, 66 + (155 - i * 1.5f));
 				else
-					pg.DrawString(i.ToString(), f, new SolidBrush(BLACK), 42+(tz-1)*105+tz, 66 + (150 - i * 1.5f));
+					pg.DrawString(i.ToString(), f, new SolidBrush(BLACK), 42+(tz-1)*110+tz, 66 + (155 - i * 1.5f));
 
-				pg.DrawLine(new Pen(BLACK), 62+(tz-1)*105+tz, 74 + (150 - i * 1.5f), 62+(tz-1)*105+tz+5, 74 + (150 - i * 1.5f));
+				pg.DrawLine(new Pen(BLACK), 62+(tz-1)*110+tz, 74 + (155 - i * 1.5f), 62+(tz-1)*110+tz+5, 74 + (155 - i * 1.5f));
 			}
 
 			// Zugteil			
-			DrawFrame(ref pg, 1+(tz-1)*105+tz, 248, 105, 30);
-			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
-			pg.DrawString(tz.ToString()+". Zug", f, new SolidBrush(BLACK), 30+(tz-1)*105+tz, 256);
+			DrawFrameNewStyle(ref pg, 1+(tz-1)*110+tz, 253, 105, 30);
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Zug "+tz.ToString(), f, new SolidBrush(BLACK), 28+(tz-1)*110+tz, 258);
 
 
 			// Zugnummer
@@ -1624,11 +2025,218 @@ namespace MMI.ET42X
 			}
 
 			f = new Font("Arial", 3, FontStyle.Bold, GraphicsUnit.Millimeter);
-			DrawFrame(ref pg, 1+(tz-1)*105+tz, 280, 52, 30);
-			pg.DrawString(zug+" 00"+tz.ToString(), f, new SolidBrush(BLACK), 6+(tz-1)*105+tz, 289);
+			DrawFrameNewStyle(ref pg, 1+(tz-1)*110+tz, 285, 52, 30);
+			pg.DrawString(zug+" 00"+tz.ToString(), f, new SolidBrush(BLACK), 6+(tz-1)*110+tz, 294);
 			
-			DrawFrame(ref pg, 54+(tz-1)*105+tz, 280, 52, 30);
-			pg.DrawString(zug+" 50"+tz.ToString(), f, new SolidBrush(BLACK), 60+(tz-1)*105+tz, 289);
+			DrawFrameNewStyle(ref pg, 54+(tz-1)*110+tz, 285, 52, 30);
+			pg.DrawString(zug+" 50"+tz.ToString(), f, new SolidBrush(BLACK), 60+(tz-1)*110+tz, 294);
+
+			//Pfeil
+			int iheight = 0; Brush b;
+			float factor = 1f;
+            
+            ET42XTYPE current_type;
+			if (tz == 1)
+				current_type = localstate.ET42Xtype1;
+			else if (tz == 2)
+				current_type = localstate.ET42Xtype2;
+			else current_type = localstate.ET42Xtype3;
+
+			if (localstate.FahrstufenSchalter >= 10)
+			{
+				b = new SolidBrush(MMI_BLUE);
+				if (current_type == ET42XTYPE.ET423)
+					factor = 150f / 1000f * 74f;
+				else if (current_type == ET42XTYPE.ET424 || current_type == ET42XTYPE.ET425)
+					factor = 150f / 1000f * 68f;
+				else factor = 150f / 1000f * 35f;
+
+				iheight = Convert.ToInt32((localstate.FahrstufenSchalter-10) * factor);
+			}
+			else
+			{
+				b = new SolidBrush(MMI_ORANGE);
+				if (current_type == ET42XTYPE.ET423)
+					factor = 150f / 1000f * 65f;
+				else if (current_type == ET42XTYPE.ET424 || current_type == ET42XTYPE.ET425)
+					factor = 150f / 1000f * 65f;
+				else factor = 150f / 1000f * 45f;
+
+				iheight = Convert.ToInt32((10-localstate.FahrstufenSchalter) * factor);
+			}
+
+			Point[] p = {new Point(08+7+(tz-1)*110+tz,155 - iheight + 74), new Point(08+7+(tz-1)*110+tz-11,155 - iheight + 74+4), new Point(08+7+(tz-1)*110+tz-7,155 - iheight + 74), new Point(08+7+(tz-1)*110+tz-11,155 - iheight + 74-4)};
+			Point[] p2 = {new Point(68+7+(tz-1)*110+tz,155 - iheight + 74), new Point(68+7+(tz-1)*110+tz-11,155 - iheight + 74+4), new Point(68+7+(tz-1)*110+tz-7,155 - iheight + 74), new Point(68+7+(tz-1)*110+tz-11,155 - iheight + 74-4)};
+			pg.FillPolygon(b, p);
+			pg.FillPolygon(b, p2);
+			pg.DrawPolygon(new Pen(BRIGHT), p);
+			pg.DrawPolygon(new Pen(BRIGHT), p2);
+			
+		}
+		public void DrawKastenBesetztgrad(ref Graphics pg, int tz)
+		{
+			Color color = MMI_BLUE;
+			DrawFrameNewStyle(ref pg, 1+(tz-1)*110+tz, 46, 105, 225);
+
+			int height = 107;
+			if (height > 150) height = 150;
+
+			pg.FillRectangle(new SolidBrush(color), 08+(tz-1)*110+tz, 155 - height + 74, 30, height);
+			pg.FillRectangle(new SolidBrush(color), 68+(tz-1)*110+tz, 155 - height + 74, 30, height);
+
+			DrawFrameSunkenSmall(ref pg, 08+(tz-1)*110+tz, 79, 30, 150);
+			DrawFrameSunkenSmall(ref pg, 68+(tz-1)*110+tz, 79, 30, 150);
+
+			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			pg.DrawString("%", f, new SolidBrush(BLACK), 43+(tz-1)*110+tz, 52);
+
+			f = new Font("Arial", 3, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			for (int i = 0; i < 150; i+=10)
+			{   
+				pg.DrawLine(new Pen(BLACK), 62+(tz-1)*110+tz, 74 + (155 - i * 1.071f), 62+(tz-1)*110+tz+5, 74 + (155 - i * 1.071f));
+
+				if (Math.IEEERemainder(i, 20) != 0) continue;
+
+				if (i <= 0)
+					pg.DrawString(i.ToString(), f, new SolidBrush(BLACK), 54+(tz-1)*110+tz, 66 + (155 - i * 1.071f));
+				else if (i < 100)
+					pg.DrawString(i.ToString(), f, new SolidBrush(BLACK), 48+(tz-1)*110+tz, 66 + (155 - i * 1.071f));
+				else
+					pg.DrawString(i.ToString(), f, new SolidBrush(BLACK), 42+(tz-1)*110+tz, 66 + (155 - i * 1.071f));
+			}
+
+			
+			// Zugnummer
+			string zug = "";
+
+			switch (tz)
+			{
+				case 1:
+					zug = TrainType(localstate.ET42Xtype1);
+					break;
+				case 2:
+					zug = TrainType(localstate.ET42Xtype2);
+					break;
+				case 3:
+					zug = TrainType(localstate.ET42Xtype3);
+					break;					
+			}
+
+			f = new Font("Arial", 3, FontStyle.Bold, GraphicsUnit.Millimeter);
+			DrawFrameNewStyle(ref pg, 1+(tz-1)*110+tz, 275, 52, 30);
+			pg.DrawString(zug+" 00"+tz.ToString(), f, new SolidBrush(BLACK), 6+(tz-1)*110+tz, 284);
+			
+			DrawFrameNewStyle(ref pg, 54+(tz-1)*110+tz, 275, 52, 30);
+			pg.DrawString(zug+" 50"+tz.ToString(), f, new SolidBrush(BLACK), 60+(tz-1)*110+tz, 284);
+
+			// Mittelwert
+			DrawFrame(ref pg, 508, 281, 120, 44);
+
+			string s = "100";
+
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			pg.DrawString("Mittelwert", f, new SolidBrush(BLACK), 515, 256);
+
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("%", f, new SolidBrush(BLACK), 590, 293);
+			//if (zugkraft >= 100)
+				pg.DrawString(s, f, new SolidBrush(BLACK), 564, 293);
+			/*else if (zugkraft >= 10)
+				pg.DrawString(s, f, new SolidBrush(BLACK), 572, 293);
+			else
+				pg.DrawString(s, f, new SolidBrush(BLACK), 580, 293);			*/
+		}
+		public void DrawKastenSpannung(ref Graphics pg, int tz)
+		{
+			Color color = MMI_BLUE;
+			float spannung = localstate.Spannung;
+
+			DrawFrameNewStyle(ref pg, 1+(tz-1)*110+tz, 46, 105, 205);
+
+			int height = Convert.ToInt32((spannung-9) * 15d / 1.1d);
+			if (height > 150) height = 150;
+
+			pg.FillRectangle(new SolidBrush(color), 35+(tz-1)*110+tz, 155 - height + 74, 37, height);
+
+			if (localstate.Spannung > 1f)
+				pg.FillRectangle(new SolidBrush(color), 35+(tz-1)*110+tz, 77+155, 37, 14);
+
+			DrawFrameSunkenSmall(ref pg, 35+(tz-1)*110+tz, 79, 37, 150);
+			DrawFrameSunkenSmall(ref pg, 35+(tz-1)*110+tz, 77+155, 37, 14);
+
+			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			pg.DrawString("kV", f, new SolidBrush(BLACK), 10+(tz-1)*110+tz, 52);
+
+			f = new Font("Arial", 3, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			for (int i = 0; i < 120; i+=10)
+			{           
+				if (i == 10 || i == 60 || i == 110)
+					pg.DrawString((i/10f + 9f).ToString(), f, new SolidBrush(BLACK), 15+(tz-1)*110+tz, 67 + (155 - i * 1.364f));
+
+				pg.DrawLine(new Pen(BLACK), 30+(tz-1)*110+tz, 74 + (155 - i * 1.364f), 30+(tz-1)*110+tz+5, 74 + (155 - i * 1.364f));
+			}
+
+			// 0
+			pg.DrawString("0", f, new SolidBrush(BLACK), 22+(tz-1)*110+tz, 77 + 155);
+			pg.DrawLine(new Pen(BLACK), 30+(tz-1)*110+tz, 84 + 155, 30+(tz-1)*110+tz+5, 84 + 155);
+
+			ET42XTYPE current_type;
+			if (tz == 1)
+				current_type = localstate.ET42Xtype1;
+			else if (tz == 2)
+				current_type = localstate.ET42Xtype2;
+			else current_type = localstate.ET42Xtype3;
+
+			DrawFrameNewStyle(ref pg, 1+(tz-1)*110+tz, 253, 52, 50);
+			DrawFrameNewStyle(ref pg, 54+(tz-1)*110+tz, 253, 52, 50);
+
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("HS 1", f, new SolidBrush(BLACK), 08+(tz-1)*110+tz, 258);
+			if (current_type != ET42XTYPE.ET426)
+				pg.DrawString("HS 2", f, new SolidBrush(BLACK), 62+(tz-1)*110+tz, 258);
+
+			if (localstate.LM_HS)
+			{
+				pg.DrawString("AUS", f, new SolidBrush(BLACK), 10+(tz-1)*110+tz, 280);
+				if (current_type != ET42XTYPE.ET426)
+					pg.DrawString("AUS", f, new SolidBrush(BLACK), 64+(tz-1)*110+tz, 280);
+			}
+			else
+			{
+				pg.DrawString("EIN", f, new SolidBrush(BLACK), 11+(tz-1)*110+tz, 280);
+				if (current_type != ET42XTYPE.ET426)
+					pg.DrawString("EIN", f, new SolidBrush(BLACK), 65+(tz-1)*110+tz, 280);
+			}
+
+
+			// Zugnummer
+
+			string zug = "";
+
+			switch (tz)
+			{
+				case 1:
+					zug = TrainType(localstate.ET42Xtype1);
+					break;
+				case 2:
+					zug = TrainType(localstate.ET42Xtype2);
+					break;
+				case 3:
+					zug = TrainType(localstate.ET42Xtype3);
+					break;					
+			}
+
+			f = new Font("Arial", 3, FontStyle.Bold, GraphicsUnit.Millimeter);
+			DrawFrameNewStyle(ref pg, 1+(tz-1)*110+tz, 305, 52, 20);
+			pg.DrawString(zug+" 00"+tz.ToString(), f, new SolidBrush(BLACK), 6+(tz-1)*110+tz, 309);
+			
+			DrawFrameNewStyle(ref pg, 54+(tz-1)*110+tz, 305, 52, 20);
+			pg.DrawString(zug+" 50"+tz.ToString(), f, new SolidBrush(BLACK), 60+(tz-1)*110+tz, 309);
 			
 		}
 		public void DrawTitle(ref Graphics pg)
@@ -1636,7 +2244,7 @@ namespace MMI.ET42X
 			switch(localstate.DISPLAY)
 			{
 				case CURRENT_DISPLAY.G:
-					DrawLinie(ref pg);
+					DrawFISLinie(ref pg);
 					break;
 				default:
 					// Rahmen
@@ -1650,33 +2258,512 @@ namespace MMI.ET42X
 					break;
 			}
 		}
+
 		public void DrawFIS(ref Graphics pg)
 		{
+			switch(localstate.FISType)
+			{
+				case FIS_TYPE.FIS:
+					DrawFIS_OhneGPS(ref pg);
+					break;
+				case FIS_TYPE.GPS_FIS:
+					DrawFIS_MitGPS(ref pg);
+					break;
+				case FIS_TYPE.GPS_ZN_FIS:
+					break;
+			}
+		}
+
+		public void DrawFIS_OhneGPS(ref Graphics pg)
+		{
 			// Eingestellte Routen
-			DrawFrame(ref pg, 1, 60, 315, 204);
+			DrawFrame(ref pg, 1, 41, 315, 200);
 			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
-			pg.DrawString("Eingestellte Routen:", f, new SolidBrush(BLACK), 10, 70);
+			pg.DrawString("Eingestellte Routen:", f, new SolidBrush(BLACK), 5, 65-19);
 
 			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 			for (int i = 1; i <= GetTrainCount(); i++)
 			{
-				pg.DrawString("Zug "+i.ToString(), f, new SolidBrush(BLACK), 10, 70+i*50);
-				pg.DrawString(" nicht Einsteigen", f, new SolidBrush(BLACK), 100, 70+i*50);
-				DrawFrame(ref pg, 70, 57+i*50, 230, 40);
+				pg.DrawString("Zug "+i.ToString(), f, new SolidBrush(BLACK), 10, 70-32+i*42);
+				if (localstate.fis.ShowEntry()) 
+					pg.DrawString(localstate.fis.Linie+" / "+localstate.fis.Ziel, f, new SolidBrush(BLACK), 100, 70-32+i*42);
+				else
+					pg.DrawString("                 ---", f, new SolidBrush(BLACK), 100, 70-32+i*42);
+
+				DrawFrameSunkenSmall(ref pg, 72, 57-24+i*42, 230, 25);
 			}
 
 			// Nächster Halt
-			DrawFrame(ref pg, 320, 60, 210, 100);
-			pg.DrawString("Nächster Halt:", f, new SolidBrush(BLACK), 375, 75);
-			DrawFrame(ref pg, 330, 107, 190, 40);
-			pg.DrawString("Werkstatt", f, new SolidBrush(BLACK), 390, 119);
+			DrawFrame(ref pg, 318, 41, 210, 99);
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Nächster Halt:", f, new SolidBrush(BLACK), 363, 55);
+			DrawFrameSunkenSmall(ref pg, 330, 90, 190, 30);
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if (localstate.fis.NaechsterHalt == "")
+				pg.DrawString("             ---", f, new SolidBrush(BLACK), 350, 98);
+			else
+				pg.DrawString(localstate.fis.NaechsterHalt, f, new SolidBrush(BLACK), 350, 98);
+
 
 
 			// Rahmen FIS Status
-			DrawFrame(ref pg, 320, 164, 210, 100);
-			pg.DrawString("FIS Status:", f, new SolidBrush(BLACK), 385, 179);
-			DrawFrame(ref pg, 330, 211, 190, 40);
-			pg.DrawString("EIN", f, new SolidBrush(BLACK), 410, 223);
+			DrawFrame(ref pg, 318, 142, 210, 99);
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("FIS Status:", f, new SolidBrush(BLACK), 375, 159);
+			DrawFrameSunkenSmall(ref pg, 330, 194, 190, 30);
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if (localstate.fis.Status)
+                pg.DrawString("EIN", f, new SolidBrush(BLACK), 410, 202);
+			else
+				pg.DrawString("AUS", f, new SolidBrush(BLACK), 410, 202);
+		}
+
+		public void DrawFIS_MitGPS(ref Graphics pg)
+		{
+			// Eingestellte Routen
+			DrawFrame(ref pg, 1, 41, 315, 200);
+			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Eingestellte Routen:", f, new SolidBrush(BLACK), 5, 65-19);
+
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			for (int i = 1; i <= GetTrainCount(); i++)
+			{
+				pg.DrawString("Zug "+i.ToString(), f, new SolidBrush(BLACK), 10, 70-32+i*42);
+				if (localstate.fis.ShowEntry()) 
+					pg.DrawString(localstate.fis.Linie+" / "+localstate.fis.Ziel, f, new SolidBrush(BLACK), 100, 70-32+i*42);
+				else
+					pg.DrawString("                 ---", f, new SolidBrush(BLACK), 100, 70-32+i*42);
+				DrawFrameSunkenSmall(ref pg, 72, 57-24+i*42, 230, 25);
+			}
+
+			// Eingestellte Flügelzugnummern
+			DrawFrame(ref pg, 1+316, 41, 311, 200);
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Eingestellte Flügelzugnummern:", f, new SolidBrush(BLACK), 5+316, 65-19);
+
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			for (int i = 1; i <= GetTrainCount(); i++)
+			{
+				pg.DrawString("Zug "+i.ToString(), f, new SolidBrush(BLACK), 10+316, 70-32+i*42);
+				if (localstate.fis.Zugnummer == "")
+                    pg.DrawString("                 ---", f, new SolidBrush(BLACK), 100+316, 70-32+i*42);
+				else
+					pg.DrawString(localstate.fis.Zugnummer, f, new SolidBrush(BLACK), 100+316, 70-32+i*42);
+				DrawFrameSunkenSmall(ref pg, 72+316, 57-24+i*42, 230, 25);
+			}
+
+			// Nächster Halt
+			DrawFrame(ref pg, 320-319, 60-60+243, 225, 89);
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Nächster Halt:", f, new SolidBrush(BLACK), 360-316, 75-65+243);
+			DrawFrameSunkenSmall(ref pg, 330-319, 107-65+243, 205, 30);
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if (localstate.fis.NaechsterHalt == "")
+				pg.DrawString("             ---", f, new SolidBrush(BLACK), 367-319, 114-65+243);
+			else
+				pg.DrawString(localstate.fis.NaechsterHalt, f, new SolidBrush(BLACK), 367-319, 114-65+243);
+
+
+
+			// Rahmen FIS Status
+			DrawFrame(ref pg, 335-108, 164-164+243, 225, 89);
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("FIS Status:", f, new SolidBrush(BLACK), 378-95, 175-164+243);
+			DrawFrameSunkenSmall(ref pg, 345-108, 206-164+243, 205, 30);
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if (localstate.fis.Status)
+                pg.DrawString("EIN", f, new SolidBrush(BLACK), 425-101, 213-164+243);
+			else
+				pg.DrawString("AUS", f, new SolidBrush(BLACK), 425-101, 213-164+243);
+
+
+			// Rahmen GPS-Empfang
+			DrawFrame(ref pg, 335-108+226, 164-164+243, 175, 89);
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("GPS-Empfang:", f, new SolidBrush(BLACK), 365-95+201, 175-164+243);
+			DrawFrameSunkenSmall(ref pg, 345-108+226, 206-164+243, 155, 30);
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if (localstate.fis.GPSStatus)
+                pg.DrawString("JA", f, new SolidBrush(BLACK), 425-101+201, 213-164+243);
+			else
+				pg.DrawString("NEIN", f, new SolidBrush(BLACK), 420-101+201, 213-164+243);
+		}
+
+		public void DrawFIS_HK(ref Graphics pg)
+		{
+			// Nächster Halt
+			int y = 90, x = -20;
+			DrawFrame(ref pg, 318+x, 41+y, 210, 99);
+			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Nächster Halt:", f, new SolidBrush(BLACK), 363+x, 55+y);
+			pg.FillRectangle(new SolidBrush(Color.Gold) ,331+x, 91+y, 188, 28);
+			DrawFrameSunkenSmall(ref pg, 330+x, 90+y, 190, 30);
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString(localstate.fis.NaechsterHalt, f, new SolidBrush(Color.Black), 350+x, 98+y);
+
+			DrawSeitlicheSoftkeys(ref pg);
+		}
+
+		public void DrawSeitlicheSoftkeys(ref Graphics pg)
+		{
+			// Seitliche Soft-Keys
+			if (localstate.DISPLAY != CURRENT_DISPLAY.FIS_HK && localstate.DISPLAY != CURRENT_DISPLAY.FIS_ROUTE)
+				DrawFrame(ref pg, 518, 43, 110, 48);
+			DrawFrame(ref pg, 518, 105, 110, 50);
+			DrawFrame(ref pg, 518, 170, 110, 50);
+			DrawFrame(ref pg, 518, 235, 110, 112);
+
+			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			switch(localstate.DISPLAY)
+			{
+				case CURRENT_DISPLAY.FIS_HK:
+					pg.DrawString("weiter", f, new SolidBrush(BLACK), 533, 121);
+
+					pg.DrawString("zurück", f, new SolidBrush(BLACK), 533, 186);
+
+					pg.DrawString("Über-", f, new SolidBrush(BLACK), 530, 282);
+					pg.DrawString("nehmen", f, new SolidBrush(BLACK), 530, 303);
+					break;
+				case CURRENT_DISPLAY.FIS_ROUTE:
+					pg.DrawString("weiter", f, new SolidBrush(BLACK), 533, 121);
+
+					pg.DrawString("zurück", f, new SolidBrush(BLACK), 533, 186);
+
+					pg.DrawString("Über-", f, new SolidBrush(BLACK), 530, 282);
+					pg.DrawString("nehmen", f, new SolidBrush(BLACK), 530, 303);
+					break;
+				case CURRENT_DISPLAY.Zug_Tf_Nr:
+					pg.DrawString("Grundbild", f, new SolidBrush(BLACK), 525, 55);
+					pg.DrawString("Eingabe", f, new SolidBrush(BLACK), 533, 111);
+					pg.DrawString("rückwärts", f, new SolidBrush(BLACK), 525, 129);
+
+					pg.DrawString("Eingabe", f, new SolidBrush(BLACK), 533, 176);
+					pg.DrawString("vorwärts", f, new SolidBrush(BLACK), 530, 194);
+
+					if (localstate.marker >= 6 && localstate.marker < 12)
+						pg.DrawString("Tf-", f, new SolidBrush(BLACK), 548, 250);
+					else if (localstate.marker >= 0 && localstate.marker < 6)
+						pg.DrawString("Zug-", f, new SolidBrush(BLACK), 548, 250);
+						
+					pg.DrawString("nummer", f, new SolidBrush(BLACK), 530, 268);
+					pg.DrawString("über-", f, new SolidBrush(BLACK), 548, 286);
+					pg.DrawString("nehmen", f, new SolidBrush(BLACK), 530, 303);
+					break;
+				case CURRENT_DISPLAY.DSK:
+					pg.DrawString("Grundbild", f, new SolidBrush(BLACK), 525, 55);
+					pg.DrawString("Eingabe", f, new SolidBrush(BLACK), 533, 111);
+					pg.DrawString("rückwärts", f, new SolidBrush(BLACK), 525, 129);
+
+					pg.DrawString("Eingabe", f, new SolidBrush(BLACK), 533, 176);
+					pg.DrawString("vorwärts", f, new SolidBrush(BLACK), 530, 194);
+
+					pg.DrawString("Kurzzeit-", f, new SolidBrush(BLACK), 538, 264);
+					pg.DrawString("speicher", f, new SolidBrush(BLACK), 538, 282);
+					if (localstate.DSK_Gesperrt)
+						pg.DrawString("entsperren", f, new SolidBrush(BLACK), 518, 299);
+					else
+						pg.DrawString("sperren", f, new SolidBrush(BLACK), 538, 299);
+					break;
+			}
+		}
+		
+		public void DrawFIS_Route(ref Graphics pg)
+		{
+			// Eingestellte Routen
+			DrawFrame(ref pg, 1, 41, 315, 200);
+			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Aktuelle Routen:", f, new SolidBrush(BLACK), 5, 65-19);
+
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			for (int i = 1; i <= GetTrainCount(); i++)
+			{
+				pg.FillRectangle(new SolidBrush(Color.Gold), 72, 57-24+i*42, 230, 25);
+				pg.DrawString("Zug "+i.ToString(), f, new SolidBrush(BLACK), 10, 70-32+i*42);
+				if (localstate.fis.ShowEntry())
+                    pg.DrawString(localstate.fis.Linie + " / " + localstate.fis.Ziel, f, new SolidBrush(Color.Black), 100, 70-32+i*42);
+				else
+					pg.DrawString("", f, new SolidBrush(Color.Black), 100, 70-32+i*42);
+				DrawFrameSunkenSmall(ref pg, 72, 57-24+i*42, 230, 25);
+			}
+
+			DrawFrame(ref pg, 1, 243, 315, 145);
+			
+			if (localstate.fis.position == FIS_POS.LINIE)
+				pg.FillRectangle(new SolidBrush(Color.Gold), 72, 217+42, 230, 25);
+			else if (localstate.fis.position == FIS_POS.START)
+				pg.FillRectangle(new SolidBrush(Color.Gold), 72, 217+2*42, 230, 25);
+			else if (localstate.fis.position == FIS_POS.ZIEL)
+				pg.FillRectangle(new SolidBrush(Color.Gold), 72, 217+3*42, 230, 25);
+
+			DrawFrameSunkenSmall(ref pg, 72, 217+42, 230, 25);
+			DrawFrameSunkenSmall(ref pg, 72, 217+2*42, 230, 25);
+			DrawFrameSunkenSmall(ref pg, 72, 217+3*42, 230, 25);
+
+			string linie = "(" + localstate.fis.GetNetz() + ") / " + localstate.fis.GetLinie();
+			string start = localstate.fis.GetStart();
+			string ziel = localstate.fis.GetZiel();
+            
+			pg.DrawString("Linie", f, new SolidBrush(BLACK), 10, 217+42+3);
+			pg.DrawString("Start", f, new SolidBrush(BLACK), 10, 217+2*42+3);
+			pg.DrawString("Ziel", f, new SolidBrush(BLACK), 10, 217+3*42+3);
+			pg.DrawString(linie, f, new SolidBrush(Color.Black), 100, 217+42+3);
+			pg.DrawString(start, f, new SolidBrush(Color.Black), 100, 217+42*2+3);
+			pg.DrawString(ziel, f, new SolidBrush(Color.Black), 100, 217+42*3+3);
+
+			DrawSeitlicheSoftkeys(ref pg);
+		}
+
+		public void DrawSchaltfunktionen(ref Graphics pg)
+		{
+			DrawFrame(ref pg, 0, 42, 315, 286); // Antrieb
+			DrawFrame(ref pg, 318, 42, 230, 160); // Absperrungen
+			DrawFrame(ref pg, 318, 205, 230, 60); // Kuehlung
+			DrawFrame(ref pg, 318, 268, 230, 60); // Oberstrom
+
+
+			// Antrieb
+			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			// Zug 1
+			pg.DrawString("Antriebsanlage 1.1", f, new SolidBrush(BLACK), 16, 60);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 240, 60, 41, 25, DARK, BRIGHT);
+			f = new Font("Arial", 4.5f, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Ein", f, new SolidBrush(BLACK), 245, 64);
+
+			if (localstate.ET42Xtype1 != ET42XTYPE.ET426)
+			{
+				f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+				pg.DrawString("Antriebsanlage 1.2", f, new SolidBrush(BLACK), 16, 60+30);
+				MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 240, 60+30, 41, 25, DARK, BRIGHT);
+				f = new Font("Arial", 4.5f, FontStyle.Bold, GraphicsUnit.Millimeter);			
+				pg.DrawString("Ein", f, new SolidBrush(BLACK), 245, 64+30);
+			}
+                                                                           	
+			if (localstate.ET42Xtype2 != ET42XTYPE.NONE)
+			{
+				// Zug 2
+				f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+				pg.DrawString("Antriebsanlage 2.1", f, new SolidBrush(BLACK), 16, 60+60);
+				MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 240, 60+60, 41, 25, DARK, BRIGHT);
+				
+				f = new Font("Arial", 4.5f, FontStyle.Bold, GraphicsUnit.Millimeter);			
+				pg.DrawString("Ein", f, new SolidBrush(BLACK), 245, 64+60);
+
+				if (localstate.ET42Xtype2 != ET42XTYPE.ET426)
+				{
+					f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+					pg.DrawString("Antriebsanlage 2.2", f, new SolidBrush(BLACK), 16, 60+90);
+					MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 240, 60+90, 41, 25, DARK, BRIGHT);
+					f = new Font("Arial", 4.5f, FontStyle.Bold, GraphicsUnit.Millimeter);			
+					pg.DrawString("Ein", f, new SolidBrush(BLACK), 245, 64+90);
+				}
+			}
+
+			if (localstate.ET42Xtype3 != ET42XTYPE.NONE)
+			{
+				// Zug 3
+				f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+				pg.DrawString("Antriebsanlage 3.1", f, new SolidBrush(BLACK), 16, 60+120);
+				MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 240, 60+120, 41, 25, DARK, BRIGHT);
+
+				f = new Font("Arial", 4.5f, FontStyle.Bold, GraphicsUnit.Millimeter);			
+				pg.DrawString("Ein", f, new SolidBrush(BLACK), 245, 64+120);
+				
+				if (localstate.ET42Xtype3 != ET42XTYPE.ET426)
+				{
+					f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+					pg.DrawString("Antriebsanlage 3.2", f, new SolidBrush(BLACK), 16, 60+150);
+					MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 240, 60+150, 41, 25, DARK, BRIGHT);
+
+					f = new Font("Arial", 4.5f, FontStyle.Bold, GraphicsUnit.Millimeter);			
+					pg.DrawString("Ein", f, new SolidBrush(BLACK), 245, 64+150);
+				}
+			}
+
+			// bspdarstellung
+
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("eingr.", f, new SolidBrush(BLACK), 6, 233+63);
+			pg.DrawString("ausgr.", f, new SolidBrush(BLACK), 106, 233+63);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 65, 233+63, 25, 25, DARK, BRIGHT);
+			pg.FillRectangle(new SolidBrush(Color.Gold), 169, 233+63, 25, 25);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 170, 233+63, 25, 25, DARK, BRIGHT);
+
+
+
+			// Absperrungen
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Absperrungen im Zug", f, new SolidBrush(BLACK), 326, 48);
+
+			if (localstate.ET42Xtype1 != ET42XTYPE.ET426)
+			{
+				// Zug 1
+				pg.DrawString("Zug 1", f, new SolidBrush(BLACK), 326, 74);
+				MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 390, 74, 140, 25, DARK, BRIGHT);
+			}
+
+			if (localstate.ET42Xtype2 != ET42XTYPE.NONE && localstate.ET42Xtype2 != ET42XTYPE.ET426)
+			{
+				// Zug 2
+				pg.DrawString("Zug 2", f, new SolidBrush(BLACK), 326, 74+30);
+				MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 390, 74+30, 140, 25, DARK, BRIGHT);
+			}
+
+			if (localstate.ET42Xtype3 != ET42XTYPE.NONE && localstate.ET42Xtype3 != ET42XTYPE.ET426)
+			{
+				// Zug 3
+				pg.DrawString("Zug 3", f, new SolidBrush(BLACK), 326, 74+60);
+				MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 390, 74+60, 140, 25, DARK, BRIGHT);
+			}
+
+			// Kuehlung
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Status Kühlung", f, new SolidBrush(BLACK), 326, 210);
+			pg.DrawString("Fahrgastraum:", f, new SolidBrush(BLACK), 326, 235);
+
+			f = new Font("Arial", 4.5f, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if (localstate.Kuehlung)
+				pg.DrawString("Ein", f, new SolidBrush(BLACK), 495, 237);
+			else
+				pg.DrawString("Aus", f, new SolidBrush(BLACK), 495, 237);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 491, 233, 41, 25, DARK, BRIGHT);
+
+			// Oberstrom
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Oberstromgrenze", f, new SolidBrush(BLACK), 326, 210+63);
+
+			f = new Font("Arial", 4.5f, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString(localstate.OberstromGrenze.ToString()+" A", f, new SolidBrush(BLACK), 473, 237+63);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 471, 233+63, 61, 25, DARK, BRIGHT);
+		}
+		public void DrawEingabeOberstrom(ref Graphics pg)
+		{
+			DrawFrame(ref pg, 0, 42, 315, 100);
+			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Oberstrombegrenzung", f, new SolidBrush(BLACK), 20, 60);
+
+			f = new Font("Arial", 4.5f, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if (localstate.OberstromGrenze < 1000f)
+                pg.DrawString(localstate.OberstromGrenze.ToString()+" A", f, new SolidBrush(BLACK), 195, 105);
+			else
+				pg.DrawString(localstate.OberstromGrenze.ToString()+" A", f, new SolidBrush(BLACK), 190, 105);
+
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, 175, 100, 90, 25, DARK, BRIGHT);
+		}
+		public void DrawSpannung(ref Graphics pg)
+		{
+			for (int i = 1; i <= GetTrainCount(); i++)
+			{
+				DrawKastenSpannung(ref g, i); 
+			}
+		}
+		public void DrawInfo(ref Graphics pg)
+		{
+		}
+		
+		public void DrawBesetzungsgrad(ref Graphics pg)
+		{
+			for (int i = 1; i <= GetTrainCount(); i++)
+			{
+				DrawKastenBesetztgrad(ref g, i); 
+			}
+		}
+
+		public void DrawVist(ref Graphics pg)
+		{
+			DrawFrame(ref pg, 0, 40, 628, 295);
+
+			DrawFrame(ref pg, 80, 120, 420, 120);
+			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if (!inverse_display)
+                pg.FillRectangle(new SolidBrush(this.BackColor), 90, 110, 160, 20);
+			else
+				pg.FillRectangle(new SolidBrush(Color.Black), 90, 110, 160, 20);
+
+			pg.DrawString("Geschwindigkeit", f, new SolidBrush(BLACK), 90, 110);
+
+			f = new Font("Arial", 20, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if (Convert.ToInt32(localstate.Geschwindigkeit) >= 100)
+				pg.DrawString(Convert.ToInt32(localstate.Geschwindigkeit).ToString(), f, new SolidBrush(BLACK), 165, 140);
+			else if (Convert.ToInt32(localstate.Geschwindigkeit) >= 10)
+				pg.DrawString(Convert.ToInt32(localstate.Geschwindigkeit).ToString(), f, new SolidBrush(BLACK), 205, 140);
+			else
+				pg.DrawString(Convert.ToInt32(localstate.Geschwindigkeit).ToString(), f, new SolidBrush(BLACK), 240, 140);
+
+			pg.DrawString("km/h", f, new SolidBrush(BLACK), 300, 140);
+			
+		}
+
+		public void DrawBremszustand(ref Graphics pg)
+		{
+			DrawFrame(ref pg, 33, 78, 564, 244); // 560x240
+
+			DrawFrameNewStyle(ref pg, 35, 80, 159, 89);
+			DrawFrameNewStyle(ref pg, 35, 170, 159, 29);
+			DrawFrameNewStyle(ref pg, 35, 200, 159, 29);
+			DrawFrameNewStyle(ref pg, 35, 230, 159, 29);
+			DrawFrameNewStyle(ref pg, 35, 260, 159, 29);
+			DrawFrameNewStyle(ref pg, 35, 290, 560, 29);
+
+			for (int i = 0; i < GetTrainCount(); i++)
+			{
+				ET42XTYPE current_type;
+				if (i == 0)
+					current_type = localstate.ET42Xtype1;
+				else if (i == 1)
+					current_type = localstate.ET42Xtype2;
+				else current_type = localstate.ET42Xtype3;
+
+				// Kasten
+				DrawFrameNewStyle(ref pg, 35+i*100+160, 80, 99, 59);
+
+				DrawFrameNewStyle(ref pg, 35+i*100+160, 140, 24, 29);
+				DrawFrameNewStyle(ref pg, 35+i*100+160+25, 140, 24, 29);
+				DrawFrameNewStyle(ref pg, 35+i*100+160+75, 140, 24, 29);
+				DrawFrameNewStyle(ref pg, 35+i*100+160+50, 140, 24, 29);
+
+				DrawFrameNewStyle(ref pg, 35+i*100+160, 170, 24, 29);
+				DrawFrameNewStyle(ref pg, 35+i*100+160+25, 170, 24, 29);
+				DrawFrameNewStyle(ref pg, 35+i*100+160+50, 170, 24, 29);
+				DrawFrameNewStyle(ref pg, 35+i*100+160+75, 170, 24, 29);
+
+				DrawFrameNewStyle(ref pg, 35+i*100+160, 200, 24, 29);
+				DrawFrameNewStyle(ref pg, 35+i*100+160+25, 200, 24, 29);
+				DrawFrameNewStyle(ref pg, 35+i*100+160+50, 200, 24, 29);
+				DrawFrameNewStyle(ref pg, 35+i*100+160+75, 200, 24, 29);
+
+				DrawFrameNewStyle(ref pg, 35+i*100+160, 230, 99, 29);
+				DrawFrameNewStyle(ref pg, 35+i*100+160, 260, 99, 29);
+
+
+				// Schrift
+				pg.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
+				Font f = new Font("Arial", 4.4f, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+				pg.DrawString("aktueller", f, new SolidBrush(BLACK), 45, 114);
+				pg.DrawString("Zustand", f, new SolidBrush(BLACK), 45, 134);
+
+				pg.DrawString("Zug "+(i+1).ToString(), f, new SolidBrush(BLACK), 35+i*100+166+20, 88);
+				pg.DrawString("TD", f, new SolidBrush(BLACK), 35+i*100+166+32, 114);
+
+				pg.DrawString("Bremsenprüfung", f, new SolidBrush(BLACK), 40, 176);
+				pg.DrawString("Geleitschutz", f, new SolidBrush(BLACK), 40, 206);
+				pg.DrawString("Kompressor", f, new SolidBrush(BLACK), 40, 236);
+				pg.DrawString("HBL-Leitung", f, new SolidBrush(BLACK), 40, 266);
+				pg.DrawString("Ergebnis der aktuellen Bremshundertstel-Berechnung: BRH = "+localstate.Brh+" %", f, new SolidBrush(BLACK), 40, 296);
+
+				pg.DrawString("1", f, new SolidBrush(BLACK), 35+i*100+166, 146);
+				pg.DrawString("2", f, new SolidBrush(BLACK), 35+i*100+166+25, 146);
+				if (current_type != ET42XTYPE.ET426)
+				{
+					pg.DrawString("3", f, new SolidBrush(BLACK), 35+i*100+166+50, 146);
+					pg.DrawString("4", f, new SolidBrush(BLACK), 35+i*100+166+75, 146);
+				}
+
+
+			}
+
 		}
 		public string getLZBDistString(int i)
 		{
@@ -1890,8 +2977,42 @@ namespace MMI.ET42X
 					
 					DrawStörung(ref g);
 					break;
+				case CURRENT_DISPLAY.S:
+					DrawSchaltfunktionen(ref g);
+					break;
+				case CURRENT_DISPLAY.OBERSTROM:
+					DrawEingabeOberstrom(ref g);
+					break;
+				case CURRENT_DISPLAY.Spg:
+					DrawSpannung(ref g);
+					break;
+				case CURRENT_DISPLAY.Info:
+					DrawInfo(ref g);
+					break;
+				case CURRENT_DISPLAY.Vist:
+					DrawVist(ref g);
+					DrawStörung(ref g);
+					break;
+				case CURRENT_DISPLAY.Besetz:
+					DrawBesetzungsgrad(ref g);
+					break;
+				case CURRENT_DISPLAY.B:
+					DrawBremszustand(ref g);
+					break;
+				case CURRENT_DISPLAY.Zugbesy:
+					DrawZug(ref g);
+					DrawZugbeeinflussungssysteme(ref g);
+					DrawStörung(ref g);
+					//DrawStatus(ref g);
+					break;
 				case CURRENT_DISPLAY.FIS:
 					DrawFIS(ref g);
+					break;
+				case CURRENT_DISPLAY.FIS_HK:
+					DrawFIS_HK(ref g);
+					break;
+				case CURRENT_DISPLAY.FIS_ROUTE:
+					DrawFIS_Route(ref g);
 					break;
 			}
 
@@ -1904,28 +3025,6 @@ namespace MMI.ET42X
 			}
 
 			//graph_main.Render(this.CreateGraphics());
-		}
-		private string DayOfWeekGerman(DayOfWeek dayofweek)
-		{
-			switch (dayofweek)
-			{
-				case DayOfWeek.Monday:
-					return "Montag";
-				case DayOfWeek.Tuesday:
-					return "Dienstag";
-				case DayOfWeek.Wednesday:
-					return "Mittwoch";
-				case DayOfWeek.Thursday:
-					return "Donnerstag";
-				case DayOfWeek.Friday:
-					return "Freitag";
-				case DayOfWeek.Saturday:
-					return "Samstag";
-				case DayOfWeek.Sunday:
-					return "Sonntag";
-			}
-			return "";
-
 		}
 		private void MoveZugkraft()
 		{
@@ -1963,6 +3062,13 @@ namespace MMI.ET42X
 					STÖRUNG_BG = Color.Gold;
 					STÖRUNG_FG = Color.Black;
 				}
+				// SOUND
+				stoerung_counter++;
+				if (stoerung_counter == 30 && GLOBAL_SOUND)
+				{
+					stoerung_counter = 0;
+					Sound.PlayMalfunctionBombardierSound();
+				}
 			}
 			else
 			{
@@ -1994,7 +3100,25 @@ namespace MMI.ET42X
 			switch(localstate.DISPLAY)
 			{
 				case CURRENT_DISPLAY.FIS:
-					return "                            FIS Übersicht";					
+					return "                            FIS Übersicht";
+				case CURRENT_DISPLAY.FIS_HK:
+					return "                      Haltestellen Korrektur";
+				case CURRENT_DISPLAY.FIS_ROUTE:
+					return "                             Routeneingabe";
+				case CURRENT_DISPLAY.S:
+					return "                 Übersicht Schaltfunktionen";
+				case CURRENT_DISPLAY.OBERSTROM:
+					return "               Eingabe Oberstrombegrenzung";
+				case CURRENT_DISPLAY.Spg:
+					return "                       Spannungsanzeige";
+				case CURRENT_DISPLAY.Info:
+					return "                                Info";
+				case CURRENT_DISPLAY.Vist:
+					return "                    Geschwindigkeit Ersatzbild";
+				case CURRENT_DISPLAY.Besetz:
+					return "                        Besetzungsgrad";
+				case CURRENT_DISPLAY.B:
+					return "                        Bremsenzustand";
 			}
 			
 			return "";
@@ -2075,7 +3199,10 @@ namespace MMI.ET42X
 					break;*/
 				case 2:
                     if (localstate.ET42Xtype1 == ET42XTYPE.ET426 && localstate.ET42Xtype2 != ET42XTYPE.ET426)
-						return zugkraft * 2f;
+						if (zugkraft < 0)
+							return zugkraft * 2f * (65f/90f);
+						else
+							return zugkraft * 2f;
 					else if (localstate.ET42Xtype1 != ET42XTYPE.ET426 && localstate.ET42Xtype2 == ET42XTYPE.ET426)
 						return zugkraft / 2f; 
 					break;

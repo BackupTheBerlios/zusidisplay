@@ -48,6 +48,28 @@ namespace MMI.EBuLa.Tools
 			catch(Exception){}
 		}
 
+		public void PlayWBGesperrt()
+		{
+			try
+			{	
+				Audio a = Audio.FromFile(@".\Sounds\wb_gesperrt.WAV");
+				a.Play();
+				System.Threading.Thread.Sleep(1200);
+			}
+			catch(Exception){}
+		}
+
+		public void PlayWBFreigabe()
+		{
+			try
+			{	
+				Audio a = Audio.FromFile(@".\Sounds\wb_freigabe.WAV");
+				a.Play();
+				System.Threading.Thread.Sleep(1200);
+			}
+			catch(Exception){}
+		}
+
 		/*
 		 * CODE BELOW FOR DIRECT-SOUND 9
 		 * 

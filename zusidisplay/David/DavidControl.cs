@@ -33,6 +33,9 @@ namespace MMI.DAVID
 		int StörPos = 0;
 		DateTime lastTime = new DateTime(0);
 
+		SoundInterface sound;
+		int stoerung_counter = 0;
+
 
 		#region Declarations
 
@@ -92,6 +95,20 @@ namespace MMI.DAVID
 			int interval = Convert.ToInt32(Math.Round((1d/(double)FramesPerSecond)*1000d));
 			timer1.Interval = interval;
 			timer1.Enabled = true;
+
+			switch (m_conf.Sound)
+			{
+				case 1:
+					sound = new APISound();
+					break;
+				case 2:
+					sound = new DxSound();
+					break;
+				default:
+					sound = new NullSound();
+					break;
+			}
+			Button_SW_Pressed(this, new EventArgs());			
 		}
 
 		protected override void Dispose( bool disposing )
@@ -125,7 +142,7 @@ namespace MMI.DAVID
 			// timer_st
 			// 
 			this.timer_st.Enabled = true;
-			this.timer_st.Interval = 750;
+			this.timer_st.Interval = 1000;
 			this.timer_st.Tick += new System.EventHandler(this.timer_st_Tick);
 			// 
 			// DavidControl
@@ -398,6 +415,22 @@ namespace MMI.DAVID
 					if (CONNECTED != value)
 					{
 						localstate.störungmgr.Add(new Störung(ENUMStörung.S01_ZUSIKomm));
+						if (m_conf.Sound != 0)
+						{
+							switch (m_conf.Sound)
+							{
+								case 1:
+									sound.PlayMalfunctionBombardierSound();
+									sound.PlayMalfunctionBombardierSound();
+									sound.PlayMalfunctionBombardierSound();
+									break;
+								case 2:
+									sound.PlayMalfunctionBombardierSound();
+									sound.PlayMalfunctionBombardierSound();
+									sound.PlayMalfunctionBombardierSound();
+									break;
+							}
+						}
 					}
 				}
 				CONNECTED = value;
@@ -1960,6 +1993,13 @@ namespace MMI.DAVID
 				{
 					STÖRUNG_BG = Color.Gold;
 					STÖRUNG_FG = Color.Blue;
+				}
+				// SOUND
+				stoerung_counter++;
+				if (stoerung_counter == 30)
+				{
+					stoerung_counter = 0;
+					sound.PlayMalfunctionBombardierSound();
 				}
 			}
 			else

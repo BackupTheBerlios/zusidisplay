@@ -80,6 +80,8 @@ namespace MMI.VT612
 			while(true);
 		}  */
 
+		public void ChangeFISState(int type, byte[] buffer) {}
+
 		public void ChangeState(int type, byte[] buffer)
 		{
 			BinaryReader reader = new BinaryReader(new MemoryStream(buffer));

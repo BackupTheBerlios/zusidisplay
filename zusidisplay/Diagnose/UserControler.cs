@@ -11,6 +11,7 @@ namespace MMI.DIAGNOSE
 	public class ControlContainer : System.Windows.Forms.UserControl
 	{
 		const string BACKGROUND_IMAGE_BOMBARDIER = @".\Pictures\bombardier.jpg";
+		const string BACKGROUND_IMAGE_ADTRANZ = @".\Pictures\adtranz.jpg";
 		const string BACKGROUND_IMAGE_SIEMENS    = @".\Pictures\siemens.jpg";
 
         private DIAGNOSEControl m_widget = null;
@@ -41,6 +42,7 @@ namespace MMI.DIAGNOSE
 				mmi_widget = new MMI.MMIBR185.BR185Control(XMLConf, true);
 				mmi_widget.Button_6_Pressed(this, new EventArgs());
 				
+				
 				m_widget = new DIAGNOSEControl(XMLConf,ref mmi_widget);
                 P_Display.Controls.Add(m_widget);
                 if (m_XMLConf.Inverse) 
@@ -60,7 +62,33 @@ namespace MMI.DIAGNOSE
 
 			try
 			{
-				pB_EBuLa.Image = new Bitmap(BACKGROUND_IMAGE_BOMBARDIER);
+				if (m_widget.IsSiemens())
+				{
+					if (System.IO.File.Exists(BACKGROUND_IMAGE_SIEMENS))
+					{
+						// change to siemens
+						pB_EBuLa.Image = new Bitmap(BACKGROUND_IMAGE_SIEMENS);
+					}
+				}
+				else
+				{
+					if (m_widget.IsBR101())
+					{
+						if (System.IO.File.Exists(BACKGROUND_IMAGE_ADTRANZ))
+						{
+							// change to adtranz
+							pB_EBuLa.Image = new Bitmap(BACKGROUND_IMAGE_ADTRANZ);
+						}
+					}
+					else
+					{
+						if (System.IO.File.Exists(BACKGROUND_IMAGE_BOMBARDIER))
+						{
+							// change to bombardier
+							pB_EBuLa.Image = new Bitmap(BACKGROUND_IMAGE_BOMBARDIER);
+						}
+					}
+				}
 			}
 			catch(Exception)
 			{
@@ -413,9 +441,6 @@ namespace MMI.DIAGNOSE
 				}
 				else if (e.X > 150 && e.X < 205) // nix
 				{
-				}
-				else if (e.X > 216 && e.X < 270) // i
-				{
 					if (m_widget.Visible)
 					{
 						m_widget.Button_SW_Pressed(sender, e);
@@ -430,13 +455,27 @@ namespace MMI.DIAGNOSE
 						}
 						else
 						{
-							if (System.IO.File.Exists(BACKGROUND_IMAGE_BOMBARDIER))
+							if (m_widget.IsBR101())
 							{
-								// change to bombardier
-								pB_EBuLa.Image = new Bitmap(BACKGROUND_IMAGE_BOMBARDIER);
+								if (System.IO.File.Exists(BACKGROUND_IMAGE_ADTRANZ))
+								{
+									// change to adtranz
+									pB_EBuLa.Image = new Bitmap(BACKGROUND_IMAGE_ADTRANZ);
+								}
+							}
+							else
+							{
+								if (System.IO.File.Exists(BACKGROUND_IMAGE_BOMBARDIER))
+								{
+									// change to bombardier
+									pB_EBuLa.Image = new Bitmap(BACKGROUND_IMAGE_BOMBARDIER);
+								}
 							}
 						}
-					}
+					}				
+				}
+				else if (e.X > 216 && e.X < 270) // i
+				{
 				}
 				else if (e.X > 282 && e.X < 402) // St
 				{

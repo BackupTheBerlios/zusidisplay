@@ -48,13 +48,15 @@ namespace MMI
         private System.Windows.Forms.Timer timer_control;
         private System.ComponentModel.IContainer components;
 
-		public MainForm()
+		public MainForm(string[] args)
 		{
 			InitializeComponent();
 
             LoadConf();
 
             Init();
+
+			LoadDisplay(args);
 
 			this.Focus();
 		}
@@ -100,15 +102,16 @@ namespace MMI
 			this.Text = "ZusiDisplay";
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
+			this.Move += new System.EventHandler(this.MainForm_Move);
 
 		}
 		#endregion
 
 		[STAThread]
-		static void Main() 
+		static void Main(string[] args) 
 		{
 			//Application.EnableVisualStyles();
-			Application.Run(new MainForm());
+			Application.Run(new MainForm(args));
         }
 
         private void timer_control_Tick(object sender, System.EventArgs e)
@@ -125,8 +128,9 @@ namespace MMI
                     m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
                     this.Controls.Add(m_menu);
 					this.Text = "ZusiDisplay";
+					ActivateBorder();
                 }
-                if (m_br185 != null && m_br185.IsDisposed)
+                else if (m_br185 != null && m_br185.IsDisposed)
                 {
                     // show main selection
 					//this.Controls.Remove(m_br185);
@@ -136,8 +140,9 @@ namespace MMI
                     m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
                     this.Controls.Add(m_menu);
 					this.Text = "ZusiDisplay";
+					ActivateBorder();
                 }   
-				if (m_david != null && m_david.IsDisposed)
+				else if (m_david != null && m_david.IsDisposed)
 				{
 					// show main selection
 					//this.Controls.Remove(m_br185);
@@ -147,8 +152,9 @@ namespace MMI
 					m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
 					this.Controls.Add(m_menu);
 					this.Text = "ZusiDisplay";
+					ActivateBorder();
 				}
-				if (m_ice3 != null && m_ice3.IsDisposed)
+				else if (m_ice3 != null && m_ice3.IsDisposed)
 				{
 					// show main selection
 					//this.Controls.Remove(m_br185);
@@ -158,8 +164,9 @@ namespace MMI
 					m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
 					this.Controls.Add(m_menu);
 					this.Text = "ZusiDisplay";
+					ActivateBorder();
 				}
-				if (m_et42x != null && m_et42x.IsDisposed)
+				else if (m_et42x != null && m_et42x.IsDisposed)
 				{
 					// show main selection
 					m_et42x.Terminate();
@@ -168,8 +175,9 @@ namespace MMI
 					m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
 					this.Controls.Add(m_menu);
 					this.Text = "ZusiDisplay";
+					ActivateBorder();
 				}
-				if (m_vt612 != null && m_vt612.IsDisposed)
+				else if (m_vt612 != null && m_vt612.IsDisposed)
 				{
 					// show main selection
 					m_vt612.Terminate();
@@ -178,8 +186,9 @@ namespace MMI
 					m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
 					this.Controls.Add(m_menu);
 					this.Text = "ZusiDisplay";
+					ActivateBorder();
 				}
-				if (m_diagnose != null && m_diagnose.IsDisposed)
+				else if (m_diagnose != null && m_diagnose.IsDisposed)
 				{
 					// show main selection
 					m_diagnose.Terminate();
@@ -188,8 +197,9 @@ namespace MMI
 					m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
 					this.Controls.Add(m_menu);
 					this.Text = "ZusiDisplay";
+					ActivateBorder();
 				}
-				if (m_tools != null && m_tools.IsDisposed)
+				else if (m_tools != null && m_tools.IsDisposed)
                 {
                     // show main selection
 
@@ -204,13 +214,15 @@ namespace MMI
                     m_handler.Load = Loadwhat.Menu;
                     m_menu = new SelectionMenu(m_handler);
                     this.Controls.Add(m_menu);*/
+					ActivateBorder();
                 }
-                if (m_menu != null && m_menu.IsDisposed)
+                else if (m_menu != null && m_menu.IsDisposed)
                 {
                     m_menu = null;
                     switch (m_handler.Load)
                     {
                         case Loadwhat.EBuLa:
+							SetWindow(enumDisplay.EBuLa);
                             m_widget = new EBuLa.ControlContainer(XmlConf);
                             this.Controls.Add(m_widget);
                             m_handler.Load = Loadwhat.Menu;
@@ -224,12 +236,14 @@ namespace MMI
                             break;
                         case Loadwhat.MMI:
 							//MMI.BR185_MMI.Network net = new MMI.BR185_MMI.Network();
-                            m_br185 = new MMIBR185.ControlContainer(XmlConf);
+							SetWindow(enumDisplay.MMI);
+							m_br185 = new MMIBR185.ControlContainer(XmlConf);
                             this.Controls.Add(m_br185);
                             m_handler.Load = Loadwhat.Menu;
 							this.Text = "ZusiDisplay -> MMI";
                             break;
 						case Loadwhat.DAVID:
+							SetWindow(enumDisplay.DAVID1);
 							m_david = new MMI.DAVID.ControlContainer(XmlConf, 1);
 							m_david.m_widget.localstate.Type = MMI.DAVID.TYPE.David1;
 							m_david.m_widget.olddisplay = DAVID.CURRENT_DISPLAY.D2_HL;
@@ -240,6 +254,7 @@ namespace MMI
 							this.Text = "ZusiDisplay -> DAVID(links)";
 							break;
 						case Loadwhat.DAVID2:
+							SetWindow(enumDisplay.DAVID2);
 							m_david = new MMI.DAVID.ControlContainer(XmlConf, 2);
 							m_david.m_widget.localstate.Type = MMI.DAVID.TYPE.David2;
 							m_david.m_widget.something_changed = true;
@@ -248,6 +263,7 @@ namespace MMI
 							this.Text = "ZusiDisplay -> DAVID(rechts)";
 							break;
 						case Loadwhat.ICE3_1:
+							SetWindow(enumDisplay.ICE3_1);
 							m_ice3 = new MMI.ICE3.ControlContainer(XmlConf, 1);
 							m_ice3.m_widget.localstate.Type = MMI.ICE3.TYPE.David1;
 							m_ice3.m_widget.olddisplay = ICE3.CURRENT_DISPLAY.D2_Zustand;
@@ -258,6 +274,7 @@ namespace MMI
 							this.Text = "ZusiDisplay -> ICE3/T(D)(links)";
 							break;
 						case Loadwhat.ICE3_2:
+							SetWindow(enumDisplay.ICE3_2);
 							m_ice3 = new MMI.ICE3.ControlContainer(XmlConf, 2);
 							m_ice3.m_widget.olddisplay = ICE3.CURRENT_DISPLAY.D1_Grundb;
 							m_ice3.m_widget.localstate.Type = MMI.ICE3.TYPE.David2;
@@ -268,18 +285,21 @@ namespace MMI
 							this.Text = "ZusiDisplay -> ICE3/T(D)(rechts)";
 							break;
 						case Loadwhat.ET42X:
+							SetWindow(enumDisplay.ET42X);
 							m_et42x = new MMI.ET42X.ControlContainer(XmlConf);
 							this.Controls.Add(m_et42x);
 							m_handler.Load = Loadwhat.Menu;
 							this.Text = "ZusiDisplay -> ET42x";
 							break;
 						case Loadwhat.VT612:
+							SetWindow(enumDisplay.VT612);
 							m_vt612 = new MMI.VT612.ControlContainer(XmlConf);
 							this.Controls.Add(m_vt612);
 							m_handler.Load = Loadwhat.Menu;
 							this.Text = "ZusiDisplay -> VT611/612";
 							break;
 						case Loadwhat.DIAGNOSE:
+							SetWindow(enumDisplay.DIAGNOSE);
 							m_diagnose = new MMI.DIAGNOSE.ControlContainer(XmlConf);
 							this.Controls.Add(m_diagnose);
 							m_handler.Load = Loadwhat.Menu;
@@ -311,6 +331,24 @@ namespace MMI
             }
         }
 
+		private void SetWindow(enumDisplay display)
+		{
+			this.Location = new Point(XmlConf.GetWidth(display), XmlConf.GetHeight(display));
+
+			if (XmlConf.GetBorder(display)) 
+			{
+				this.FormBorderStyle = FormBorderStyle.FixedDialog;
+			}
+			else
+			{
+				this.FormBorderStyle = FormBorderStyle.None;
+			}
+		}
+		private void ActivateBorder()
+		{
+			this.FormBorderStyle = FormBorderStyle.FixedDialog;
+		}
+
         public void Init()
         {
             try
@@ -325,15 +363,10 @@ namespace MMI
                 // show menu
                 this.Controls.Add(m_menu);
 
-                this.Location = new Point(XmlConf.Width,XmlConf.Height);
-                if (XmlConf.Border) 
-                {
-                    this.FormBorderStyle = FormBorderStyle.FixedDialog;
-                }
-                else
-                {
-                    this.FormBorderStyle = FormBorderStyle.None;
-                }
+                
+				MainForm_Move(this, new EventArgs());
+                
+				
 
                 this.TopMost = XmlConf.TopMost;
 
@@ -355,18 +388,83 @@ namespace MMI
             }
         }
 
+		private void LoadDisplay(string[] args)
+		{
+			foreach(string strg in args)
+			{
+				if (!isKnownArgument(strg)) continue;
+				OpenDisplay(strg);
+				m_menu.Dispose();
+				return;
+			}
+		}
+
+		private bool isKnownArgument(string arg)
+		{
+			return (arg == "-ebula" ||
+					arg == "-mmi" ||
+					arg == "-et42x" ||
+					arg == "-vt612" ||
+					arg == "-diagnose" ||
+					arg == "-david_1" ||
+					arg == "-david_2" ||
+					arg == "-ice3_1" ||
+					arg == "-ice3_2");
+		}
+
+		private void OpenDisplay(string arg)
+		{
+			switch(arg)
+			{
+				case "-ebula":
+					m_handler.Load = Loadwhat.EBuLa;
+					break;
+				case "-mmi":
+					m_handler.Load = Loadwhat.MMI;
+					break;
+				case "-et42x":
+					m_handler.Load = Loadwhat.ET42X;
+					break;
+				case "-vt612":
+					m_handler.Load = Loadwhat.VT612;
+					break;
+				case "-diagnose":
+					m_handler.Load = Loadwhat.DIAGNOSE;
+					break;
+				case "-david_1":
+					m_handler.Load = Loadwhat.DAVID;
+					break;
+				case "-david_2":
+					m_handler.Load = Loadwhat.DAVID2;
+					break;
+				case "-ice3_1":
+					m_handler.Load = Loadwhat.ICE3_1;
+					break;
+				case "-ice3_2":
+					m_handler.Load = Loadwhat.ICE3_2;
+					break;			
+			}
+		}
+
 		private void MainForm_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 		}
 
 		private void MainForm_Resize(object sender, System.EventArgs e)
 		{
+			/*
 			foreach(UserControl c in this.Controls)
 			{
 				if (c == null) continue;
 
 				c.Size = new Size(this.Width, this.Height);
 			}
+			*/
+		}
+
+		private void MainForm_Move(object sender, System.EventArgs e)
+		{
+				XmlConf.Position = new System.Drawing.Point(this.Location.X, this.Location.Y);
 		}
 
     }

@@ -502,12 +502,11 @@ namespace MMI.ICE3
 				}
 				else if (e.X > 273 && e.X < 318) // S
 				{
-					
+					// Umschaltung ICE Typ
+					m_widget.Button_SW_Pressed(sender, e);					
 				}
 				else if (e.X > 332 && e.X < 375) // i
 				{ 
-					// Umschaltung ICE Typ
-					m_widget.Button_SW_Pressed(sender, e);					
 				}
 				else if (e.X > 391 && e.X < 494) // störung
 				{

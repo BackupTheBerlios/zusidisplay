@@ -5,16 +5,18 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using System.Collections;
+using MMI.EBuLa.Tools;
 
 namespace MMI.ET42X
 {
-	public class Network : MMI.EBuLa.Tools.INetwork
+	public class Network : MMI.EBuLa.Tools.INetwork, MMI.EBuLa.Tools.IFISNetwork
 	{
 		Socket s;
 		Socket new_socket;
 		TextBox messages;
 		ET42XControl c;
 		ArrayList sockets_list = new ArrayList();
+		MMI.EBuLa.Tools.SuperNetwork sn;
 		
 		public Network(ref ET42XControl control)
 		{
@@ -32,7 +34,7 @@ namespace MMI.ET42X
 
 		public void Connect()
 		{
-			MMI.EBuLa.Tools.SuperNetwork sn = new MMI.EBuLa.Tools.SuperNetwork(this);
+			sn = new MMI.EBuLa.Tools.SuperNetwork(this);
 			c.IsCONNECTED = true;
 
 			try
@@ -79,6 +81,139 @@ namespace MMI.ET42X
 			}
 			while(true);
 		}  */
+
+		public void SendData(FIS_DATA type, string data)
+		{
+			switch(type)
+			{
+				case FIS_DATA.FIS_Aus:
+					// TODO
+					break;
+				case FIS_DATA.FIS_Ausloesen:
+					sn.SendToFISServer(s, 25, "");
+					break;
+				case FIS_DATA.FIS_Start:
+					sn.SendToFISServer(s, 26, "");
+					break;
+				case FIS_DATA.GPS_Status:
+					sn.SendToFISServer(s, 17, "");
+					break;
+				case FIS_DATA.Naechster_Halt:
+					sn.SendToFISServer(s, 18, "");
+					break;
+				case FIS_DATA.Next_Entry:
+					sn.SendToFISServer(s, 23, "");
+					break;
+				case FIS_DATA.Prev_Entry:
+					sn.SendToFISServer(s, 24, "");
+					break;
+				case FIS_DATA.Route_Data:
+					sn.SendToFISServer(s, 29, "");
+					break;
+				case FIS_DATA.Status:
+					sn.SendToFISServer(s, 16, "");
+					break;
+				case FIS_DATA.Set_FISTYPE:
+					if (data == "true")
+						sn.SendToFISServer(s, 40, true);
+					else if (data == "false")
+						sn.SendToFISServer(s, 40, false);
+					break;
+				case FIS_DATA.Set_NaechsterHalt:
+					// TODO
+					break;
+				case FIS_DATA.Set_Route_Netz:
+					sn.SendToFISServer(s, 34, data);
+					break;
+				case FIS_DATA.Set_Route_Linie:
+					sn.SendToFISServer(s, 35, data);
+					break;
+				case FIS_DATA.Set_Route_Start:
+					sn.SendToFISServer(s, 36, data);
+					break;
+				case FIS_DATA.Set_Route_Ziel:
+					sn.SendToFISServer(s, 37, data);
+					break;
+				case FIS_DATA.Set_Status:
+					if (data == "true")
+						sn.SendToFISServer(s, 32, true);
+					else if (data == "false")
+						sn.SendToFISServer(s, 32, false);
+					break;
+			}
+		}
+		public void ChangeFISState(int type, byte[] buffer) 
+		{
+			string data = "";
+			float valu = 0f;
+			bool state = false;
+			BinaryReader reader = new BinaryReader(new MemoryStream(buffer));
+
+			switch (type)
+			{
+				case  1: 
+					valu = reader.ReadSingle();
+					if (valu == 1f) state = true;
+					c.SetFIS_Status(state);
+					break;
+				case  2: 
+					valu = reader.ReadSingle();
+					if (valu == 1f) state = true;
+					c.SetFIS_GPSStatus(state);
+					break;
+				case  3:
+					try
+					{
+						data = reader.ReadString();
+						c.SetFIS_NaechsterHalt(data);
+					}                              
+					catch(Exception){}
+					break;
+				case  4: 
+					try
+					{
+						data = reader.ReadString();
+						c.SetFIS_Netz(data);
+					}                              
+					catch(Exception){}
+					break;
+				case  5: 
+					try
+					{
+						data = reader.ReadString();
+						c.SetFIS_Linie(data);
+					}                              
+					catch(Exception){}
+					break;
+				case  6: 
+					try
+					{
+						data = reader.ReadString();
+						c.SetFIS_Start(data);
+					}                              
+					catch(Exception){}
+					break;
+				case  7: 
+					try
+					{
+						data = reader.ReadString();
+						c.SetFIS_Ziel(data);
+					}                              
+					catch(Exception){}
+					break;
+				case  8: 
+					c.SetFIS_NoMoreData();
+					break;
+				case  9: 
+					c.SetFIS_NoMoreZiel();
+					break;
+				case  10: 
+					c.SetFIS_NoMoreStart();
+					break;
+				default: // nix
+					break;
+			}
+		}
 
 		public void ChangeState(int type, byte[] buffer)
 		{
@@ -167,6 +302,9 @@ namespace MMI.ET42X
 					break;
 				case 47: // Türen offen
 					c.SetLM_Tür(state);
+					break;
+				case 51: // Schalter Fahrstufen
+					c.SetFahrstufenSchalter(valu);
 					break;
 				case 56: // AFB
 					break;

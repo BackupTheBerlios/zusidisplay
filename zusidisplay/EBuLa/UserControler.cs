@@ -19,7 +19,7 @@ namespace MMI.EBuLa
         
         private SystemTools.System sys = new SystemTools.System();
 
-        private MMI.EBuLa.Tools.XMLLoader m_XMLConf = null;
+        public MMI.EBuLa.Tools.XMLLoader m_XMLConf = null;
 
 		public static String Version = "TODO"; // System.Reflection.Assembly.GetAssembly(new ControlContainer(new MMI.EBuLa.Tools.XMLLoader("")).GetType()).GetName().Version.ToString();
 

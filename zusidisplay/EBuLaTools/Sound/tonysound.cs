@@ -53,6 +53,24 @@ namespace MMI.EBuLa.Tools
 			catch(Exception) {}
 		}
 
+		public void PlayWBGesperrt()
+		{
+			try
+			{
+				PlaySound(@".\Sounds\wb_gesperrt.wav", IntPtr.Zero, PlaySoundFlags.SND_ASYNC & PlaySoundFlags.SND_NOSTOP);
+			}
+			catch(Exception) {}
+		}
+
+		public void PlayWBFreigabe()
+		{
+			try
+			{
+				PlaySound(@".\Sounds\wb_freigabe.wav", IntPtr.Zero, PlaySoundFlags.SND_ASYNC & PlaySoundFlags.SND_NOSTOP);
+			}
+			catch(Exception) {}
+		}
+
 		[DllImport("winmm.dll")] //inports the winmm.dll used for sound
 		private static extern bool PlaySound( string szSound, IntPtr hMod, PlaySoundFlags flags );
 	}
@@ -77,6 +95,8 @@ namespace MMI.EBuLa.Tools
         public void PlayErrorSound() {}
 		public void PlayMalfunctionSiemensSound() {}
 		public void PlayMalfunctionBombardierSound() {}
+		public void PlayWBFreigabe() {}
+		public void PlayWBGesperrt() {}
     }
 }
 

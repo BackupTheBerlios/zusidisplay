@@ -46,6 +46,8 @@ namespace MMI.ICE3
 		ThreadStart threadDelegate_Türen;
 		Thread ThreadTüren;
 
+		SoundInterface sound;
+
 		bool DO_TÜREN = false;
 
 		string DEBUG = "";
@@ -111,6 +113,19 @@ namespace MMI.ICE3
 				localstate.DISPLAY = CURRENT_DISPLAY.D2_Zustand;
 			}
 			//olddisplay = CURRENT_DISPLAY.D1_Grundb;
+
+			switch (m_conf.Sound)
+			{
+				case 1:
+					sound = new APISound();
+					break;
+				case 2:
+					sound = new DxSound();
+					break;
+				default:
+					sound = new NullSound();
+					break;
+			}
 
 			//SetButtons();
 			vtime = DateTime.Now;
@@ -251,6 +266,7 @@ namespace MMI.ICE3
 						{
 							localstate.wbBremse = WBBremse.AUS;
 							something_changed = true;
+							sound.PlayWBGesperrt();
 						}
 						break;
 				}
@@ -273,6 +289,7 @@ namespace MMI.ICE3
 					{
 						localstate.wbBremse = WBBremse.SB;
 						something_changed = true;
+						sound.PlayWBFreigabe();
 					}
 					break;
 				case CURRENT_DISPLAY.V_GREATER_0:
@@ -300,6 +317,7 @@ namespace MMI.ICE3
 						{
 							localstate.wbBremse = WBBremse.BB_SB;
 							something_changed = true;
+							sound.PlayWBFreigabe();
 						}
 						break;
 				}

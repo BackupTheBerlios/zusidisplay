@@ -36,6 +36,7 @@ namespace MMI.DIAGNOSE
 		private System.Windows.Forms.RadioButton rb_189;
 		private System.Windows.Forms.RadioButton rb_er20;
 		private System.Windows.Forms.RadioButton rb_146_1;
+		private System.Windows.Forms.RadioButton rb_101MET;
 
 		MMI.DIAGNOSE.DIAGNOSEState m_state;
 
@@ -51,6 +52,9 @@ namespace MMI.DIAGNOSE
 			{
 				case TRAIN_TYPE.BR101:
 					rb_101.Checked = true;
+					break;
+				case TRAIN_TYPE.BR101_MET:
+					rb_101MET.Checked = true;
 					break;
 				case TRAIN_TYPE.BR145:
 					rb_145.Checked = true;
@@ -126,6 +130,7 @@ namespace MMI.DIAGNOSE
 			this.b_cancel = new System.Windows.Forms.Button();
 			this.cb_12std = new System.Windows.Forms.CheckBox();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.rb_101MET = new System.Windows.Forms.RadioButton();
 			this.rb_182 = new System.Windows.Forms.RadioButton();
 			this.rb_152 = new System.Windows.Forms.RadioButton();
 			this.rb_189 = new System.Windows.Forms.RadioButton();
@@ -176,6 +181,7 @@ namespace MMI.DIAGNOSE
 			// 
 			// groupBox5
 			// 
+			this.groupBox5.Controls.Add(this.rb_101MET);
 			this.groupBox5.Controls.Add(this.rb_182);
 			this.groupBox5.Controls.Add(this.rb_152);
 			this.groupBox5.Controls.Add(this.rb_189);
@@ -194,6 +200,16 @@ namespace MMI.DIAGNOSE
 			this.groupBox5.TabIndex = 0;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Bitte wählen Sie den gewünschten Loktyp aus:";
+			// 
+			// rb_101MET
+			// 
+			this.rb_101MET.Enabled = false;
+			this.rb_101MET.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.rb_101MET.Location = new System.Drawing.Point(128, 56);
+			this.rb_101MET.Name = "rb_101MET";
+			this.rb_101MET.Size = new System.Drawing.Size(88, 24);
+			this.rb_101MET.TabIndex = 15;
+			this.rb_101MET.Text = "BR 101 (MET)";
 			// 
 			// rb_182
 			// 
@@ -240,7 +256,7 @@ namespace MMI.DIAGNOSE
 			this.rb_101.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.rb_101.Location = new System.Drawing.Point(40, 56);
 			this.rb_101.Name = "rb_101";
-			this.rb_101.Size = new System.Drawing.Size(168, 24);
+			this.rb_101.Size = new System.Drawing.Size(72, 24);
 			this.rb_101.TabIndex = 1;
 			this.rb_101.TabStop = true;
 			this.rb_101.Text = "BR 101";
@@ -380,6 +396,10 @@ namespace MMI.DIAGNOSE
 			if (rb_101.Checked)
 			{
 				m_state.type = TRAIN_TYPE.BR101;
+			}
+			if (rb_101MET.Checked)
+			{
+				m_state.type = TRAIN_TYPE.BR101_MET;
 			}
 			else if (rb_145.Checked)
 			{

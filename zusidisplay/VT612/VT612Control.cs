@@ -1469,18 +1469,7 @@ namespace MMI.VT612
 				// Datum oben rechts
 				DrawFrame(ref pg, 468, 1, 160, 38);
 
-				string s = "";
-
-				s = DayOfWeekGerman(vtime.DayOfWeek).Substring(0, 2) + ", ";	
-				if (vtime.DayOfYear < 10)
-					s += "0"+vtime.DayOfYear.ToString() + ".";
-				else
-					s += vtime.DayOfYear.ToString() + ".";
-				if (vtime.Month < 10)
-					s += "0"+vtime.Month.ToString() + ".";
-				else
-					s += vtime.Month.ToString() + ".";
-				s += vtime.Year.ToString();
+				string s = MMI.EBuLa.Tools.Misc.getDateString(vtime);
 
 				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
@@ -1491,18 +1480,7 @@ namespace MMI.VT612
 				// Datum oben links
 				DrawFrame(ref pg, 1, 1, 120, 38);
 
-				string s = "";
-
-				s = DayOfWeekGerman(vtime.DayOfWeek).Substring(0, 2) + ", ";	
-				if (vtime.DayOfYear < 10)
-					s += "0"+vtime.DayOfYear.ToString() + ".";
-				else
-					s += vtime.DayOfYear.ToString() + ".";
-				if (vtime.Month < 10)
-					s += "0"+vtime.Month.ToString() + ".";
-				else
-					s += vtime.Month.ToString() + ".";
-				s += vtime.Year.ToString();
+				string s = MMI.EBuLa.Tools.Misc.getDateString(vtime);
 
 				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
@@ -1970,28 +1948,7 @@ namespace MMI.VT612
 
 			//graph_main.Render(this.CreateGraphics());
 		}
-		private string DayOfWeekGerman(DayOfWeek dayofweek)
-		{
-			switch (dayofweek)
-			{
-				case DayOfWeek.Monday:
-					return "Montag";
-				case DayOfWeek.Tuesday:
-					return "Dienstag";
-				case DayOfWeek.Wednesday:
-					return "Mittwoch";
-				case DayOfWeek.Thursday:
-					return "Donnerstag";
-				case DayOfWeek.Friday:
-					return "Freitag";
-				case DayOfWeek.Saturday:
-					return "Samstag";
-				case DayOfWeek.Sunday:
-					return "Sonntag";
-			}
-			return "";
-
-		}
+		
 		private void MoveZugkraft()
 		{
 			while (Math.Abs(localstate.Zugkraft_Thread - localstate.Zugkraft) > 15f)

@@ -39,6 +39,8 @@ namespace MMI.EBuLa
 
         private int firsttime = 3;
 
+		private XMLLoader m_conf;
+
 		public bool isGNT = true;
 
 		private Bitmap m_backBuffer;
@@ -269,6 +271,8 @@ namespace MMI.EBuLa
                 control.Route.Position = -1;
 
 				control.vtime = vtime;
+
+				m_conf = XMLConf;
 
                 if (XMLConf.Sound == 0)
                 {
@@ -3267,7 +3271,7 @@ namespace MMI.EBuLa
         private void B_Zeit_Click(object sender, System.EventArgs e)
         {
             ControlSwitch cw = new ControlSwitch(control);
-			cw.Location = new Point(this.Location.X+430, this.Location.Y+130);
+			cw.Location = new Point(m_conf.Position.X+430, m_conf.Position.Y+130);
             SetButtons(true);
             kh.Form = cw;
 			DialogResult result;

@@ -14,6 +14,7 @@ namespace MMI.EBuLa
 
 	public class Network
 	{
+		const string VERSION = "1.5.2";
 		const int BUFFER_SIZE = 4096*128;
 		const int REQUEST = 10;
 		Socket s;
@@ -385,9 +386,9 @@ namespace MMI.EBuLa
 			byte[] id;
 
 			if (isDAVID)
-				id = System.Text.ASCIIEncoding.UTF8.GetBytes("EBuLa 1.4.99 (DAVID)");
+				id = System.Text.ASCIIEncoding.UTF8.GetBytes("EBuLa "+VERSION+" (DAVID)");
 			else
-				id = System.Text.ASCIIEncoding.UTF8.GetBytes("EBuLa 1.4.99");
+				id = System.Text.ASCIIEncoding.UTF8.GetBytes("EBuLa "+VERSION);
 
 			int length = id.Length + 9;
 

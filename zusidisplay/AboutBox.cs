@@ -152,7 +152,7 @@ namespace MMI
 			this.label13.Name = "label13";
 			this.label13.Size = new System.Drawing.Size(192, 16);
 			this.label13.TabIndex = 10;
-			this.label13.Text = "ET423-426 Diagnosedisplay (alpha)";
+			this.label13.Text = "ET423-426 Diagnosedisplay";
 			// 
 			// label12
 			// 

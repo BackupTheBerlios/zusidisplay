@@ -803,7 +803,10 @@ namespace MMI.DIAGNOSE
 						localstate.TfnummerTemp = "";
 						localstate.marker_changed2 = false;
 						localstate.marker = 0;
-						localstate.DISPLAY = CURRENT_DISPLAY.Zugbesy;
+						if (IsBR101())
+                            localstate.DISPLAY = CURRENT_DISPLAY.G;
+						else
+							localstate.DISPLAY = CURRENT_DISPLAY.Zugbesy;
 					}
 					break;
 				case CURRENT_DISPLAY.DSK:
@@ -961,10 +964,13 @@ namespace MMI.DIAGNOSE
 			switch(localstate.DISPLAY)
 			{
 				case CURRENT_DISPLAY.G:
-					localstate.DISPLAY = CURRENT_DISPLAY.Zugbesy;
+					if (IsBR101())
+                        localstate.DISPLAY = CURRENT_DISPLAY.Zug_Tf_Nr;
+					else
+						localstate.DISPLAY = CURRENT_DISPLAY.Zugbesy;
 					break;
 				case CURRENT_DISPLAY.Z_BR:
-					if (IsBombardier())
+					if (IsBombardier() || IsADtranz())
 						localstate.DISPLAY = CURRENT_DISPLAY.Zugbesy;
 					break;
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
@@ -1296,7 +1302,7 @@ namespace MMI.DIAGNOSE
 							switch (m_conf.Sound)
 							{
 								case 1:
-									if (IsBombardier())
+									if (IsBombardier() || IsADtranz())
 									{
 										Sound.PlayMalfunctionBombardierSound();
 										Sound.PlayMalfunctionBombardierSound();
@@ -1310,7 +1316,7 @@ namespace MMI.DIAGNOSE
 									}
 									break;
 								case 2:
-									if (IsBombardier())
+									if (IsBombardier() || IsADtranz())
 									{
 										Sound.PlayMalfunctionBombardierSound();
 										Sound.PlayMalfunctionBombardierSound();
@@ -1333,7 +1339,7 @@ namespace MMI.DIAGNOSE
 		}
 		private void DrawFrame(ref Graphics pg, int x, int y, int width, int height)
 		{
-			if (IsBombardier())
+			if (IsBombardier() || IsADtranz())
 			{
 				DrawFrameSunken(ref pg, x, y, width, height);
 				DrawFrameRaised(ref pg, x+2, y+2, width-3, height-3);
@@ -1347,40 +1353,17 @@ namespace MMI.DIAGNOSE
 
 		private void DrawFrameRaised(ref Graphics pg, int x, int y, int width, int height)
 		{
-			// Stift
-			Pen pen_dg = new Pen(DARK, 1);
-			Pen pen_ws = new Pen(BRIGHT, 1);
-
-			pg.DrawLine(pen_ws, x, y, x+width, y);
-			pg.DrawLine(pen_ws, x, y, x,       y+height);
-
-			pg.DrawLine(pen_dg, x+width, y,        x+width, y+height);
-			pg.DrawLine(pen_dg, x,       y+height, x+width, y+height);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameRaised(ref pg, x, y, width, height, DARK, BRIGHT);
 		}
 
 		private void DrawFrameSunken(ref Graphics pg, int x, int y, int width, int height)
 		{
-			// Stift
-			Pen pen_dg = new Pen(DARK, 1);
-			Pen pen_ws = new Pen(BRIGHT, 2);
-
-			pg.DrawLine(pen_dg, x, y, x+width, y);
-			pg.DrawLine(pen_dg, x, y, x,       y+height);
-
-			pg.DrawLine(pen_ws, x+width, y,        x+width, y+height);
-			pg.DrawLine(pen_ws, x,       y+height, x+width, y+height);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunken(ref pg, x, y, width, height, DARK, BRIGHT);
 		}
+
 		private void DrawFrameSunkenSmall(ref Graphics pg, int x, int y, int width, int height)
 		{
-			// Stift
-			Pen pen_dg = new Pen(DARK, 1);
-			Pen pen_ws = new Pen(BRIGHT, 1);
-
-			pg.DrawLine(pen_dg, x, y, x+width, y);
-			pg.DrawLine(pen_dg, x, y, x,       y+height);
-
-			pg.DrawLine(pen_ws, x+width, y,        x+width, y+height);
-			pg.DrawLine(pen_ws, x,       y+height, x+width, y+height);
+			MMI.EBuLa.Tools.DisplayDraw.DrawFrameSunkenSmall(ref pg, x, y, width, height, DARK, BRIGHT);
 		}
 
 		public void FillFields(ref Graphics pg)
@@ -1727,14 +1710,6 @@ namespace MMI.DIAGNOSE
 
 			zugkraft = ReduziereZugkraft(localstate.ZugkraftGesammt, 1) * 2f;
 
-			/*
-			if (localstate.VT612type2 != VT612TYPE.NONE)
-				zugkraft += ReduziereZugkraft(localstate.ZugkraftGesammt, 2) * 2f;
-
-			if (localstate.VT612type3 != VT612TYPE.NONE)
-				zugkraft += ReduziereZugkraft(localstate.ZugkraftGesammt, 3) * 2f;
-				*/
-
 			if (zugkraft < 0) zugkraft *= -1;
 
 			string s = Convert.ToInt32(zugkraft).ToString();
@@ -1831,7 +1806,7 @@ namespace MMI.DIAGNOSE
 
 		public void DrawSpannung(ref Graphics pg)
 		{
-			if (IsBombardier()) DrawSpannungBombardier(ref pg);
+			if (IsBombardier() || IsADtranz()) DrawSpannungBombardier(ref pg);
 			else DrawSpannungSiemens(ref pg);
 		}
 		public void DrawSpannungSiemens(ref Graphics pg)
@@ -1955,9 +1930,19 @@ namespace MMI.DIAGNOSE
 
 			// Seitenschrift
 			float oldsize = f.Size;
-			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
-			pg.DrawString("Spannung", f, new SolidBrush(BLACK), 500, 230);
-			pg.DrawString("Oberstrom", f, new SolidBrush(BLACK), 500, 255);
+			if (IsADtranz())
+			{
+				f = new Font(GetFontString(), 22, FontStyle.Bold, GraphicsUnit.Point);
+				pg.DrawString("Spannung", f, new SolidBrush(BLACK), 465, 230);
+				pg.DrawString("Oberstrom", f, new SolidBrush(BLACK), 460, 260);
+			}
+			else
+			{
+				f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+				pg.DrawString("Spannung", f, new SolidBrush(BLACK), 500, 230);
+				pg.DrawString("Oberstrom", f, new SolidBrush(BLACK), 500, 255);
+			}
+
 			f = new Font("Arial", oldsize, FontStyle.Bold, GraphicsUnit.Millimeter);
 
 			if (localstate.traction > 1)
@@ -1989,7 +1974,7 @@ namespace MMI.DIAGNOSE
 		}
 		public void DrawOberstrom(ref Graphics pg)
 		{
-			if (IsBombardier())
+			if (IsBombardier()  || IsADtranz())
 				DrawOberstromBombardier(ref pg);
 			else
 				DrawOberstromSiemens(ref pg);
@@ -2253,6 +2238,15 @@ namespace MMI.DIAGNOSE
 				//kleine Felder
 				DrawFrame(ref pg, 145, 338, 50, 50);
 				DrawFrame(ref pg, 94, 338, 50, 50);
+
+				// großer Rahmen
+				DrawFrame(ref pg, 1, 335, 629, 56);
+			}
+			else if (IsADtranz())
+			{
+				//kleine Felder
+				DrawFrame(ref pg, 145, 338, 50, 50);
+				DrawFrame(ref pg, 4, 338, 140, 50);
 
 				// großer Rahmen
 				DrawFrame(ref pg, 1, 335, 629, 56);
@@ -2798,6 +2792,11 @@ namespace MMI.DIAGNOSE
 		}
 		private void DrawST(ref Graphics pg)
 		{
+			if (localstate.type == TRAIN_TYPE.BR152 || localstate.type == TRAIN_TYPE.BR189)
+			{
+				pg.FillRectangle(new SolidBrush(Color.LemonChiffon), 0, 40, 800, 353);
+			}
+
 			int y = 60;
 			Brush b_ws;
 
@@ -3079,18 +3078,7 @@ namespace MMI.DIAGNOSE
 				// Datum oben rechts
 				DrawFrame(ref pg, 468, 1, 160, 30);
 
-				string s = "";
-
-				s = DayOfWeekGerman(vtime.DayOfWeek).Substring(0, 2) + ", ";	
-				if (vtime.DayOfYear < 10)
-					s += "0"+vtime.DayOfYear.ToString() + ".";
-				else
-					s += vtime.DayOfYear.ToString() + ".";
-				if (vtime.Month < 10)
-					s += "0"+vtime.Month.ToString() + ".";
-				else
-					s += vtime.Month.ToString() + ".";
-				s += vtime.Year.ToString();
+				string s = MMI.EBuLa.Tools.Misc.getDateString(vtime);
 
 				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
@@ -3101,18 +3089,7 @@ namespace MMI.DIAGNOSE
 				// Datum oben links
 				DrawFrame(ref pg, 1, 1, 120, 38);
 
-				string s = "";
-
-				s = DayOfWeekGerman(vtime.DayOfWeek).Substring(0, 2) + ", ";	
-				if (vtime.DayOfYear < 10)
-					s += "0"+vtime.DayOfYear.ToString() + ".";
-				else
-					s += vtime.DayOfYear.ToString() + ".";
-				if (vtime.Month < 10)
-					s += "0"+vtime.Month.ToString() + ".";
-				else
-					s += vtime.Month.ToString() + ".";
-				s += vtime.Year.ToString();
+				string s = MMI.EBuLa.Tools.Misc.getDateString(vtime);
 
 				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
@@ -3159,13 +3136,16 @@ namespace MMI.DIAGNOSE
 			switch(localstate.DISPLAY)
 			{
 				case CURRENT_DISPLAY.G:
-					if (IsBombardier())
+					if (IsBombardier() || IsADtranz())
                         l_Button1.Text = "An-triebe";
 					else
 						l_Button1.Text = "";
 					l_Button2.Text = "W";
 					l_Button3.Text = "";
-					l_Button4.Text = "Zug- Besy";
+					if (IsBR101())
+                        l_Button4.Text = "Zug- Num.";
+					else
+						l_Button4.Text = "Zug- Besy";
 					l_Button5.Text = "";
 					if (IsMMI())
                         l_Button6.Text = "Ein Displ.";
@@ -3177,13 +3157,13 @@ namespace MMI.DIAGNOSE
 					l_Button0.Text = "";
 					break;
 				case CURRENT_DISPLAY.Z_BR:
-					if (IsBombardier())
+					if (IsBombardier() || IsADtranz())
 						l_Button1.Text = "An-triebe";
 					else
 						l_Button1.Text = "";
 					l_Button2.Text = "W";
 					l_Button3.Text = "";
-					if (IsBombardier())
+					if (IsBombardier() || IsADtranz())
 						l_Button4.Text = "Zug- Besy";
 					else
 						l_Button4.Text = "";
@@ -3205,7 +3185,7 @@ namespace MMI.DIAGNOSE
 					l_Button5.Text = "";
 					l_Button6.Text = "";
 					l_Button7.Text = "DSK";
-					if (IsBombardier())
+					if (IsBombardier() || IsADtranz())
 						l_Button8.Text = "Prü-fen";
 					else
 						l_Button8.Text = "Prü-lauf";
@@ -3458,7 +3438,7 @@ namespace MMI.DIAGNOSE
 				pg.DrawString(info, f, new SolidBrush(BLACK), 38+i*80, 90);
 			}
 
-			if (IsBombardier())
+			if (IsBombardier() || IsADtranz())
 			{
 				if (localstate.Brh > 0f && IsCONNECTED)
 					text = "Gültige Zugdaten aus Eingabedaten";
@@ -3496,7 +3476,7 @@ namespace MMI.DIAGNOSE
 			switch(localstate.DISPLAY)
 			{
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
-					if (IsBombardier())
+					if (IsBombardier() || IsADtranz())
 					{
 						pg.DrawString("Grundbild", f, new SolidBrush(BLACK), 525, 56);
 						pg.DrawString("zurück", f, new SolidBrush(BLACK), 537, 120);
@@ -3530,7 +3510,7 @@ namespace MMI.DIAGNOSE
 					}
 					break;
 				case CURRENT_DISPLAY.DSK:
-					if (IsBombardier())
+					if (IsBombardier() || IsADtranz())
 					{
 						pg.DrawString("Grundbild", f, new SolidBrush(BLACK), 525, 56);
 						pg.DrawString("zurück", f, new SolidBrush(BLACK), 537, 120);
@@ -3611,12 +3591,12 @@ namespace MMI.DIAGNOSE
 				{
 					pg.FillRectangle(Brushes.WhiteSmoke, 105+i*48, y+10, 30, 40);
 					if ((i < localstate.marker && localstate.marker_changed))
-						if (IsBombardier())
+						if (IsBombardier() || IsADtranz())
 							pg.DrawString(nr.Substring(i, 1), f, Brushes.Black, 110+i*48, y +19);
 						else
 							pg.DrawString(nr.Substring(i, 1), f, Brushes.Blue, 110+i*48, y +19);
 					else if (!localstate.marker_changed || localstate.marker > 5)
-						if (IsBombardier())
+						if (IsBombardier() || IsADtranz())
 							pg.DrawString(org.Substring(i, 1), f, Brushes.Black, 110+i*48, y +19);
 						else
 							pg.DrawString(org.Substring(i, 1), f, Brushes.Blue, 110+i*48, y +19);
@@ -3656,12 +3636,12 @@ namespace MMI.DIAGNOSE
 				{
 					pg.FillRectangle(Brushes.WhiteSmoke, 105+i*48, y+10, 30, 40);
 					if ((i < localstate.marker-6 && localstate.marker_changed2))
-						if (IsBombardier())
+						if (IsBombardier() || IsADtranz())
 							pg.DrawString(nr.Substring(i, 1), f, Brushes.Black, 110+i*48, y +19);
 						else
 							pg.DrawString(nr.Substring(i, 1), f, Brushes.Blue, 110+i*48, y +19);
 					else if (!localstate.marker_changed2 || localstate.marker-6 > 5)
-						if (IsBombardier())
+						if (IsBombardier() || IsADtranz())
 							pg.DrawString(org.Substring(i, 1), f, Brushes.Black, 110+i*48, y +19);
 						else
 							pg.DrawString(org.Substring(i, 1), f, Brushes.Blue, 110+i*48, y +19);
@@ -3704,7 +3684,7 @@ namespace MMI.DIAGNOSE
 				{
 					pg.FillRectangle(Brushes.WhiteSmoke, 105+i*48+x, y+10, 30, 40);
 					if (i < localstate.marker)
-						if (IsBombardier())
+						if (IsBombardier() || IsADtranz())
 							pg.DrawString(localstate.DSK_BUFFER.Substring(i, 1), f, Brushes.Black, 110+i*48+x, y +19);
 						else
 							pg.DrawString(localstate.DSK_BUFFER.Substring(i, 1), f, Brushes.Blue, 110+i*48+x, y +19);
@@ -3932,7 +3912,7 @@ namespace MMI.DIAGNOSE
 					DrawOberstrom(ref g);
 					DrawStörung(ref g);
 					DrawStatus(ref g);
-					if (IsBombardier())	DrawStatusStörRahmen(ref g, true, true);
+					if (IsBombardier() || IsADtranz()) DrawStatusStörRahmen(ref g, true, true);
 					break;
 				case CURRENT_DISPLAY.Z_BR:
 					DrawZug(ref g);
@@ -3940,14 +3920,14 @@ namespace MMI.DIAGNOSE
 					DrawOberstrom(ref g);
 					DrawStörung(ref g);
 					DrawStatus(ref g);
-					if (IsBombardier())	DrawStatusStörRahmen(ref g, true, true);
+					if (IsBombardier() || IsADtranz())	DrawStatusStörRahmen(ref g, true, true);
 					break;
 				case CURRENT_DISPLAY.Zugbesy:
 					DrawZug(ref g);
 					DrawZugbeeinflussungssysteme(ref g);
 					DrawStörung(ref g);
 					DrawStatus(ref g);
-					if (IsBombardier())	DrawStatusStörRahmen(ref g, true, true);					
+					if (IsBombardier() || IsADtranz())	DrawStatusStörRahmen(ref g, true, true);					
 					break;
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
 					DrawTitle(ref g);
@@ -3972,28 +3952,7 @@ namespace MMI.DIAGNOSE
 
 			//graph_main.Render(this.CreateGraphics());
 		}
-		private string DayOfWeekGerman(DayOfWeek dayofweek)
-		{
-			switch (dayofweek)
-			{
-				case DayOfWeek.Monday:
-					return "Montag";
-				case DayOfWeek.Tuesday:
-					return "Dienstag";
-				case DayOfWeek.Wednesday:
-					return "Mittwoch";
-				case DayOfWeek.Thursday:
-					return "Donnerstag";
-				case DayOfWeek.Friday:
-					return "Freitag";
-				case DayOfWeek.Saturday:
-					return "Samstag";
-				case DayOfWeek.Sunday:
-					return "Sonntag";
-			}
-			return "";
-
-		}
+	
 		private void MoveZugkraft()
 		{
 			while (Math.Abs(localstate.Zugkraft_Thread - localstate.Zugkraft) > 15f)
@@ -4037,7 +3996,7 @@ namespace MMI.DIAGNOSE
 				if (stoerung_counter == 30)
 				{
 					stoerung_counter = 0;
-					if (IsBombardier())
+					if (IsBombardier() || IsADtranz())
 						Sound.PlayMalfunctionBombardierSound();
 					else
 						Sound.PlayMalfunctionSiemensSound();
@@ -4142,15 +4101,23 @@ namespace MMI.DIAGNOSE
 		}
 		public bool IsBombardier()
 		{
-			return (localstate.type == TRAIN_TYPE.BR101 || localstate.type == TRAIN_TYPE.BR145 || localstate.type == TRAIN_TYPE.BR146 || localstate.type == TRAIN_TYPE.BR146_1 || localstate.type == TRAIN_TYPE.BR185);
+			return (localstate.type == TRAIN_TYPE.BR101_MET || localstate.type == TRAIN_TYPE.BR145 || localstate.type == TRAIN_TYPE.BR146 || localstate.type == TRAIN_TYPE.BR146_1 || localstate.type == TRAIN_TYPE.BR185);
 		}
 		public bool IsSiemens()
 		{
-			return !IsBombardier();
+			return (!IsBombardier() && !IsADtranz());
+		}
+		public bool IsADtranz()
+		{
+			return localstate.type == TRAIN_TYPE.BR101;
 		}
 		public bool IsMMI()
 		{
 			return (localstate.type == TRAIN_TYPE.BR185 || localstate.type == TRAIN_TYPE.BR146_1 || localstate.type == TRAIN_TYPE.BR189);
+		}
+		public bool IsBR101()
+		{
+			return (localstate.type == TRAIN_TYPE.BR101 || localstate.type == TRAIN_TYPE.BR101_MET);
 		}
 		public bool SwitchToMMIAllowed
 		{
@@ -4182,6 +4149,13 @@ namespace MMI.DIAGNOSE
 				text = "AFB: Zugdaten eingeben";
 			
 			return text;
+		}
+		public string GetFontString()
+		{
+			if (IsBR101())
+				return "FixedSysTTF";
+			else
+				return "Arial";
 		}
 		public float ReduziereZugkraft(float zugkraft, int tz)
 		{

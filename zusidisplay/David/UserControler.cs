@@ -12,7 +12,7 @@ namespace MMI.DAVID
 {
 	public class ControlContainer : System.Windows.Forms.UserControl
 	{
-		const string BACKGROUND_IMAGE_ADTRANZ = @".\Pictures\adtranz.jpg";
+		const string BACKGROUND_IMAGE_ADTRANZ = @".\Pictures\adtranz_ice.jpg";
 		const string BACKGROUND_IMAGE_ABB     = @".\Pictures\abb.jpg";
 
         public DavidControl m_widget = null;
@@ -91,7 +91,6 @@ namespace MMI.DAVID
 					m_widget_ebula.Inverse();
 				}
 			}
-
 		}
 
 		protected override void Dispose( bool disposing )

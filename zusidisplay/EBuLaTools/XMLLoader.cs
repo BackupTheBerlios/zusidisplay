@@ -1,28 +1,36 @@
 using System;
 using System.Collections;
 using System.Xml;
+using System.Drawing;
 
 namespace MMI.EBuLa.Tools
 {
+	public enum enumDisplay
+	{
+		EBuLa=1, MMI, DIAGNOSE, DAVID1, DAVID2, ICE3_1, ICE3_2, ET42X, VT612
+	}
+
     public class XMLLoader
     {
-		const string VERSION = "1.5.0";
+		const string VERSION = "1.5.2";
 		
 		int m_fps = 20;
 
         string m_EBuLaVersion, m_Path, m_File, m_Host;
-        bool m_Inverse, m_Border, m_useDB, m_topMost, m_focusToZusi, m_WindowHasFocus;
-        int m_Brightness, m_Width, m_Height, m_Sound, m_Port;
+        bool m_Inverse, m_useDB, m_topMost, m_focusToZusi, m_WindowHasFocus;
+        int m_Brightness,  m_Sound, m_Port;
         Hashtable m_Keys;
         string m_filename;
+		Point m_position = new System.Drawing.Point(0);
+		Hashtable m_Border = new Hashtable(), m_Width = new Hashtable(), m_Height = new Hashtable();
 
 		public static String ToolsVersion = System.Reflection.Assembly.GetAssembly(new MMI.EBuLa.Tools.XMLLoader("").GetType()).GetName().Version.ToString();
 
         public XMLLoader(string filename)
         {
             m_EBuLaVersion = ""; m_Path = ""; m_File = ""; m_Host = "";
-            m_Inverse = false; m_Border = true;
-            m_Brightness = -1; m_Width = -1; m_Height = -1; m_Sound = 0;
+            m_Inverse = false; 
+            m_Brightness = -1; m_Sound = 0;
             m_Keys = new Hashtable(20);
 
 			if (filename == "") return;
@@ -36,7 +44,7 @@ namespace MMI.EBuLa.Tools
             
             if (System.IO.File.Exists(m_filename))
             {
-                XmlReader reader = new XmlTextReader(m_filename);                // create XmlDocument                XmlDocument doc = new XmlDocument();                try                {                    // ignore xml doctype + header                    reader.MoveToContent();                    doc.Load(reader);                    // create root node                    XmlNode root = doc.DocumentElement;                    // create node list (below root)                    XmlNodeList xnl = doc.ChildNodes;                    if (xnl.Count > 1) System.Windows.Forms.MessageBox.Show("XML Datei beschädigt!");                    // create help node                    XmlNode Node = xnl[0].ChildNodes[0]; // EBuLa                    try                    {                        if ( ((XmlNode)Node.Attributes[0]).Name == "version")                        {                            m_EBuLaVersion = ((XmlNode)Node.Attributes[0]).Value;                        }                    }                    catch                    {                        m_EBuLaVersion = "1.2";                    }                    xnl = Node.ChildNodes;                    if (xnl.Count < 2) throw new Exception();                    XmlNode att = xnl[0], iosys = xnl[1]; XmlNode keys = xnl[2];                    foreach(XmlAttribute a in att.Attributes)                    {                        switch (a.Name)                        {                            case "border":                                if (a.Value == "true")                                {                                    m_Border = true;                                }                                else if (a.Value == "false")                                {                                    m_Border = false;                                }                                else                                {                                    throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");                                }                                break;                            case "inverse":                                if (a.Value == "true")                                {                                    m_Inverse = true;                                }                                else if (a.Value == "false")                                {                                    m_Inverse = false;                                }                                else                                {                                    throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");                                }                                break;                            case "brightness":                                if (a.Value != "")                                {                                    try                                    {                                        m_Width = Convert.ToInt32(a.Value);                                    }                                    catch                                    {                                        throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");                                    }                                }                                else                                {                                    m_Brightness = 0;                                }                                break;                                                            case "width":                                if (a.Value != "")                                {                                    try                                    {                                        m_Width = Convert.ToInt32(a.Value);                                    }                                    catch                                    {                                        throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");                                    }                                }                                else                                {                                    m_Width = 0;                                }                                break;                                                            case "height":                                if (a.Value != "")                                {                                    try                                    {                                        m_Height = Convert.ToInt32(a.Value);                                    }                                    catch                                    {                                        throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");                                    }                                }                                else                                {                                    m_Height = 0;                                }                                break;                            case "sound":                                if (a.Value == "API")                                {                                    m_Sound = 1;                                }                                else if (a.Value == "DX")                                {                                    m_Sound = 2;                                }                                else if (a.Value == "off" || a.Value == "")                                {                                    m_Sound = 0;                                }                                else                                {                                    throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");                                }                                break;							case "topmost":								if (a.Value == "true")									m_topMost = true;								else 									m_topMost = false;								break;							case "focustozusi":								if (a.Value == "true")									m_focusToZusi = true;								else 									m_focusToZusi = false;								break;							default:                                System.Windows.Forms.MessageBox.Show("Eintrag in XML Datei nicht erkannt: "+a.Name);                                break;                        }                    }                    foreach(XmlAttribute a in iosys.Attributes)                    {                        switch(a.Name)                        {							case "port":								m_Port = Convert.ToInt32(a.Value);								break;							case "host":								m_Host = a.Value;								break;							case "useDB":								if (a.Value == "yes") m_useDB = true;								break;                            case "path":                                m_Path = a.Value;                                break;                            case "file":                                m_File = a.Value;                                break;                        }                    }                    foreach(XmlAttribute a in keys.Attributes)                    {                        int keynr = 0;                        if (IsValidKey(a.Name))                        {                            try                            {                                if (a.Value != "")                                 {                                    keynr = Convert.ToInt32(a.Value);                                    m_Keys.Add(a.Name,keynr);                                }                                else                                {                                    m_Keys.Add(a.Name,-1);                                }                            }                            catch (Exception)                            {                                throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");                            }                        }                        else                        {                            System.Windows.Forms.MessageBox.Show(a.Name+" is kei gültiger Key!");                            break;                        }                    }                    reader.Close();
+                XmlReader reader = new XmlTextReader(m_filename);                // create XmlDocument                XmlDocument doc = new XmlDocument();                try                {                    // ignore xml doctype + header                    reader.MoveToContent();                    doc.Load(reader);                    // create root node                    XmlNode root = doc.DocumentElement;					// create node list (below root)					XmlNodeList xnl = doc.ChildNodes;					root = (XmlNode)xnl[0];                    try                    {                        if ( ((XmlNode)root.Attributes[0]).Name == "version")                        {                            m_EBuLaVersion = ((XmlNode)root.Attributes[0]).Value;                        }                    }                    catch                    {                        m_EBuLaVersion = "1.2";                    }					// create node list (below root)					xnl = root.ChildNodes;					//if (xnl.Count > 1) System.Windows.Forms.MessageBox.Show("XML Datei beschädigt!");					foreach(XmlNode node in xnl)					{						switch(node.Name)						{							case "EBuLa":								SetValu(node, enumDisplay.EBuLa);								break;							case "MMI":								SetValu(node, enumDisplay.MMI);								break;							case "DAVID1":								SetValu(node, enumDisplay.DAVID1);								break;							case "DAVID2":								SetValu(node, enumDisplay.DAVID2);								break;							case "DIAGNOSE":								SetValu(node, enumDisplay.DIAGNOSE);								break;							case "ET42X":								SetValu(node, enumDisplay.ET42X);								break;							case "VT612":								SetValu(node, enumDisplay.VT612);								break;							case "ICE3_1":								SetValu(node, enumDisplay.ICE3_1);								break;							case "ICE3_2":								SetValu(node, enumDisplay.ICE3_2);								break;							case "Attributes":								foreach(XmlAttribute a in node.Attributes)								{									switch (a.Name)									{										case "inverse":											if (a.Value == "true")											{												m_Inverse = true;											}											else if (a.Value == "false")											{												m_Inverse = false;											}											else											{												throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");											}											break;										case "brightness":											break;										case "sound":											if (a.Value == "API")											{												m_Sound = 1;											}											else if (a.Value == "DX")											{												m_Sound = 2;											}											else if (a.Value == "off" || a.Value == "")											{												m_Sound = 0;											}											else											{												throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");											}											break;										case "topmost":											if (a.Value == "true")												m_topMost = true;											else 												m_topMost = false;											break;										case "focustozusi":											if (a.Value == "true")												m_focusToZusi = true;											else 												m_focusToZusi = false;											break;										default:											System.Windows.Forms.MessageBox.Show("Eintrag in XML Datei nicht erkannt: "+a.Name);											break;									}								}								break;							case "IOSystem":								foreach(XmlAttribute a in node.Attributes)								{									switch(a.Name)									{										case "port":											m_Port = Convert.ToInt32(a.Value);											break;										case "host":											m_Host = a.Value;											break;										case "useDB":											if (a.Value == "yes") m_useDB = true;											break;										case "path":											m_Path = a.Value;											break;										case "file":											m_File = a.Value;											break;									}								}								break;							case "Keys":								foreach(XmlAttribute a in node.Attributes)								{									int keynr = 0;									if (IsValidKey(a.Name))									{										try										{											if (a.Value != "") 											{												keynr = Convert.ToInt32(a.Value);												m_Keys.Add(a.Name,keynr);											}											else											{												m_Keys.Add(a.Name,-1);											}										}										catch (Exception)										{											throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");										}									}									else									{										System.Windows.Forms.MessageBox.Show(a.Name+" is kei gültiger Key!");										break;									}								}								break;						}					}                    reader.Close();
                 }                catch (Exception e)                {                    System.Windows.Forms.MessageBox.Show("XML Lesefehler: " + e.Message.ToString());                    return;                }            }
             else
             {
@@ -56,22 +64,19 @@ namespace MMI.EBuLa.Tools
                 // Standarddeklarator schreiben
                 writer.WriteStartDocument();
 
-                writer.WriteStartElement("MMI");
+                writer.WriteStartElement("ZusiDisplay");
 
-                writer.WriteStartElement("EBuLa");
+				writer.WriteAttributeString("version",VERSION);
 
-                writer.WriteAttributeString("version",VERSION);
+				WriteAttributes(ref writer);
+				
+				WriteIOSystem(ref writer);
 
-                WriteAttributes(ref writer);
+				WriteKeys(ref writer);
 
-                WriteIOSystem(ref writer);
+				WriteValues(ref writer);
 
-                WriteKeys(ref writer);
-
-                //EBuLa
-                writer.WriteEndElement();
-
-                //MMI
+                //ZusiDisplay
                 writer.WriteEndElement();
 
                 // Puffer leeren und schließen
@@ -85,6 +90,31 @@ namespace MMI.EBuLa.Tools
             }
         }
 
+		private void WriteValues(ref XmlTextWriter writer)
+		{
+			WriteValue(ref writer, "EBuLa", enumDisplay.EBuLa);
+			WriteValue(ref writer, "MMI", enumDisplay.MMI);
+			WriteValue(ref writer, "DIAGNOSE", enumDisplay.DIAGNOSE);
+			WriteValue(ref writer, "DAVID1", enumDisplay.DAVID1);
+			WriteValue(ref writer, "DAVID2", enumDisplay.DAVID2);
+			WriteValue(ref writer, "ICE3_1", enumDisplay.ICE3_1);
+			WriteValue(ref writer, "ICE3_2", enumDisplay.ICE3_2);
+			WriteValue(ref writer, "ET42X", enumDisplay.ET42X);
+			WriteValue(ref writer, "VT612", enumDisplay.VT612);
+		}
+
+		private void WriteValue(ref XmlTextWriter writer, string tag, enumDisplay disp)
+		{
+			writer.WriteStartElement(tag);
+
+			writer.WriteAttributeString("border", ((bool)m_Border[disp]).ToString().ToLower());
+
+			writer.WriteAttributeString("width",((int)m_Width[disp]).ToString());
+
+			writer.WriteAttributeString("height",((int)m_Height[disp]).ToString());
+
+			writer.WriteEndElement();
+		}
 
         private void WriteAttributes(ref XmlTextWriter writer)
         {
@@ -93,12 +123,6 @@ namespace MMI.EBuLa.Tools
             writer.WriteAttributeString("inverse",m_Inverse.ToString().ToLower());
 
             writer.WriteAttributeString("brightness",m_Brightness.ToString());
-
-            writer.WriteAttributeString("border",m_Border.ToString().ToLower());
-            
-            writer.WriteAttributeString("width",m_Width.ToString());
-
-            writer.WriteAttributeString("height",m_Height.ToString());
 
             if (m_Sound == 2)
             {
@@ -189,11 +213,35 @@ namespace MMI.EBuLa.Tools
 
         public int Brightness {get{return m_Brightness;}set{m_Brightness=value;}}
 
-        public bool Border {get{return m_Border;}set{m_Border=value;}}
+		public void SetBorder(enumDisplay display, bool border)
+		{
+			m_Border[display] = border;
+		}
 
-        public int Width {get{return m_Width;}set{m_Width=value;}}
+		public bool GetBorder(enumDisplay display)
+		{
+			return (bool)m_Border[display];
+		}
 
-        public int Height {get{return m_Height;}set{m_Height=value;}}
+		public void SetWidth(enumDisplay display, int width)
+		{
+			m_Width[display] = width;
+		}
+
+		public int GetWidth(enumDisplay display)
+		{
+			return (int)m_Width[display];
+		}
+
+		public void SetHeight(enumDisplay display, int height)
+		{
+			m_Height[display] = height;
+		}					  
+
+		public int GetHeight(enumDisplay display)
+		{
+			return (int)m_Height[display];
+		}                  
 
         public string Path {get{return m_Path;}set{m_Path=value;}}
 
@@ -210,6 +258,7 @@ namespace MMI.EBuLa.Tools
 		public int Port{get{return m_Port;}set{m_Port=value;}}
 		public string Host {get{return m_Host;}set{m_Host=value;}}
 		
+		public Point Position{get{return m_position;}set{m_position=value;}}
         public int Key (string keyName)    
         {
             if (m_Keys.Contains(keyName))
@@ -270,5 +319,11 @@ namespace MMI.EBuLa.Tools
                 writer.WriteAttributeString(name, Key(name).ToString());
             }
         }
+
+		private void SetValu(XmlNode node, enumDisplay display)
+		{
+			foreach(XmlAttribute a in node.Attributes)			{				switch (a.Name)				{					case "border":						if (a.Value == "true")						{							m_Border[display] = true;						}						else if (a.Value == "false")						{							m_Border[display] = false;						}						else						{							throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");						}						break;					case "width":						if (a.Value != "")						{							try							{								m_Width[display] = Convert.ToInt32(a.Value);							}							catch							{								throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");							}						}						else						{							m_Width[display] = 0;						}						break;                                					case "height":						if (a.Value != "")						{							try							{								m_Height[display] = Convert.ToInt32(a.Value);							}							catch							{								throw new Exception("Eintrag '"+a.Name+"' hat falschen Wert!");							}						}						else						{							m_Width[display] = 0;						}						break;				}
+			}
+		}
 	}
 }

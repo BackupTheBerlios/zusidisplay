@@ -35,7 +35,7 @@ namespace MMI.ET42X
             try
             {
                 //m_parent = gotParent;
-                m_widget = new ET42XControl(XMLConf);
+                m_widget = new ET42XControl(XMLConf, ref net);
                 P_Display.Controls.Add(m_widget);
                 if (m_XMLConf.Inverse) 
                 {
@@ -71,6 +71,8 @@ namespace MMI.ET42X
 				t.Start();
 				Thread.Sleep(1);
 			}
+
+			m_widget.m_net = net;
 		}
 
 		protected override void Dispose( bool disposing )
@@ -181,6 +183,7 @@ namespace MMI.ET42X
 
         private void B_Off_Click(object sender, System.EventArgs e)
         {
+			m_widget.GLOBAL_SOUND = false;
             this.Dispose();
         }
 
@@ -365,15 +368,18 @@ namespace MMI.ET42X
 			{
 				if (e.X > 88 && e.X < 138) // aus
 				{
+					m_widget.GLOBAL_SOUND = false;
 					this.Dispose();
 				}
 				else if (e.X > 150 && e.X < 205) // nix
 				{
+					if (m_widget.Visible)
+						m_widget.Button_SW_Pressed(sender, e);
 				}
 				else if (e.X > 216 && e.X < 270) // i
 				{
 					if (m_widget.Visible)
-						m_widget.Button_SW_Pressed(sender, e);
+						m_widget.Button_I_Pressed(sender, e);
 				}
 				else if (e.X > 282 && e.X < 402) // St
 				{

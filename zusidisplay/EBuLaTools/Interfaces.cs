@@ -5,6 +5,12 @@ namespace MMI.EBuLa.Tools
 		void Connect();
 		void ChangeState(int type, byte[] val);
 		void SetConnected(bool connected);
+		void ChangeFISState(int type, byte[] val);
+	}
+
+	public interface IFISNetwork
+	{
+		void SendData(FIS_DATA type, string data);
 	}
 
 	public class Stuff

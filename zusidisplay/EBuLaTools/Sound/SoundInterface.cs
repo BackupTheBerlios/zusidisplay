@@ -24,5 +24,15 @@ namespace MMI.EBuLa.Tools
 		/// Play malfunction sound beep (bombardier loco)
 		/// </summary>
 		void PlayMalfunctionBombardierSound();
+
+		/// <summary>
+		/// Play "WB gesperrt"
+		/// </summary>
+		void PlayWBGesperrt();
+
+		/// <summary>
+		/// Play "WB Freigabe"
+		/// </summary>
+		void PlayWBFreigabe();
 	}
 }

@@ -368,11 +368,11 @@ namespace MMI.VT612
 				}
 				else if (e.X > 150 && e.X < 205) // nix
 				{
+					if (m_widget.Visible)
+						m_widget.Button_SW_Pressed(sender, e);
 				}
 				else if (e.X > 216 && e.X < 270) // i
 				{
-					if (m_widget.Visible)
-						m_widget.Button_SW_Pressed(sender, e);
 				}
 				else if (e.X > 282 && e.X < 402) // St
 				{
