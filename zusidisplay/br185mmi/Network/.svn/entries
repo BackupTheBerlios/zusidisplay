@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="300"
+   name=""
+   committed-date="2004-11-06T15:20:45.875000Z"
+   url="file:///F:/RepositorySVN/MMI/BR185MMI/Network"
+   last-author="de User"
+   kind="dir"
+   revision="300"/>
+<entry
+   committed-rev="335"
+   name="Network.cs"
+   text-time="2004-11-22T11:43:46.000000Z"
+   committed-date="2004-11-22T20:54:14.078125Z"
+   checksum="45272fb95f6e606cb7b46255673f707b"
+   last-author="de User"
+   kind="file"
+   revision="335"/>
+</wc-entries>

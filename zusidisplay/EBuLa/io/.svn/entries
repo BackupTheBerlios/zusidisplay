@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="265"
+   name=""
+   committed-date="2004-10-17T10:47:23.226910Z"
+   url="file:///F:/RepositorySVN/MMI/EBuLa/IO"
+   last-author="de User"
+   kind="dir"
+   uuid="bb42afd1-f5e1-0b4c-9781-b4abc8450302"
+   revision="296"/>
+<entry
+   committed-rev="333"
+   name="XMLReader.cs"
+   text-time="2004-11-22T10:58:26.000000Z"
+   committed-date="2004-11-22T20:54:00.671875Z"
+   checksum="17469023c8b03add07f913f7fdc601f3"
+   last-author="de User"
+   kind="file"
+   revision="333"/>
+</wc-entries>

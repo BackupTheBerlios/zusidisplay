@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="116"
+   name=""
+   committed-date="2004-08-18T16:04:02.684971Z"
+   url="file:///F:/RepositorySVN/MMI/EBuLa/libs"
+   last-author="de User"
+   kind="dir"
+   revision="296"/>
+<entry
+   committed-rev="116"
+   name="Microsoft.DirectX.dll"
+   text-time="2004-07-09T06:15:04.000000Z"
+   committed-date="2004-08-18T16:04:02.684971Z"
+   checksum="0c453970e89db1c1eb9de087e6eab5ba"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T16:03:42.000000Z"/>
+<entry
+   committed-rev="116"
+   name="Microsoft.DirectX.DirectSound.dll"
+   text-time="2004-07-09T06:31:10.000000Z"
+   committed-date="2004-08-18T16:04:02.684971Z"
+   checksum="d035348ec8968861af585b7132fe4c7b"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T16:03:42.000000Z"/>
+<entry
+   committed-rev="116"
+   name="Microsoft.DirectX.AudioVideoPlayback.dll"
+   text-time="2004-07-09T06:15:02.000000Z"
+   committed-date="2004-08-18T16:04:02.684971Z"
+   checksum="75933586afd94ea24c5acd3dbc89a272"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T16:03:42.000000Z"/>
+</wc-entries>

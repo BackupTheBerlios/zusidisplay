@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- EBuLA Train Doctype Rev 01 -->
+
+<!-- the train -->
+<!ELEMENT ebula_train ( properties, description, entry+ )>
+<!ATTLIST ebula_train	version		CDATA #REQUIRED>
+<!ATTLIST ebula_train	trackname	CDATA #REQUIRED>
+<!ATTLIST ebula_train	traintype	CDATA #REQUIRED>
+<!ATTLIST ebula_train	trainnumber	CDATA #REQUIRED>
+
+<!-- train properties -->
+<!ELEMENT properites EMPTY>
+<!ATTLIST properites	from			CDATA #REQUIRED>
+<!ATTLIST properites	timetable_date  CDATA #REQUIRED>
+<!ATTLIST properites	timetable_valid	CDATA #REQUIRED>
+<!ATTLIST properites	waypoints		CDATA #REQUIRED>
+<!ATTLIST properites	tfz				CDATA #REQUIRED>
+<!ATTLIST properites	vmax			CDATA #REQUIRED>
+
+<!-- train description-->
+<!ELEMENT description EMPTY>
+
+<!-- entries -->
+<!ELEMENT entry EMPTY>
+<!ATTLIST properties	name		CDATA #REQUIRED>
+<!ATTLIST properties	arr_time	CDATA #REQUIRED>
+<!ATTLIST properties	dep_time	CDATA #REQUIRED>
+
+

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="278"
+   name=""
+   committed-date="2004-10-24T15:21:28.657289Z"
+   url="file:///F:/RepositorySVN/MMI/EBuLa"
+   last-author="de User"
+   kind="dir"
+   uuid="bb42afd1-f5e1-0b4c-9781-b4abc8450302"
+   prop-time="2004-08-18T15:40:18.000000Z"
+   revision="296"/>
+<entry
+   committed-rev="186"
+   name="FSD.cs"
+   text-time="2004-09-17T08:36:06.000000Z"
+   committed-date="2004-09-19T07:02:25.889785Z"
+   checksum="35b5a5e83d1c4c3fef58f21b8336f0d6"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   committed-rev="326"
+   name="UserControl1.resx"
+   text-time="2004-11-16T18:20:36.000000Z"
+   committed-date="2004-11-16T18:30:20.859375Z"
+   checksum="963db378c15f991e99920e844ea98777"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="326"/>
+<entry
+   committed-rev="190"
+   name="DateTimeField.resx"
+   text-time="2004-09-19T15:05:56.000000Z"
+   committed-date="2004-09-19T15:06:36.866676Z"
+   checksum="f27bcbe10fab5fe3a51690e7d8c58282"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   committed-rev="191"
+   name="ControlSwitch.resx"
+   text-time="2004-09-19T15:07:04.000000Z"
+   committed-date="2004-09-19T15:08:46.342854Z"
+   checksum="8c10233bde0654e1e2560b5608341ca4"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   committed-rev="109"
+   name="EBuLa.sln"
+   text-time="2004-08-18T15:38:30.000000Z"
+   committed-date="2004-08-18T15:38:28.048272Z"
+   checksum="d2bd50346850465c3816540fe3b8ed73"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   committed-rev="333"
+   name="Control.cs"
+   text-time="2004-11-22T11:01:14.000000Z"
+   committed-date="2004-11-22T20:54:00.671875Z"
+   checksum="103d7289514b0d12f89455c8815be51c"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="333"/>
+<entry
+   committed-rev="310"
+   name="UserControler.resx"
+   text-time="2004-11-07T18:19:02.000000Z"
+   committed-date="2004-11-07T18:20:42.734375Z"
+   checksum="6e6472641acbe9120adf5bcccc751032"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="310"/>
+<entry
+   committed-rev="307"
+   name="EBuLa.csproj"
+   text-time="2004-11-06T13:30:20.000000Z"
+   committed-date="2004-11-07T17:51:08.234375Z"
+   checksum="5b3ad2d9e88b1fd6d907782ea9275ab2"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="307"/>
+<entry
+   name="Sound"
+   kind="dir"
+   schedule="delete"/>
+<entry
+   name="Network"
+   kind="dir"/>
+<entry
+   committed-rev="273"
+   name="Zugdialog.cs"
+   text-time="2004-10-22T17:28:16.000000Z"
+   committed-date="2004-10-23T10:01:15.630592Z"
+   checksum="4da0cc93b30405840246d24720e83a9b"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   name="libs"
+   kind="dir"/>
+<entry
+   committed-rev="109"
+   name="KeyHandler.cs"
+   text-time="2004-08-18T15:38:30.000000Z"
+   committed-date="2004-08-18T15:38:28.048272Z"
+   checksum="a519bb355b23a1109aa805a03f9a36f3"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   committed-rev="109"
+   name="FSD.resx"
+   text-time="2004-08-18T15:38:30.000000Z"
+   committed-date="2004-08-18T15:38:28.048272Z"
+   checksum="2c4b3b01af55b4b453d4c3cb8ea96999"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   committed-rev="326"
+   name="Zugauswahl.cs"
+   text-time="2004-11-16T15:19:26.000000Z"
+   committed-date="2004-11-16T18:30:20.859375Z"
+   checksum="7b61686fa42c8b96227345a35dd1741f"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="326"/>
+<entry
+   committed-rev="326"
+   name="AssemblyInfo.cs"
+   text-time="2004-11-10T15:59:20.000000Z"
+   committed-date="2004-11-16T18:30:20.859375Z"
+   checksum="5477905fd4315c9c1cd72ef250978b77"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="326"/>
+<entry
+   committed-rev="193"
+   name="Route.cs"
+   text-time="2004-09-20T18:06:08.000000Z"
+   committed-date="2004-09-20T18:20:25.554934Z"
+   checksum="db1d3ffd9d4c992cf61e97f7e9876d8a"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   committed-rev="333"
+   name="UserControl1.cs"
+   text-time="2004-11-22T11:07:58.000000Z"
+   committed-date="2004-11-22T20:54:00.671875Z"
+   checksum="e9557f2e570638b1360378ff13127fbb"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="333"/>
+<entry
+   committed-rev="273"
+   name="DateTimeField.cs"
+   text-time="2004-10-22T17:29:06.000000Z"
+   committed-date="2004-10-23T10:01:15.630592Z"
+   checksum="f880efde49b10740054c2bd137e3ffb1"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   committed-rev="326"
+   name="Entry.cs"
+   text-time="2004-11-16T17:21:56.000000Z"
+   committed-date="2004-11-16T18:30:20.859375Z"
+   checksum="b01bdd79f8a897164bcf24090bda6d78"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="326"/>
+<entry
+   committed-rev="109"
+   name="Zugdialog.resx"
+   text-time="2004-08-18T15:38:30.000000Z"
+   committed-date="2004-08-18T15:38:28.048272Z"
+   checksum="11e426fafe4248809dedd9263cae5108"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   committed-rev="326"
+   name="ControlSwitch.cs"
+   text-time="2004-11-12T19:01:50.000000Z"
+   committed-date="2004-11-16T18:30:20.859375Z"
+   checksum="7ed12b0b3f1c04b2df845e30de5a8bd9"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="326"/>
+<entry
+   name="IO"
+   kind="dir"/>
+<entry
+   committed-rev="109"
+   name="Enum.cs"
+   text-time="2004-08-18T15:38:30.000000Z"
+   committed-date="2004-08-18T15:38:28.048272Z"
+   checksum="24b6c96695aeabfb2fd4e3f11ea2bda8"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+<entry
+   committed-rev="326"
+   name="UserControler.cs"
+   text-time="2004-11-08T11:12:30.000000Z"
+   committed-date="2004-11-16T18:30:20.859375Z"
+   checksum="7ec8c6d3fc354c543f08f4d215ef4282"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="326"/>
+<entry
+   committed-rev="333"
+   name="Zugauswahl.resx"
+   text-time="2004-11-22T10:47:12.000000Z"
+   committed-date="2004-11-22T20:54:00.671875Z"
+   checksum="740c21d0a7f8f31317ab4d68aaba9a24"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"
+   revision="333"/>
+<entry
+   committed-rev="109"
+   name="ReadMe.txt"
+   text-time="2004-08-18T15:38:30.000000Z"
+   committed-date="2004-08-18T15:38:28.048272Z"
+   checksum="f4173aece4f4ca06d6144a1496a46bd6"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-08-18T15:39:46.000000Z"/>
+</wc-entries>

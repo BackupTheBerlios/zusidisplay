@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- EBuLA Track Doctype Rev 01 -->
+
+<!-- the track -->
+<!ELEMENT ebula_track ( description, entry+ )>
+<!ATTLIST ebula_track	version		CDATA #REQUIRED>
+<!ATTLIST ebula_track	trackname	CDATA #REQUIRED>
+<!ATTLIST ebula_track	track_side	CDATA #REQUIRED>
+<!ATTLIST ebula_track	gtn			CDATA #REQUIRED>
+
+<!-- track description-->
+<!ELEMENT description EMPTY>
+<!ATTLIST description	desc			CDATA #REQUIRED>
+<!ATTLIST description	mbr				CDATA #REQUIRED>
+
+<!-- all entries -->
+<!ELEMENT entry EMPTY>
+<!ATTLIST description	position	CDATA #REQUIRED>
+<!ATTLIST description	speed		CDATA #REQUIRED>
+<!ATTLIST description	name		CDATA #REQUIRED>
+<!ATTLIST description	sig_speed	CDATA #REQUIRED>
+<!ATTLIST description	zack		CDATA #REQUIRED>
+<!ATTLIST description	tunnel		CDATA #REQUIRED>

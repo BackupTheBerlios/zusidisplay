@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="300"
+   name=""
+   committed-date="2004-11-06T15:20:45.875000Z"
+   url="file:///F:/RepositorySVN/MMI/BR185MMI"
+   last-author="de User"
+   kind="dir"
+   revision="300"/>
+<entry
+   committed-rev="300"
+   name="BR185MMI.csproj.user"
+   text-time="2004-11-06T15:19:52.000000Z"
+   committed-date="2004-11-06T15:20:45.875000Z"
+   checksum="d4bfe51abcda96608949f27edf513b3c"
+   last-author="de User"
+   kind="file"/>
+<entry
+   committed-rev="300"
+   name="BR185Control.resx"
+   text-time="2004-11-06T13:49:00.000000Z"
+   committed-date="2004-11-06T15:20:45.875000Z"
+   checksum="4b2fa7da3999efe664a671b18e22d63d"
+   last-author="de User"
+   kind="file"/>
+<entry
+   committed-rev="300"
+   name="UserControler.resx"
+   text-time="2004-11-06T13:49:00.000000Z"
+   committed-date="2004-11-06T15:20:45.875000Z"
+   checksum="d64ff556aac7084153c13cb834b5b635"
+   last-author="de User"
+   kind="file"/>
+<entry
+   name="Network"
+   kind="dir"/>
+<entry
+   committed-rev="328"
+   name="Line.cs"
+   text-time="2004-11-10T16:46:34.000000Z"
+   committed-date="2004-11-16T18:31:38.343750Z"
+   checksum="bc26c963290a6c334d0229ce8fdbbeca"
+   last-author="de User"
+   kind="file"
+   revision="328"/>
+<entry
+   committed-rev="300"
+   name="Switcher.cs"
+   text-time="2004-11-06T13:49:00.000000Z"
+   committed-date="2004-11-06T15:20:45.875000Z"
+   checksum="2a82da264a6f4c870e0927cd93b6a290"
+   last-author="de User"
+   kind="file"/>
+<entry
+   committed-rev="335"
+   name="AssemblyInfo.cs"
+   text-time="2004-11-10T15:59:26.000000Z"
+   committed-date="2004-11-22T20:54:14.078125Z"
+   checksum="5477905fd4315c9c1cd72ef250978b77"
+   last-author="de User"
+   kind="file"
+   revision="335"/>
+<entry
+   committed-rev="300"
+   name="BR185MMI.sln"
+   text-time="2004-11-06T13:48:38.000000Z"
+   committed-date="2004-11-06T15:20:45.875000Z"
+   checksum="7a6446124b98ea54f8b9b49b76426806"
+   last-author="de User"
+   kind="file"/>
+<entry
+   committed-rev="300"
+   name="DrawingUnit.cs"
+   text-time="2004-11-06T13:49:00.000000Z"
+   committed-date="2004-11-06T15:20:45.875000Z"
+   checksum="f057a808566ba55b762f12e79e05793b"
+   last-author="de User"
+   kind="file"/>
+<entry
+   committed-rev="335"
+   name="BR185MMI.csproj"
+   text-time="2004-11-06T15:21:00.000000Z"
+   committed-date="2004-11-22T20:54:14.078125Z"
+   checksum="cb8e0ddffc85e729638da7d657adb0d6"
+   last-author="de User"
+   kind="file"
+   revision="335"/>
+<entry
+   committed-rev="328"
+   name="Square.cs"
+   text-time="2004-11-10T16:46:40.000000Z"
+   committed-date="2004-11-16T18:31:38.343750Z"
+   checksum="41bc55261c1df2c5c50cfa60928b0fea"
+   last-author="de User"
+   kind="file"
+   revision="328"/>
+<entry
+   committed-rev="327"
+   name="BR185Control.cs"
+   text-time="2004-11-10T17:05:24.000000Z"
+   committed-date="2004-11-16T18:31:28.531250Z"
+   checksum="277e9c063b3807a09c9c7ff26ebadaa9"
+   last-author="de User"
+   kind="file"
+   revision="327"/>
+<entry
+   committed-rev="300"
+   name="Switcher.resx"
+   text-time="2004-11-06T13:49:00.000000Z"
+   committed-date="2004-11-06T15:20:45.875000Z"
+   checksum="c4b3d9a63d7871baec3fff273cca005c"
+   last-author="de User"
+   kind="file"/>
+<entry
+   committed-rev="300"
+   name="BR185MMI.suo"
+   text-time="2004-11-06T13:50:24.000000Z"
+   committed-date="2004-11-06T15:20:45.875000Z"
+   checksum="ebee18677f5b98c73d8323bab08f96f8"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-11-06T15:20:30.000000Z"/>
+<entry
+   committed-rev="300"
+   name="DBGraphics.cs"
+   text-time="2004-11-06T13:49:00.000000Z"
+   committed-date="2004-11-06T15:20:45.875000Z"
+   checksum="f4180cf4c3a23040285c1d01b4a88baf"
+   last-author="de User"
+   kind="file"/>
+<entry
+   committed-rev="335"
+   name="UserControler.cs"
+   text-time="2004-11-22T20:35:16.000000Z"
+   committed-date="2004-11-22T20:54:14.078125Z"
+   checksum="8d5c3b12d7afa59f85023561b00a2a23"
+   last-author="de User"
+   kind="file"
+   revision="335"/>
+</wc-entries>

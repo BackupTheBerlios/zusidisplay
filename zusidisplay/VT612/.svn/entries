@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   url="file:///F:/RepositorySVN/MMI/VT612"
+   kind="dir"
+   schedule="add"
+   revision="0"/>
+<entry
+   name="AssemblyInfo.cs"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="VT612.csproj"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="VT612Control.resx"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="State.cs"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="UserControler.resx"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="VT612Control.cs"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="bin"
+   kind="dir"
+   schedule="add"/>
+<entry
+   name="Switcher.resx"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="Network"
+   kind="dir"
+   schedule="add"/>
+<entry
+   name="obj"
+   kind="dir"
+   schedule="add"/>
+<entry
+   name="UserControler.cs"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="Switcher.cs"
+   kind="file"
+   schedule="add"/>
+<entry
+   name="VT612.csproj.user"
+   kind="file"
+   schedule="add"/>
+</wc-entries>

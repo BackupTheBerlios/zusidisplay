@@ -1,0 +1,86 @@
+using System;
+using System.IO;
+using Microsoft.DirectX.AudioVideoPlayback;
+
+// USES  --> Managed DirectX 9.0c <--
+
+namespace MMI.EBuLa
+{
+	public class DxSound : SoundInterface
+	{
+
+        const string STANDARD_WAVE  = ".\\quittung.wav";
+        const string ERROR_WAVE     = ".\\fehler.wav";
+
+		public DxSound()
+		{
+		}
+
+		public void PlaySound()
+		{
+			try
+			{
+				Audio.FromFile(STANDARD_WAVE).Play();
+			}
+			catch(Exception){}
+		}
+
+		public void PlayErrorSound()
+		{
+			try
+			{
+				Audio.FromFile(ERROR_WAVE).Play();
+			}
+			catch(Exception){}
+		}
+
+
+		/*
+		private Microsoft.DirectX.DirectSound.SecondaryBuffer ApplicationBuffer = null;
+		private Microsoft.DirectX.DirectSound.Device ApplicationDevice = null;
+
+		public DxSound()
+		{
+            ApplicationDevice = new Microsoft.DirectX.DirectSound.Device();
+            ApplicationDevice.SetCooperativeLevel(new System.Windows.Forms.Control(), Microsoft.DirectX.DirectSound.CooperativeLevel.Priority);
+		}
+
+        private bool LoadSoundFile(string name)
+        {
+            try
+            {
+                ApplicationBuffer = new Microsoft.DirectX.DirectSound.SecondaryBuffer(name, ApplicationDevice);
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public void PlaySound()
+        {
+            LoadSoundFile(STANDARD_WAVE);
+
+            if(null != ApplicationBuffer)
+            {
+                ApplicationBuffer.Play(0, Microsoft.DirectX.DirectSound.BufferPlayFlags.Default);
+            }
+
+            ApplicationBuffer = null;
+        }
+
+        public void PlayErrorSound()
+        {
+            LoadSoundFile(ERROR_WAVE);
+
+            if(null != ApplicationBuffer)
+            {
+                ApplicationBuffer.Play(0, Microsoft.DirectX.DirectSound.BufferPlayFlags.Default);
+            }
+
+            ApplicationBuffer = null;
+        }
+		*/
+	}
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="266"
+   name=""
+   committed-date="2004-10-17T11:56:46.593484Z"
+   url="file:///F:/RepositorySVN/MMI/EBuLa/Sound"
+   last-author="de User"
+   kind="dir"
+   uuid="bb42afd1-f5e1-0b4c-9781-b4abc8450302"
+   revision="296"/>
+<entry
+   committed-rev="119"
+   name="tonysound.cs"
+   text-time="2004-08-18T15:38:30.000000Z"
+   committed-date="2004-08-18T16:07:38.565392Z"
+   checksum="663bf1aad556d30ad7f643e7292e9335"
+   last-author="de User"
+   kind="file"/>
+<entry
+   committed-rev="297"
+   name="DxSound.cs"
+   text-time="2004-10-31T10:55:08.000000Z"
+   committed-date="2004-11-04T16:56:51.531250Z"
+   checksum="492f15c34816f9a17dfd2a61f158eea0"
+   last-author="de User"
+   kind="file"
+   revision="297"/>
+<entry
+   committed-rev="119"
+   name="SoundInterface.cs"
+   text-time="2004-08-18T15:38:30.000000Z"
+   committed-date="2004-08-18T16:07:38.565392Z"
+   checksum="a585e614144193894c9b14011c12a33a"
+   last-author="de User"
+   kind="file"/>
+</wc-entries>

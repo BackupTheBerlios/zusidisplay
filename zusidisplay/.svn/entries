@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="296"
+   name=""
+   committed-date="2004-10-31T10:56:52.734375Z"
+   url="file:///F:/RepositorySVN/MMI"
+   last-author="de User"
+   kind="dir"
+   uuid="bb42afd1-f5e1-0b4c-9781-b4abc8450302"
+   prop-time="2004-10-31T11:00:10.000000Z"
+   revision="296"/>
+<entry
+   name="MMI-BR185"
+   kind="dir"
+   schedule="delete"/>
+<entry
+   committed-rev="348"
+   name="Handler.cs"
+   text-time="2004-12-31T16:06:56.000000Z"
+   committed-date="2004-12-31T16:13:15.750000Z"
+   checksum="12b17309b100dbe3e8faaefc4b6cab64"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:06.000000Z"
+   revision="348"/>
+<entry
+   committed-rev="348"
+   name="MMI.csproj"
+   text-time="2004-12-31T15:59:30.000000Z"
+   committed-date="2004-12-31T16:13:15.750000Z"
+   checksum="7171ddc81e1582a02ebde68464fae565"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:06.000000Z"
+   revision="348"/>
+<entry
+   name="VT612"
+   kind="dir"
+   schedule="add"/>
+<entry
+   name="ICE3"
+   kind="dir"/>
+<entry
+   name="David"
+   kind="dir"/>
+<entry
+   committed-rev="348"
+   name="AboutBox.cs"
+   text-time="2004-11-20T14:41:22.000000Z"
+   committed-date="2004-12-31T16:13:15.750000Z"
+   checksum="f07b19ab335cda87dcaec78ee4ae11a1"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:06.000000Z"
+   revision="348"/>
+<entry
+   name="EBuLa"
+   kind="dir"/>
+<entry
+   committed-rev="348"
+   name="Form1.cs"
+   text-time="2004-12-31T16:08:54.000000Z"
+   committed-date="2004-12-31T16:13:15.750000Z"
+   checksum="58a31c228b2f1dcd7002424913b3ca8e"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:08.000000Z"
+   revision="348"/>
+<entry
+   committed-rev="109"
+   name="App.ico"
+   text-time="2004-10-31T11:00:10.000000Z"
+   committed-date="2004-08-18T15:38:28.048272Z"
+   checksum="3be06df2668b1faff848f23fbf164c8e"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:08.000000Z"/>
+<entry
+   committed-rev="348"
+   name="SelectionMenu.resx"
+   text-time="2004-12-31T16:06:42.000000Z"
+   committed-date="2004-12-31T16:13:15.750000Z"
+   checksum="828ca3f7d23f773d93e8881f5d0721cb"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:08.000000Z"
+   revision="348"/>
+<entry
+   name="EBuLaEditor"
+   kind="dir"/>
+<entry
+   committed-rev="348"
+   name="AssemblyInfo.cs"
+   text-time="2004-12-30T09:09:10.000000Z"
+   committed-date="2004-12-31T16:13:15.750000Z"
+   checksum="37db0a145de20e46e0e6d83df1c3af73"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:08.000000Z"
+   revision="348"/>
+<entry
+   committed-rev="348"
+   name="AboutBox.resx"
+   text-time="2004-11-20T14:41:22.000000Z"
+   committed-date="2004-12-31T16:13:15.750000Z"
+   checksum="c63727fbfc4982526554974654d40188"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:08.000000Z"
+   revision="348"/>
+<entry
+   name="Releases"
+   kind="dir"
+   schedule="delete"/>
+<entry
+   committed-rev="348"
+   name="Form1.resx"
+   text-time="2004-11-24T14:31:14.000000Z"
+   committed-date="2004-12-31T16:13:15.750000Z"
+   checksum="5a43c8d149bc4af69c49612daa8083d4"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:10.000000Z"
+   revision="348"/>
+<entry
+   name="BR185MMI"
+   kind="dir"/>
+<entry
+   name="SystemTools"
+   kind="dir"/>
+<entry
+   name="ET42X_"
+   kind="dir"
+   schedule="add"/>
+<entry
+   name="EBuLaTools"
+   kind="dir"/>
+<entry
+   committed-rev="348"
+   name="MMI.sln"
+   text-time="2004-12-31T15:56:32.000000Z"
+   committed-date="2004-12-31T16:13:15.750000Z"
+   checksum="ad68a002914fa1b15ca92562bbc2986e"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:10.000000Z"
+   revision="348"/>
+<entry
+   committed-rev="348"
+   name="SelectionMenu.cs"
+   text-time="2004-12-31T16:07:04.000000Z"
+   committed-date="2004-12-31T16:13:15.750000Z"
+   checksum="f27a2253458b093ee40c7cc2b0a03d23"
+   last-author="de User"
+   kind="file"
+   prop-time="2004-10-31T11:00:10.000000Z"
+   revision="348"/>
+</wc-entries>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   url="file:///F:/RepositorySVN/MMI/VT612/Network"
+   kind="dir"
+   schedule="add"
+   revision="0"/>
+<entry
+   name="Network.cs"
+   kind="file"
+   schedule="add"/>
+</wc-entries>
