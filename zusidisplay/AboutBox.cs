@@ -61,7 +61,7 @@ namespace MMI
 			
 		    this.linkLabel3.Text = "Diese Programm ist durch die LGPL geschützt";
 			this.linkLabel3.Links[0].LinkData = "Register";
-			this.linkLabel3.Links.Add(28, 5, "http://www.gpl.org");
+			this.linkLabel3.Links.Add(28, 5, ".\\lgpl.txt");
 		}
 
 		/// <summary>
@@ -393,7 +393,7 @@ namespace MMI
 
 			// If the value looks like a URL, navigate to it.
 			// Otherwise, display it in a message box.
-			if(null != target && target.StartsWith("http"))
+			if(null != target /*&& target.StartsWith("http")*/)
 			{
 				System.Diagnostics.Process.Start(target);
 			}

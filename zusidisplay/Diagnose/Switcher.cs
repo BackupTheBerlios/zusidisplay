@@ -236,6 +236,7 @@ namespace MMI.DIAGNOSE
 			// rb_101
 			// 
 			this.rb_101.Checked = true;
+			this.rb_101.Enabled = false;
 			this.rb_101.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.rb_101.Location = new System.Drawing.Point(40, 56);
 			this.rb_101.Name = "rb_101";

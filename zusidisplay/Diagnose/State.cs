@@ -22,7 +22,7 @@ namespace MMI.DIAGNOSE
 	{
 		public CURRENT_DISPLAY DISPLAY = CURRENT_DISPLAY.G;
 		public CURRENT_DISPLAY OLD_DISPLAY = CURRENT_DISPLAY.NONE;
-		public TRAIN_TYPE type = TRAIN_TYPE.BR101;
+		public TRAIN_TYPE type = TRAIN_TYPE.BR145;
 		public int traction = 1;
 
 		public float Zusatzbremse = 0f;

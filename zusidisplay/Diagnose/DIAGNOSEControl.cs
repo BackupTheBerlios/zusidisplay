@@ -165,7 +165,7 @@ namespace MMI.DIAGNOSE
 					Sound = new NullSound();
 					break;
 			}
-			
+			Button_SW_Pressed(this, new EventArgs());			
 		}
 
 		protected override void Dispose( bool disposing )
@@ -3538,7 +3538,10 @@ namespace MMI.DIAGNOSE
 
 						pg.DrawString("Kurzzeit-", f, new SolidBrush(BLACK), 538, 264);
 						pg.DrawString("speicher", f, new SolidBrush(BLACK), 538, 282);
-						pg.DrawString("sperren", f, new SolidBrush(BLACK), 538, 299);
+						if (localstate.DSK_Gesperrt)
+							pg.DrawString("entsperren", f, new SolidBrush(BLACK), 518, 299);
+						else
+							pg.DrawString("sperren", f, new SolidBrush(BLACK), 538, 299);
 					}
 					else
 					{
@@ -3551,7 +3554,10 @@ namespace MMI.DIAGNOSE
 
 						pg.DrawString("Kurzzeit-", f, new SolidBrush(BLACK), 538, 264);
 						pg.DrawString("speicher", f, new SolidBrush(BLACK), 538, 282);
-						pg.DrawString("sperren", f, new SolidBrush(BLACK), 538, 299);
+						if (localstate.DSK_Gesperrt)
+                            pg.DrawString("entsperren", f, new SolidBrush(BLACK), 518, 299);
+						else
+							pg.DrawString("sperren", f, new SolidBrush(BLACK), 538, 299);
 					}
 					break;
 			}

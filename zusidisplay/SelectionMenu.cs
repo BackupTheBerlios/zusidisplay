@@ -223,7 +223,7 @@ namespace MMI
 			this.B_Diagnose.Name = "B_Diagnose";
 			this.B_Diagnose.Size = new System.Drawing.Size(216, 80);
 			this.B_Diagnose.TabIndex = 14;
-			this.B_Diagnose.Text = "Diagnose Display";
+			this.B_Diagnose.Text = "Diagnosedisplay";
 			this.B_Diagnose.Click += new System.EventHandler(this.B_Diagnose_Click);
 			// 
 			// SelectionMenu
