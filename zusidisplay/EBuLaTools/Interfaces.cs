@@ -5,7 +5,10 @@ namespace MMI.EBuLa.Tools
 		void Connect();
 		void ChangeState(int type, byte[] val);
 		void SetConnected(bool connected);
+		bool GetConnectedStatus();
 		void ChangeFISState(int type, byte[] val);
+		void SetStatus(ENUMStörung Stoerung);
+		void SetStatus(ENUMStörung Stoerung, bool delete);
 	}
 
 	public interface IFISNetwork

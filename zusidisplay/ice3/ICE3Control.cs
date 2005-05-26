@@ -17,8 +17,8 @@ namespace MMI.ICE3
 {	   
 	public class ICE3Control : System.Windows.Forms.UserControl
 	{
-		const bool USE_DOUBLE_BUFFER = true;
-		const float FramesPerSecond = 30f;
+		bool USE_DOUBLE_BUFFER = false;
+		const float FramesPerSecond = 100f;
 		const string fixed_font = "FixedSysTTF";
 		const string other_font = "Tahoma";
 		Color MMI_BLUE = Color.FromArgb(59,128,255);			
@@ -92,6 +92,17 @@ namespace MMI.ICE3
 		#endregion
 		public ICE3Control(MMI.EBuLa.Tools.XMLLoader conf, ControlContainer cc)
 		{
+			if (!conf.DoubleBuffer)
+			{
+				//This turns off internal double buffering of all custom GDI+ drawing
+				this.SetStyle(ControlStyles.DoubleBuffer, true);
+				this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+				this.SetStyle(ControlStyles.UserPaint, true);
+				USE_DOUBLE_BUFFER = false;
+			}
+			else 
+				USE_DOUBLE_BUFFER = true;
+
 			InitializeComponent();
 
 			schw.Initialize();
@@ -137,6 +148,8 @@ namespace MMI.ICE3
 			int interval = Convert.ToInt32(Math.Round((1d/(double)FramesPerSecond)*1000d));
 			timer1.Interval = interval;
 			timer1.Enabled = true;
+
+			Button_SW_Pressed(this, new EventArgs());
 		}
 
 		protected override void Dispose( bool disposing )
@@ -848,7 +861,7 @@ namespace MMI.ICE3
 						{
 							// Thread muss neu anglegt werden
 							ThreadTüren = new Thread(new ThreadStart(threadDelegate_Türen));
-							ThreadTüren.Priority = ThreadPriority.Lowest;
+							ThreadTüren.Priority = ThreadPriority.BelowNormal;
 							ThreadTüren.IsBackground = true;
 							ThreadTüren.Start();
 							//DEBUG = "THREAD: RUNNING";
@@ -868,7 +881,7 @@ namespace MMI.ICE3
 				else
 				{
 					ThreadTüren = new Thread(new ThreadStart(threadDelegate_Türen));
-					ThreadTüren.Priority = ThreadPriority.Lowest;
+					ThreadTüren.Priority = ThreadPriority.BelowNormal;
 					ThreadTüren.IsBackground = true;
 					ThreadTüren.Start();
 					//DEBUG = "THREAD: RUNNING";
@@ -888,7 +901,16 @@ namespace MMI.ICE3
 
 		public void UpdateScreen()
 		{
-			ICE3Control_Paint(this, new PaintEventArgs(this.CreateGraphics(), new Rectangle(0,0,this.Width, this.Height)));
+			//if (!something_changed) return;
+
+			//something_changed = false;
+			
+			if (USE_DOUBLE_BUFFER)
+				ICE3Control_Paint(this, new PaintEventArgs(this.CreateGraphics(), new Rectangle(0,0,this.Width, this.Height)));
+			else
+				this.Refresh();
+
+			
 		}
 
 
@@ -1018,6 +1040,9 @@ namespace MMI.ICE3
 					case ENUMStörung.S01_ZUSIKomm:
 						DrawS01(ref pg, false);
 						break;
+					case ENUMStörung.S11_ZUSIKomm:
+						DrawS11(ref pg, false);
+						break;
 					case ENUMStörung.S02_Trennschütz:
 						DrawS02(ref pg, false);
 						break;
@@ -1032,6 +1057,9 @@ namespace MMI.ICE3
 				{
 					case ENUMStörung.S01_ZUSIKomm:
 						DrawS01(ref pg, true);
+						break;
+					case ENUMStörung.S11_ZUSIKomm:
+						DrawS11(ref pg, false);
 						break;
 					case ENUMStörung.S02_Trennschütz:
 						DrawS02(ref pg, true);
@@ -2781,6 +2809,27 @@ namespace MMI.ICE3
 			}
 		}
 
+		private void DrawS11(ref Graphics pg, bool greater)
+		{
+			Font f = new Font("Arial", 11, FontStyle.Regular, GraphicsUnit.Point);
+			string s = "";
+
+			Störung st = localstate.störungmgr.LastStörung;
+			s += st.Priority.ToString()+"  ";
+			s += st.Name+"  ";
+			s += st.Description;
+
+			pg.DrawString(s, f, b_ws, 20, 1);
+
+			f = new Font("Arial", 14, FontStyle.Bold, GraphicsUnit.Point);
+
+			pg.DrawString("Die Kommunikation mit ZUSI ist im Augenblick gestört!", f, b_ws, 50, 40);
+			pg.DrawString("ZUSI ist bereits mit dem TCP Server verbunden!", f, b_ws, 50, 60);
+			pg.DrawString("- Verbindung zwischen ZUSI und TCP Server trennen", f, b_ws, 50, 80);
+			pg.DrawString("- Display meldet sich automatisch an Server an", f, b_ws, 50, 100);
+			pg.DrawString("- ZUSI wieder verbinden", f, b_ws, 50, 120);
+		}
+
 		private void DrawS02(ref Graphics pg, bool greater)
 		{
 			Font f = new Font("Arial", 11, FontStyle.Regular, GraphicsUnit.Point);
@@ -3667,7 +3716,7 @@ namespace MMI.ICE3
 		}
 		public void ICE3Control_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
-			if (m_backBuffer == null)
+			if (m_backBuffer == null && USE_DOUBLE_BUFFER)
 			{
 				m_backBuffer= new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
 			}
@@ -3684,14 +3733,14 @@ namespace MMI.ICE3
 
 			if (!Inverse)
 			{
-				g.Clear(Color.LightGray);
+				g.Clear(Misc.FILL_GRAY);
 				b_ws = new SolidBrush(Color.Black);
 				b_ws_alt = new SolidBrush(Color.WhiteSmoke);
 				p_ws_2 = new Pen(b_ws, 1);
 			}
 			else
 			{
-				g.Clear(Color.Black);
+				g.Clear(Misc.FILL_BLACK);
 				b_ws = new SolidBrush(Color.WhiteSmoke);
 				b_ws_alt = new SolidBrush(Color.Black);
 				p_ws_2 = new Pen(b_ws, 1);

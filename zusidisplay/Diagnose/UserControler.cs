@@ -97,12 +97,13 @@ namespace MMI.DIAGNOSE
 
 			net = new Network(ref m_widget);
 			net2 = new MMIBR185.Network(ref mmi_widget);
+			net2.isEmbeded = true;
 
 			if (t == null)
 			{
 				t = new Thread(new ThreadStart(net.Connect));
 				t.IsBackground = true;
-				t.Priority = ThreadPriority.Lowest;
+				t.Priority = m_XMLConf.thread_prio;
 				t.Start();
 				Thread.Sleep(1);
 			}
@@ -111,7 +112,7 @@ namespace MMI.DIAGNOSE
 			{
 				t2 = new Thread(new ThreadStart(net2.Connect));
 				t2.IsBackground = true;
-				t2.Priority = ThreadPriority.Lowest;
+				t2.Priority = m_XMLConf.thread_prio;
 				t2.Start();
 				Thread.Sleep(1);
 			}
@@ -267,6 +268,7 @@ namespace MMI.DIAGNOSE
 					P_Display.Controls.Add(m_widget);
 					isMMI = false;
 					m_widget.Visible = true;
+					mmi_widget.PREVENT_DRAW = true;
 				}
 				else
 				{
@@ -275,6 +277,7 @@ namespace MMI.DIAGNOSE
 					P_Display.Controls.Add(mmi_widget);
 					isMMI = true;
 					m_widget.Visible = false;
+					mmi_widget.PREVENT_DRAW = false;
 				}
 			}
 			else

@@ -38,6 +38,8 @@ namespace MMI.EBuLa
 		public bool inverse = false;
 		public bool sound = false;
 
+		public TrainInfo current_Train = null;
+
 		public Hashtable track_ht = new Hashtable();
 
 
@@ -51,6 +53,9 @@ namespace MMI.EBuLa
 		public string buffer_trainpath = "";
 		public string buffer_trackname = "";
 		public string buffer_vmax = "";
+
+		public Hashtable train_list = new Hashtable();
+
 		public bool addtionalhours = false;
 
 
@@ -85,7 +90,7 @@ namespace MMI.EBuLa
 				route.Position = 0;
 				while (((Entry)route.Entrys[(int)route.Position]).m_ops_name != old_bs)
 				{
-					NextEntry();
+					NextEntry(false);
 				}
 			}
 		}
@@ -345,13 +350,6 @@ namespace MMI.EBuLa
 					this_e.m_ops_name = "";
 				}
 
-				pos = this_e.m_ops_name.IndexOf("@@LZB");
-				if (pos >= 0)
-				{
-					this_e.m_type = EntryType.LZB_BEGINNING;
-					this_e.m_ops_name = "";
-				}
-
 				// LZB Ende
 				pos = this_e.m_ops_name.IndexOf("@@LZB-Ende");
 				if (pos >= 0)
@@ -360,7 +358,14 @@ namespace MMI.EBuLa
 					this_e.m_ops_name = "";
 				}
 
-				// Zugfunkt
+				pos = this_e.m_ops_name.IndexOf("@@LZB");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.LZB_BEGINNING;
+					this_e.m_ops_name = "";
+				}
+
+				// Zugfunk
 				pos = this_e.m_ops_name.IndexOf("ZF");
 				int pos2 = this_e.m_ops_name.IndexOf("ZF-Ende");
 				if (pos >= 0)
@@ -369,14 +374,105 @@ namespace MMI.EBuLa
 						this_e.m_type = EntryType.RADIO_MARKER_ENDING;
 					else
 						this_e.m_type = EntryType.RADIO_MARKER;
+					this_e.m_ops_name = "";
 				}
+
+				// verkürtzte Vorsignale, Teil 1
+				pos = this_e.m_ops_name.IndexOf("º@@");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.VERKUERTZT;
+					this_e.m_ops_name = "";
+				}
+
+				// verkürtzte Vorsignale, Teil 2
+				pos = this_e.m_ops_name.IndexOf("º");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.VERKUERTZT;
+					this_e.m_ops_name = this_e.m_ops_name.Replace("º", "");
+				}
+
+				// E60 usw. verschieben
+				if (this_e.m_ops_speed.Length == 0)
+				{
+					pos = this_e.m_ops_name.IndexOf("E50");
+					if (pos >= 0)
+					{
+						this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+						this_e.m_ops_speed = "E50";
+					}
+
+					pos = this_e.m_ops_name.IndexOf("Z50");
+					if (pos >= 0)
+					{
+						this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+						this_e.m_ops_speed = "Z50";
+					}
+					
+					pos = this_e.m_ops_name.IndexOf("A50");
+					if (pos >= 0)
+					{
+						this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+						this_e.m_ops_speed = "A50";
+					}
+
+					pos = this_e.m_ops_name.IndexOf("E60");
+					if (pos >= 0)
+					{
+						this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+						this_e.m_ops_speed = "E60";
+					}
+
+					pos = this_e.m_ops_name.IndexOf("Z60");
+					if (pos >= 0)
+					{
+						this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+						this_e.m_ops_speed = "Z60";
+					}
+					
+					pos = this_e.m_ops_name.IndexOf("A60");
+					if (pos >= 0)
+					{
+						this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+						this_e.m_ops_speed = "A60";
+					}
+
+					pos = this_e.m_ops_name.IndexOf("E70");
+					if (pos >= 0)
+					{
+						this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+						this_e.m_ops_speed = "E70";
+					}
+
+					pos = this_e.m_ops_name.IndexOf("Z70");
+					if (pos >= 0)
+					{
+						this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+						this_e.m_ops_speed = "Z70";
+					}
+					
+					pos = this_e.m_ops_name.IndexOf("A70");
+					if (pos >= 0)
+					{
+						this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+						this_e.m_ops_speed = "A70";
+					}
+				}
+
+				this_e.m_ops_name.Replace("|", "");
 
 				// REMOVE GNT
 				if (gnt)
 				{
-					if (this_e.m_ops_name == "@@GNT-Anfang" || this_e.m_ops_name == "@@GNT-Ende")
+					if (this_e.m_ops_name == "@@GNT-Anfang")
 					{
 						this_e.m_type = EntryType.GNT_BEGINNING;
+						this_e.m_ops_name = "";
+					}
+					else if (this_e.m_ops_name == "@@GNT-Ende")
+					{
+						this_e.m_type = EntryType.GNT_ENDING;
 						this_e.m_ops_name = "";
 					}
 					if (this_e.m_ops_name == "" && this_e.m_position != "" && this_e.m_speed != "" && this_e.m_gnt_speed == "")
@@ -534,6 +630,53 @@ namespace MMI.EBuLa
 		}
 
         
+		public void ParseDirectory(Label l_top)
+		{
+			string path = getZusiPath();
+			if (path.IndexOf("\\Temp") < 0) path += @"\Temp";
+			// Create a reference to the current directory.
+			DirectoryInfo di = new DirectoryInfo(path);
+			// Create an array representing the files in the current directory.
+			FileInfo[] fi = di.GetFiles();
+			
+			train_list = new Hashtable();
+			int counter = 0;
+			
+
+			foreach (FileInfo fiTemp in fi)
+			{
+				counter++;
+				//fiTemp.Name
+				if (fiTemp.Extension != ".txt") continue;
+
+				// kein zusatzverkehr
+				if (fiTemp.Name.ToLower().IndexOf("zusatz") > -1) continue;
+				// kein dekoverkehr
+				if (fiTemp.Name.ToLower().IndexOf("deko") > -1) continue;
+				// kein dummy
+				if (fiTemp.Name.ToLower().IndexOf("dummy") > -1) continue;
+				// kein abstellung
+				if (fiTemp.Name.ToLower().IndexOf("abstell") > -1) continue;
+				// keine autos
+				if (fiTemp.Name.ToLower().IndexOf("auto") > -1) continue;
+				// 
+				if (fiTemp.Name.ToLower().IndexOf("aktuellerzug") > -1) continue;
+
+				Application.DoEvents();
+				l_top.Text = "Daten werden gelesen!".ToUpper() + " ("+ counter.ToString()+" von " + fi.Length.ToString()+ ")";
+				TrainInfo ti = new TrainInfo(fiTemp.Name, fiTemp.DirectoryName, XMLConf.SearchForDepAndArr);
+				Application.DoEvents();
+				if (ti.Number == "") continue;
+
+				try
+				{
+					train_list.Add(ti.Number+" "+ti.Type, ti);
+					if (ti.ti2 != null) train_list.Add(ti.ti2.Number+" "+ti.ti2.Type, ti.ti2);
+				}
+				catch(Exception){};
+			}
+		}
+
 		private string ReadEntry(string strg, EntryPos where, Entry entry, char until)
 		{
 			string help = strg;
@@ -645,198 +788,200 @@ namespace MMI.EBuLa
 			string path = m_path;
 			string trainnumber = "";
 			string traintype = "";
-			string gotfilename = null;
 			RegistryKey rk = null;
 
-			if (gotfilename == null)
+			rk = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Zusi");
+			if (rk == null)
 			{
-				rk = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Zusi");
-				if (rk == null)
+				if (XMLConf.Path=="") 
 				{
-					if (XMLConf.Path=="") 
-					{
-						MessageBox.Show("Weder Zusi noch Pfadangabe gefunden!");
-					}
-					else
-					{
-						path = XMLConf.Path+"\\Temp\\";
-					}
+					MessageBox.Show("Weder Zusi noch Pfadangabe gefunden!");
 				}
-
-				if (buffer_trainnumber != "" /*&& buffer_traintype != ""*/)
+				else
 				{
-					trainnumber = buffer_trainnumber;
-					traintype = buffer_traintype;
-					if (rk != null)
+					path = XMLConf.Path+"\\Temp\\";
+				}
+			}
+
+			if (buffer_trainnumber != "" /*&& buffer_traintype != ""*/)
+			{
+				trainnumber = buffer_trainnumber;
+				traintype = buffer_traintype;
+				if (rk != null)
+				{
+					path = rk.GetValue("ZusiDir").ToString();
+					//if (!use_DB) path += "\\Temp\\";
+					if (path.ToLower().IndexOf("path") < 0) path += "\\Temp\\";
+
+				}
+				else if (path == m_path)
+				{
+					MessageBox.Show("FEHLER! Zusi nicht in Registry gefunden!");
+					return;
+				}
+			}
+			/*
+			else
+			{
+				if (rk != null) 
+				{
+					if (path == "")
 					{
 						path = rk.GetValue("ZusiDir").ToString();
 						if (!use_DB) path += "\\Temp\\";
 					}
-					else if (path == m_path)
+					else
 					{
-						MessageBox.Show("FEHLER! Zusi nicht in Registry gefunden!");
-						return;
+						path = path+"\\";
+					}
+					trainnumber = rk.OpenSubKey("Zusi").GetValue("Zugnummer").ToString();
+					traintype = rk.OpenSubKey("Zusi").GetValue("Gattung").ToString();
+				}
+				else
+				{
+					System.Windows.Forms.MessageBox.Show("Zusi nicht gefunden! (Dieser Fehler dürfte nie auftreten)");
+					return;
+				}
+			}
+			*/
+
+			int bb = trainnumber.IndexOf("/");                
+			if (bb == -1) bb = trainnumber.IndexOf("+");
+			if (bb != -1)
+			{
+				trainnumber = trainnumber.Remove(bb,1);
+			} 
+			if (trainnumber[trainnumber.Length-1] == 'e')
+			{
+				trainnumber = trainnumber.Remove(trainnumber.Length-1,1);
+			}
+            
+			m_filename = XMLConf.File;
+
+			//file = m_filename;
+			//path = m_path;
+
+			//System.Console.WriteLine("Path: "+path+" MPath:"+m_path+"  File: "+file+" MFilename:"+m_filename+" Type: "+traintype+trainnumber+".txt");
+
+			string [] files_org = new string[0];
+			
+			/*if (XMLConf.UseDB)
+			{
+				string schedule = "";
+				string trackName =	"";
+				
+				buffer_trackname = (string)track_ht[traintype+trainnumber];
+
+				trackName = buffer_trainpath + @"\" + buffer_trackname + ".str";//getTrackName();
+
+				Route help_route = XMLReader.ReadTackFromDB(trackName, !left, gnt, false);
+
+				if (help_route != null)
+				{
+					route = help_route;
+				}
+				else
+				{
+					route = null;
+					return;
+				}
+
+				schedule = buffer_trainpath;
+
+				schedule += @"\EBuLa\train_"+buffer_trainschedule+"_"+traintype+trainnumber+".xml";
+
+				route = XMLReader.AddTimetableToRoute(route, schedule);
+
+				route = XMLReader.RemoveHighSpeed(route, this);
+
+			}
+			else // no useDB*/
+			{
+				if (m_filename == "")
+				{
+					try
+					{
+						if (searchInTrackPath)
+						{
+							files_org = System.IO.Directory.GetFiles(getTrackPath(), "*"+getTrainName()+".txt");
+						}
+						else
+						{
+							//files_org  = System.IO.Directory.GetFiles(path, "*"+traintype+trainnumber+".txt");
+							files_org  = System.IO.Directory.GetFiles(path, traintype+trainnumber+".txt");
+							if (files_org.Length < 1 && current_Train != null) 
+								files_org  = System.IO.Directory.GetFiles(path, current_Train.File);
+						}
+					}
+					catch (Exception e)
+					{
+						MessageBox.Show("Datei nicht im Pfad: "+path+" gefunden! ("+e.Message.ToString()+")");
 					}
 				}
 				else
 				{
-					if (rk != null) 
+					try
 					{
-						if (path == "")
-						{
-							path = rk.GetValue("ZusiDir").ToString();
-							if (!use_DB) path += "\\Temp\\";
-						}
-						else
-						{
-							path = path+"\\";
-						}
-						trainnumber = rk.OpenSubKey("Zusi").GetValue("Zugnummer").ToString();
-						traintype = rk.OpenSubKey("Zusi").GetValue("Gattung").ToString();
+						files_org  = System.IO.Directory.GetFiles(path, "*"+m_filename);
 					}
-					else
+					catch (Exception e)
 					{
-						System.Windows.Forms.MessageBox.Show("Zusi nicht gefunden! (Dieser Fehler dürfte nie auftreten)");
-						return;
+						MessageBox.Show("Datei ("+m_filename+") nicht im Pfad: "+path+" gefunden! ("+e.Message.ToString()+")");
 					}
 				}
 
-				int bb = trainnumber.IndexOf("/");                
-				if (bb == -1) bb = trainnumber.IndexOf("+");
-				if (bb != -1)
+				bb = trainnumber.IndexOf("_");
+				if ( bb != -1 )
 				{
 					trainnumber = trainnumber.Remove(bb,1);
 				} 
-				if (trainnumber[trainnumber.Length-1] == 'e')
+
+
+				if (files_org.Length > 1)
 				{
-					trainnumber = trainnumber.Remove(trainnumber.Length-1,1);
-				}
-                
-				m_filename = XMLConf.File;
-
-				//file = m_filename;
-				//path = m_path;
-
-				//System.Console.WriteLine("Path: "+path+" MPath:"+m_path+"  File: "+file+" MFilename:"+m_filename+" Type: "+traintype+trainnumber+".txt");
-
-				string [] files_org = new string[0];
-				
-				if (XMLConf.UseDB)
-				{
-					string schedule = "";
-					string trackName =	"";
-					
-					buffer_trackname = (string)track_ht[traintype+trainnumber];
-
-					trackName = buffer_trainpath + @"\" + buffer_trackname + ".str";//getTrackName();
-
-					Route help_route = XMLReader.ReadTackFromDB(trackName, !left, gnt, false);
-
-					if (help_route != null)
-					{
-						route = help_route;
-					}
-					else
-					{
-						route = null;
-						return;
-					}
-
-					schedule = buffer_trainpath;
-
-					schedule += @"\EBuLa\train_"+buffer_trainschedule+"_"+traintype+trainnumber+".xml";
-
-					route = XMLReader.AddTimetableToRoute(route, schedule);
-
-					route = XMLReader.RemoveHighSpeed(route, this);
-
-				}
-				else // no useDB
-				{
-					if (m_filename == "")
-					{
-						try
-						{
-							if (searchInTrackPath)
-							{
-								files_org  = System.IO.Directory.GetFiles(getTrackPath(), "*"+getTrainName()+".txt");
-							}
-							else
-							{
-								//files_org  = System.IO.Directory.GetFiles(path, "*"+traintype+trainnumber+".txt");
-								files_org  = System.IO.Directory.GetFiles(path, traintype+trainnumber+".txt");
-							}
-						}
-						catch (Exception e)
-						{
-							MessageBox.Show("Datei nicht im Pfad: "+path+" gefunden! ("+e.Message.ToString()+")");
-						}
-					}
-					else
-					{
-						try
-						{
-							files_org  = System.IO.Directory.GetFiles(path, "*"+m_filename);
-						}
-						catch (Exception e)
-						{
-							MessageBox.Show("Datei ("+m_filename+") nicht im Pfad: "+path+" gefunden! ("+e.Message.ToString()+")");
-						}
-					}
-
-					bb = trainnumber.IndexOf("_");
-					if ( bb != -1 )
-					{
-						trainnumber = trainnumber.Remove(bb,1);
-					} 
-
-
-					if (files_org.Length > 1)
-					{
-						System.Windows.Forms.MessageBox.Show("Zu viele Dateien zur Zugnummer gefunden! Zusi Temp Ordner löschen!");
-						return;
-					}
-					if (files_org.Length < 1)
-					{
-						System.Windows.Forms.MessageBox.Show("Keine Datei zur Zugnummer gefunden!");
-						return;
-					}
-					file = files_org[0];
-
-					// <DEBUG>
-					foreach (string s in files_org)
-					{
-						//Console.WriteLine(s);
-					}
-					Console.WriteLine("File found: " + file);
-					// </DEBUG> */
-					/*else // gotfilename != null
-					{
-						file = gotfilename;
-						trainnumber = System.IO.Path.GetFileNameWithoutExtension(file);
-						trainnumber = RemoveChars(trainnumber);
-					}*/
-
-					route = new Route(trainnumber.ToString(), "EMTPY");
-					ParseFile(file);
-				}	  
-
-				if (route == null)
-				{
-					System.Windows.Forms.MessageBox.Show("Fehler! Fahrplan nicht gefunden!");
-					m_filename = "";
-					path = "";
+					System.Windows.Forms.MessageBox.Show("Zu viele Dateien zur Zugnummer gefunden! Zusi Temp Ordner löschen!");
 					return;
 				}
+				if (files_org.Length < 1)
+				{
+					System.Windows.Forms.MessageBox.Show("Keine Datei zur Zugnummer gefunden!");
+					return;
+				}
+				file = files_org[0];
 
-				route.Position = -1;
-				Marker = null;
-				//gnt = false;
-				//if (route.Entrys.Count > 0) Marker = (Entry)route.Entrys[(int)route.Position];
-				route.setVmax();
+				// <DEBUG>
+				foreach (string s in files_org)
+				{
+					//Console.WriteLine(s);
+				}
+				//Console.WriteLine("File found: " + file);
+				// </DEBUG> */
+				/*else // gotfilename != null
+				{
+					file = gotfilename;
+					trainnumber = System.IO.Path.GetFileNameWithoutExtension(file);
+					trainnumber = RemoveChars(trainnumber);
+				}*/
+
+				route = new Route(trainnumber.ToString(), "EMTPY");
+				ParseFile(file);
+			}	  
+
+			if (route == null)
+			{
+				System.Windows.Forms.MessageBox.Show("Fehler! Fahrplan nicht gefunden!");
 				m_filename = "";
 				path = "";
+				return;
 			}
+
+			route.Position = -1;
+			Marker = null;
+			//gnt = false;
+			//if (route.Entrys.Count > 0) Marker = (Entry)route.Entrys[(int)route.Position];
+			route.setVmax();
+			m_filename = "";
+			path = "";
 		}
 
 		public string getSchedule(string s)
@@ -869,6 +1014,11 @@ namespace MMI.EBuLa
 
 		public void NextEntry()
 		{
+            NextEntry(true);
+		}
+
+		public void NextEntry(bool only_timed_entries)
+		{
 			if (route.Entrys.Count < 1) return;
 			Entry e = null;
 			do
@@ -882,7 +1032,7 @@ namespace MMI.EBuLa
 					break;
 				}
 				e = (Entry)route.Entrys[(int)route.Position+1];
-				if (e.m_type == EntryType.OPS_MARKER && e.m_ops_name != "" && e.m_etd != "")
+				if (e.m_type == EntryType.OPS_MARKER && e.m_ops_name != "" && ((e.m_etd != "" || !only_timed_entries) || e.m_eta != "" ))
 				{
 					route.Position++;
 					marker = e;
@@ -1197,6 +1347,22 @@ namespace MMI.EBuLa
 			{
 				MessageBox.Show("Zusi nicht in der Registry gefunden! ("+e.Message+")");
 				return "";
+			}
+			return trainname;
+		}
+
+		public string getZusiPath()
+		{
+			RegistryKey rk = null;
+			string trainname = "";
+			try
+			{
+				rk = Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("Zusi");
+				trainname = rk.GetValue("ZusiDir").ToString();
+			}
+			catch (Exception e)
+			{
+				return XMLConf.Path;
 			}
 			return trainname;
 		}

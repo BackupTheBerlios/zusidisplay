@@ -1,3 +1,5 @@
+//#define SELECTION2
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -18,7 +20,6 @@ namespace MMI
 {
 	public class MainForm : System.Windows.Forms.Form
 	{
-
         private string conffile = System.IO.Path.GetDirectoryName(Application.ExecutablePath)+"\\configuration.xml";
 
 		const string EBuLaFile		= "ebula.dll";
@@ -39,11 +40,18 @@ namespace MMI
 		private MMI.VT612.ControlContainer m_vt612 = null;
 		private MMI.DAVID.ControlContainer m_david = null;
 		private MMI.ICE3.ControlContainer m_ice3 = null;
-        private SelectionMenu m_menu = null;
+		private MMI.FIS_TERM.ControlContainer m_fis = null;
+#if SELECTION2
+        private SelectionMenu2 m_menu = null;
+#else 
+		private SelectionMenu m_menu = null;
+#endif
         private Handler m_handler = null;
 		public MMI.EBuLa.Network net = null;
 
         private XMLLoader XmlConf = null;
+
+		private bool firsttime = true;
 
         private System.Windows.Forms.Timer timer_control;
         private System.ComponentModel.IContainer components;
@@ -57,6 +65,8 @@ namespace MMI
             Init();
 
 			LoadDisplay(args);
+
+			ActivateBorder();
 
 			this.Focus();
 		}
@@ -102,6 +112,8 @@ namespace MMI
 			this.Text = "ZusiDisplay";
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseDown);
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.MainForm_Closing);
 			this.Move += new System.EventHandler(this.MainForm_Move);
 
 		}
@@ -114,21 +126,35 @@ namespace MMI
 			Application.Run(new MainForm(args));
         }
 
+		private void SetHandler()
+		{
+			m_handler.Load = Loadwhat.Menu;
+#if SELECTION2
+			m_menu = new SelectionMenu2(m_handler, XmlConf.TopMost);
+#else
+			m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
+#endif
+			this.Controls.Add(m_menu);
+			this.Text = "ZusiDisplay";
+			ActivateBorder();
+		}
+
         private void timer_control_Tick(object sender, System.EventArgs e)
         {
 			GC.Collect();
             try
             {
+				if (firsttime)
+				{
+					ActivateBorder();
+					firsttime = false;
+				}
                 if (m_widget != null && m_widget.IsDisposed)
                 {
                     // show main selection
 					m_widget.Terminate();
                     m_widget = null;
-                    m_handler.Load = Loadwhat.Menu;
-                    m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
-                    this.Controls.Add(m_menu);
-					this.Text = "ZusiDisplay";
-					ActivateBorder();
+                    SetHandler();
                 }
                 else if (m_br185 != null && m_br185.IsDisposed)
                 {
@@ -136,11 +162,7 @@ namespace MMI
 					//this.Controls.Remove(m_br185);
 					m_br185.Terminate();
                     m_br185 = null;
-                    m_handler.Load = Loadwhat.Menu;
-                    m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
-                    this.Controls.Add(m_menu);
-					this.Text = "ZusiDisplay";
-					ActivateBorder();
+                    SetHandler();
                 }   
 				else if (m_david != null && m_david.IsDisposed)
 				{
@@ -148,11 +170,7 @@ namespace MMI
 					//this.Controls.Remove(m_br185);
 					m_david.Terminate();
 					m_david = null;
-					m_handler.Load = Loadwhat.Menu;
-					m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
-					this.Controls.Add(m_menu);
-					this.Text = "ZusiDisplay";
-					ActivateBorder();
+					SetHandler();
 				}
 				else if (m_ice3 != null && m_ice3.IsDisposed)
 				{
@@ -160,44 +178,35 @@ namespace MMI
 					//this.Controls.Remove(m_br185);
 					m_ice3.Terminate();
 					m_ice3 = null;
-					m_handler.Load = Loadwhat.Menu;
-					m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
-					this.Controls.Add(m_menu);
-					this.Text = "ZusiDisplay";
-					ActivateBorder();
+					SetHandler();
 				}
 				else if (m_et42x != null && m_et42x.IsDisposed)
 				{
 					// show main selection
 					m_et42x.Terminate();
 					m_et42x = null;
-					m_handler.Load = Loadwhat.Menu;
-					m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
-					this.Controls.Add(m_menu);
-					this.Text = "ZusiDisplay";
-					ActivateBorder();
+					SetHandler();
 				}
 				else if (m_vt612 != null && m_vt612.IsDisposed)
 				{
 					// show main selection
 					m_vt612.Terminate();
 					m_vt612 = null;
-					m_handler.Load = Loadwhat.Menu;
-					m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
-					this.Controls.Add(m_menu);
-					this.Text = "ZusiDisplay";
-					ActivateBorder();
+					SetHandler();
 				}
 				else if (m_diagnose != null && m_diagnose.IsDisposed)
 				{
 					// show main selection
 					m_diagnose.Terminate();
 					m_diagnose = null;
-					m_handler.Load = Loadwhat.Menu;
-					m_menu = new SelectionMenu(m_handler, XmlConf.TopMost);
-					this.Controls.Add(m_menu);
-					this.Text = "ZusiDisplay";
-					ActivateBorder();
+					SetHandler();
+				}
+				else if (m_fis != null && m_fis.IsDisposed)
+				{
+					// show main selection
+					m_fis.Terminate();
+					m_fis = null;
+					SetHandler();
 				}
 				else if (m_tools != null && m_tools.IsDisposed)
                 {
@@ -305,6 +314,13 @@ namespace MMI
 							m_handler.Load = Loadwhat.Menu;
 							this.Text = "ZusiDisplay -> DIAGNOSE";
 							break;
+						case Loadwhat.FIS_TERM:
+							SetWindow(enumDisplay.FIS_TERM);
+							m_fis = new MMI.FIS_TERM.ControlContainer(XmlConf);
+							this.Controls.Add(m_fis);
+							m_handler.Load = Loadwhat.Menu;
+							this.Text = "ZusiDisplay -> FIS";
+							break;
 					}
                 }
             }
@@ -333,20 +349,48 @@ namespace MMI
 
 		private void SetWindow(enumDisplay display)
 		{
-			this.Location = new Point(XmlConf.GetWidth(display), XmlConf.GetHeight(display));
+			try
+			{
+				this.Location = new Point(XmlConf.GetWidth(display), XmlConf.GetHeight(display));
 
-			if (XmlConf.GetBorder(display)) 
-			{
-				this.FormBorderStyle = FormBorderStyle.FixedDialog;
+				if (XmlConf.GetBorder(display)) 
+				{
+					this.FormBorderStyle = FormBorderStyle.FixedDialog;
+				}
+				else
+				{
+					this.FormBorderStyle = FormBorderStyle.None;
+				}
+
+				this.Height = 632;
+
+				if (display == enumDisplay.FIS_TERM)
+				{
+					this.FormBorderStyle = FormBorderStyle.Sizable;
+					this.Height = 300;
+				}
 			}
-			else
-			{
-				this.FormBorderStyle = FormBorderStyle.None;
-			}
+			catch (Exception) {}
 		}
 		private void ActivateBorder()
 		{
-			this.FormBorderStyle = FormBorderStyle.FixedDialog;
+			SetWindow(enumDisplay.Menu);
+			if (XmlConf.GetBorder(enumDisplay.Menu))
+				this.FormBorderStyle = FormBorderStyle.FixedSingle;
+			else
+				this.FormBorderStyle = FormBorderStyle.None;
+
+			int width = XmlConf.GetWidth(enumDisplay.Menu);
+			int height = XmlConf.GetHeight(enumDisplay.Menu);
+			if (width >= 0 || height >= 0)
+			{
+				this.StartPosition = FormStartPosition.Manual;
+				this.Location = new Point(width, height);
+			}
+			else
+			{
+				this.StartPosition = FormStartPosition.CenterScreen;
+			}
 		}
 
         public void Init()
@@ -357,7 +401,11 @@ namespace MMI
                 m_handler = new Handler();
                 m_widget = null;//new ControlContainer(m_inverse);
                 m_tools = null;//new EBuLaTools();
-                m_menu   = new SelectionMenu(m_handler, XmlConf.TopMost);
+#if SELECTION2
+                m_menu   = new SelectionMenu2(m_handler, XmlConf.TopMost);
+#else
+				m_menu   = new SelectionMenu(m_handler, XmlConf.TopMost);
+#endif
                 //m_mesa = new MesaController(); 
 
                 // show menu
@@ -465,6 +513,118 @@ namespace MMI
 		private void MainForm_Move(object sender, System.EventArgs e)
 		{
 				XmlConf.Position = new System.Drawing.Point(this.Location.X, this.Location.Y);
+		}
+
+		private void MainForm_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			int Y_MOVE = MMI.FIS_TERM.FIS_TERMControl.Y_MOVE;
+
+			if (m_handler.Load == Loadwhat.FIS_TERM)
+			{
+				if ((e.X > 90 && e.X < 90 +255) && (e.Y > 149+Y_MOVE) && e.Y < 149+Y_MOVE+483)
+				{
+					if (this.Width == 806)
+						this.Width = 806;
+					else
+						this.Width = 606;
+				}
+			}
+		}
+
+		private void MainForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (m_menu != null && m_menu.Visible) 
+			{
+			}
+			else
+			{
+				if (m_widget != null && m_widget.Visible)
+				{
+					// show main selection
+					m_widget.Terminate();
+					m_widget.Dispose();
+					m_widget = null;
+					SetHandler();
+				}
+				else if (m_br185 != null && m_br185.Visible)
+				{
+					// show main selection
+					//this.Controls.Remove(m_br185);
+					m_br185.Terminate();
+					m_br185.Dispose();
+					m_br185 = null;
+					SetHandler();
+				}   
+				else if (m_david != null && m_david.Visible)
+				{
+					// show main selection
+					//this.Controls.Remove(m_br185);
+					m_david.Terminate();
+					m_david.Dispose();
+					m_david = null;
+					SetHandler();
+				}
+				else if (m_ice3 != null && m_ice3.Visible)
+				{
+					// show main selection
+					//this.Controls.Remove(m_br185);
+					m_ice3.Terminate();
+					m_ice3.Dispose();
+					m_ice3 = null;
+					SetHandler();
+				}
+				else if (m_et42x != null && m_et42x.Visible)
+				{
+					// show main selection
+					m_et42x.Terminate();
+					m_et42x.Dispose();
+					m_et42x = null;
+					SetHandler();
+				}
+				else if (m_vt612 != null && m_vt612.Visible)
+				{
+					// show main selection
+					m_vt612.Terminate();
+					m_vt612.Dispose();
+					m_vt612 = null;
+					SetHandler();
+				}
+				else if (m_diagnose != null && m_diagnose.Visible)
+				{
+					// show main selection
+					m_diagnose.Terminate();
+					m_diagnose.Dispose();
+					m_diagnose = null;
+					SetHandler();
+				}
+				else if (m_fis != null && m_fis.Visible)
+				{
+					// show main selection
+					m_fis.Terminate();
+					m_fis.Dispose();
+					m_fis = null;
+					SetHandler();
+				}
+				else if (m_tools != null && m_tools.Visible)
+				{
+					// show main selection
+
+					m_tools.Dispose();
+					m_tools = null;
+
+					LoadConf();
+					Init();
+
+					this.Text = "ZusiDisplay";
+
+					/*
+					m_handler.Load = Loadwhat.Menu;
+					m_menu = new SelectionMenu(m_handler);
+					this.Controls.Add(m_menu);*/
+					SetHandler();
+				}
+				e.Cancel = true;
+			}
 		}
 
     }

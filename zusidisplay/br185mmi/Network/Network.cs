@@ -10,6 +10,7 @@ namespace MMI.MMIBR185
 {
 	public class Network : MMI.EBuLa.Tools.INetwork
 	{
+		public new bool isEmbeded = false;
 		Socket s;
 		Socket new_socket;
 		TextBox messages;
@@ -36,6 +37,7 @@ namespace MMI.MMIBR185
 		{
 			
 			sn = new MMI.EBuLa.Tools.SuperNetwork(this);
+			sn.isEmbeded = isEmbeded;
 			c.IsCONNECTED = true;
 
 			try
@@ -50,9 +52,35 @@ namespace MMI.MMIBR185
 			}
 		}
 
+
 		public void SetConnected(bool con)
 		{
 			c.IsCONNECTED = con;
+		}
+
+		public bool GetConnectedStatus()
+		{
+			return c.IsCONNECTED;
+		}
+
+		public void SetStatus(MMI.EBuLa.Tools.ENUMStörung Stoerung)
+		{
+			SetStatus(Stoerung, false);
+		}
+
+		public void SetStatus(MMI.EBuLa.Tools.ENUMStörung Stoerung, bool delete)
+		{
+			if (delete)
+			{
+				if (Stoerung == MMI.EBuLa.Tools.ENUMStörung.S11_ZUSIKomm)
+					c.ZUSI_AT_TCP_SERVER = false;
+			}
+			else
+			{
+				if (Stoerung == MMI.EBuLa.Tools.ENUMStörung.S11_ZUSIKomm)
+					c.ZUSI_AT_TCP_SERVER = true;
+			}
+			c.something_changed = true;
 		}
 
 		/*public void Listen()
@@ -179,21 +207,38 @@ namespace MMI.MMIBR185
 				case 70: // unknown
 					break;
 				case 74: // INTEGRA SIGNUM
-					c.SetLM_INTEGRA_GELB(state);
+					c.SetLM_INTEGRA(valu);
 					break;
 				case 75: // LZB Zielweg ab 0
 					float old_valu = c.localstate.LZB_ZielWeg;
-					double rest = Math.IEEERemainder(valu, 10);
-					if (rest != 0)
+					double rest = Math.IEEERemainder(valu, 10d);
+					if (rest > 0d)
 					{
-						valu += (10f - (float)rest);
+						valu = Convert.ToSingle(Math.Ceiling(valu / 10d) * 10d);
+						//valu += (10f - (float)rest);
 					}
-					old_valu = Math.Abs(old_valu - valu);
-					if (old_valu >= 10) // mehr als 10 geändert
-						c.SetLZB_ZielWeg(Convert.ToInt32(valu));
+					//old_valu = Math.Abs(old_valu - valu);
+					//if (old_valu >= 10) // mehr als 10 geändert
+
+					if (Math.IEEERemainder(valu, 10d) < 0d)
+						break;
+
+					c.SetLZB_ZielWeg(valu);
 					break;
 				case 76:
 					c.SetLZB_Sollgeschwindigkeit(valu);
+					break;
+				case 79: //GNT G
+					c.SetLM_GNT_G(state);
+					break;
+				case 80: //GNT Ü
+					c.SetLM_GNT_Ü(state);
+					break;
+				case 81: //GNT B
+					c.SetLM_GNT_B(state);
+					break;
+				case 82: //GNT S
+					c.SetLM_GNT_S(state);
 					break;
 				case 85:
 					// nur EBuLa

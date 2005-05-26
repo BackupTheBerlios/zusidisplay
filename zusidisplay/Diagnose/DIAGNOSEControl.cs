@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Data;
 using System.Windows.Forms;
+//using Microsoft.DirectX.Direct3D;
 
 using MMI.EBuLa.Tools;
 
@@ -17,10 +18,16 @@ namespace MMI.DIAGNOSE
 {	
 	public class DIAGNOSEControl : System.Windows.Forms.UserControl
 	{
-		const bool USE_DOUBLE_BUFFER = true;
+		bool USE_DOUBLE_BUFFER = false;
 		const int ZUGKRAFT = 96;
 		const int BREMSKRAFT = 120;
 		const string DSK_SPERRCODE = "1234";
+
+		/*
+		Microsoft.DirectX.Direct3D.Device device = null;
+		Microsoft.DirectX.Direct3D.VertexBuffer vertexBuffer = null;
+		Microsoft.DirectX.Direct3D.Texture texture = null;
+		*/
 
 		#region Declarations
 		private System.ComponentModel.IContainer components;
@@ -31,6 +38,7 @@ namespace MMI.DIAGNOSE
 
 		private Bitmap m_backBuffer;
 		private Graphics g;
+		private string[,] buttons = new string[11,2];
 
 		private DateTime vtime;
 
@@ -72,58 +80,27 @@ namespace MMI.DIAGNOSE
 
 		//DBGraphics graph_main;
 
-		public MMI.DIAGNOSE.DIAGNOSEState localstate;		
-
-		private System.Windows.Forms.Panel p_Buttons;
-		private System.Windows.Forms.Panel p_Button1;
-		private System.Windows.Forms.Panel p_UpperLine;
-		private System.Windows.Forms.Label l_Button1;
-		private System.Windows.Forms.Panel p_Button2;
-		private System.Windows.Forms.Label l_Button2;
-		private System.Windows.Forms.Panel p_Button3;
-		private System.Windows.Forms.Label l_Button3;
-		private System.Windows.Forms.Panel p_Button4;
-		private System.Windows.Forms.Label l_Button4;
-		private System.Windows.Forms.Panel p_Button5;
-		private System.Windows.Forms.Label l_Button5;
-		private System.Windows.Forms.Panel p_Button6;
-		private System.Windows.Forms.Label l_Button6;
-		private System.Windows.Forms.Panel p_Button7;
-		private System.Windows.Forms.Label l_Button7;
-		private System.Windows.Forms.Panel p_Button8;
-		private System.Windows.Forms.Label l_Button8;
-		private System.Windows.Forms.Panel p_Button9;
-		private System.Windows.Forms.Label l_Button9;
-		private System.Windows.Forms.Panel p_Button0;
-		private System.Windows.Forms.Label l_Button0;
+		public MMI.DIAGNOSE.DIAGNOSEState localstate;
 		private System.Windows.Forms.Timer timer_st;
-		private System.Windows.Forms.Panel p_extra;
-		private System.Windows.Forms.Panel p_Light8;
-		private System.Windows.Forms.Panel p_Light9;
-		private System.Windows.Forms.Panel p_Dark3;
-		private System.Windows.Forms.Panel p_Light7;
-		private System.Windows.Forms.Panel p_Dark7;
-		private System.Windows.Forms.Panel p_Light6;
-		private System.Windows.Forms.Panel p_Dark1;
-		private System.Windows.Forms.Panel p_Light5;
-		private System.Windows.Forms.Panel p_Dark9;
-		private System.Windows.Forms.Panel p_Light4;
-		private System.Windows.Forms.Panel p_Dark8;
-		private System.Windows.Forms.Panel p_Light3;
-		private System.Windows.Forms.Panel p_Dark6;
-		private System.Windows.Forms.Panel p_Light2;
-		private System.Windows.Forms.Panel p_Dark5;
-		private System.Windows.Forms.Panel p_Dark4;
-		private System.Windows.Forms.Panel p_Light10;
-		private System.Windows.Forms.Panel p_Dark2;
-		private System.Windows.Forms.Panel p_Light1;
 		private System.Windows.Forms.Timer timer_eingabe;
+		private System.Windows.Forms.Timer timer_verbrauch;
 
 		bool on = true;
 
 		#endregion
 		public DIAGNOSEControl(MMI.EBuLa.Tools.XMLLoader conf, ref MMI.MMIBR185.BR185Control mmi)
 		{
+			if (!conf.DoubleBuffer)
+			{
+				//This turns off internal double buffering of all custom GDI+ drawing
+				this.SetStyle(ControlStyles.DoubleBuffer, true);
+				this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+				this.SetStyle(ControlStyles.UserPaint, true);
+				USE_DOUBLE_BUFFER = false;
+			}
+			else
+				USE_DOUBLE_BUFFER = true;
+
 			InitializeComponent();
 
 			center = new Point(468+80, 30+80);
@@ -137,9 +114,13 @@ namespace MMI.DIAGNOSE
 			uhrrestList = (new ISphere(468+80, 30+80, 10)).PointList();
 
 			m_conf = conf;
+
 			mmi_widget = mmi;
 
 			localstate = new MMI.DIAGNOSE.DIAGNOSEState();
+			
+			localstate.Energie = conf.Energie;
+			
 			something_changed = true;
 
 
@@ -149,7 +130,7 @@ namespace MMI.DIAGNOSE
 
 			zugkraft_thread = new Thread(new ThreadStart(MoveZugkraft));
 
-			int interval = Convert.ToInt32(Math.Round((1d/(double)conf.FramesPerSecond)*1000d));
+			int interval = Convert.ToInt32(Math.Round((1d/(double)conf.FramesPerSecondLow)*1000d));
 			timer1.Interval = interval;
 			timer1.Enabled = true;
 
@@ -165,11 +146,30 @@ namespace MMI.DIAGNOSE
 					Sound = new NullSound();
 					break;
 			}
-			Button_SW_Pressed(this, new EventArgs());			
+			Button_SW_Pressed(this, new EventArgs());				
+
+			mmi_widget.PREVENT_DRAW = true;
+			/*
+			try
+			{
+				// Now  setup our D3D stuff
+				Microsoft.DirectX.Direct3D.PresentParameters presentParams = new Microsoft.DirectX.Direct3D.PresentParameters();
+				presentParams.Windowed=true;
+				presentParams.SwapEffect = Microsoft.DirectX.Direct3D.SwapEffect.Discard;
+				device = new Microsoft.DirectX.Direct3D.Device(0, Microsoft.DirectX.Direct3D.DeviceType.Hardware, this, 
+					Microsoft.DirectX.Direct3D.CreateFlags.HardwareVertexProcessing, presentParams);
+			}
+			catch (Exception) {}
+			*/
 		}
 
 		protected override void Dispose( bool disposing )
 		{
+			if (localstate != null && m_conf != null)
+			{
+				m_conf.Energie = localstate.Energie;
+				m_conf.SaveFile();
+			}
 			if (zugkraft_thread != null) zugkraft_thread.Abort();
 			zugkraft_thread = null;
 			
@@ -192,498 +192,14 @@ namespace MMI.DIAGNOSE
 		{
 			this.components = new System.ComponentModel.Container();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.p_Buttons = new System.Windows.Forms.Panel();
-			this.p_extra = new System.Windows.Forms.Panel();
-			this.p_Light8 = new System.Windows.Forms.Panel();
-			this.p_Button0 = new System.Windows.Forms.Panel();
-			this.p_Light9 = new System.Windows.Forms.Panel();
-			this.l_Button0 = new System.Windows.Forms.Label();
-			this.p_Dark3 = new System.Windows.Forms.Panel();
-			this.p_Button9 = new System.Windows.Forms.Panel();
-			this.p_Light7 = new System.Windows.Forms.Panel();
-			this.l_Button9 = new System.Windows.Forms.Label();
-			this.p_Dark7 = new System.Windows.Forms.Panel();
-			this.p_Button8 = new System.Windows.Forms.Panel();
-			this.p_Light6 = new System.Windows.Forms.Panel();
-			this.l_Button8 = new System.Windows.Forms.Label();
-			this.p_Dark1 = new System.Windows.Forms.Panel();
-			this.p_Button7 = new System.Windows.Forms.Panel();
-			this.p_Light5 = new System.Windows.Forms.Panel();
-			this.l_Button7 = new System.Windows.Forms.Label();
-			this.p_Dark9 = new System.Windows.Forms.Panel();
-			this.p_Button6 = new System.Windows.Forms.Panel();
-			this.p_Light4 = new System.Windows.Forms.Panel();
-			this.l_Button6 = new System.Windows.Forms.Label();
-			this.p_Dark8 = new System.Windows.Forms.Panel();
-			this.p_Button5 = new System.Windows.Forms.Panel();
-			this.p_Light3 = new System.Windows.Forms.Panel();
-			this.l_Button5 = new System.Windows.Forms.Label();
-			this.p_Dark6 = new System.Windows.Forms.Panel();
-			this.p_Button4 = new System.Windows.Forms.Panel();
-			this.p_Light2 = new System.Windows.Forms.Panel();
-			this.l_Button4 = new System.Windows.Forms.Label();
-			this.p_Dark5 = new System.Windows.Forms.Panel();
-			this.p_Button3 = new System.Windows.Forms.Panel();
-			this.p_Light1 = new System.Windows.Forms.Panel();
-			this.l_Button3 = new System.Windows.Forms.Label();
-			this.p_Dark4 = new System.Windows.Forms.Panel();
-			this.p_Button2 = new System.Windows.Forms.Panel();
-			this.p_Light10 = new System.Windows.Forms.Panel();
-			this.l_Button2 = new System.Windows.Forms.Label();
-			this.p_Dark2 = new System.Windows.Forms.Panel();
-			this.p_Button1 = new System.Windows.Forms.Panel();
-			this.l_Button1 = new System.Windows.Forms.Label();
-			this.p_UpperLine = new System.Windows.Forms.Panel();
 			this.timer_st = new System.Windows.Forms.Timer(this.components);
 			this.timer_eingabe = new System.Windows.Forms.Timer(this.components);
-			this.p_Buttons.SuspendLayout();
-			this.p_extra.SuspendLayout();
-			this.p_Button0.SuspendLayout();
-			this.p_Button9.SuspendLayout();
-			this.p_Button8.SuspendLayout();
-			this.p_Button7.SuspendLayout();
-			this.p_Button6.SuspendLayout();
-			this.p_Button5.SuspendLayout();
-			this.p_Button4.SuspendLayout();
-			this.p_Button3.SuspendLayout();
-			this.p_Button2.SuspendLayout();
-			this.p_Button1.SuspendLayout();
-			this.SuspendLayout();
+			this.timer_verbrauch = new System.Windows.Forms.Timer(this.components);
 			// 
 			// timer1
 			// 
 			this.timer1.Interval = 1;
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-			// 
-			// p_Buttons
-			// 
-			this.p_Buttons.BackColor = System.Drawing.SystemColors.Control;
-			this.p_Buttons.Controls.Add(this.p_extra);
-			this.p_Buttons.Controls.Add(this.p_Button0);
-			this.p_Buttons.Controls.Add(this.p_Dark3);
-			this.p_Buttons.Controls.Add(this.p_Button9);
-			this.p_Buttons.Controls.Add(this.p_Dark7);
-			this.p_Buttons.Controls.Add(this.p_Button8);
-			this.p_Buttons.Controls.Add(this.p_Dark1);
-			this.p_Buttons.Controls.Add(this.p_Button7);
-			this.p_Buttons.Controls.Add(this.p_Dark9);
-			this.p_Buttons.Controls.Add(this.p_Button6);
-			this.p_Buttons.Controls.Add(this.p_Dark8);
-			this.p_Buttons.Controls.Add(this.p_Button5);
-			this.p_Buttons.Controls.Add(this.p_Dark6);
-			this.p_Buttons.Controls.Add(this.p_Button4);
-			this.p_Buttons.Controls.Add(this.p_Dark5);
-			this.p_Buttons.Controls.Add(this.p_Button3);
-			this.p_Buttons.Controls.Add(this.p_Dark4);
-			this.p_Buttons.Controls.Add(this.p_Button2);
-			this.p_Buttons.Controls.Add(this.p_Dark2);
-			this.p_Buttons.Controls.Add(this.p_Button1);
-			this.p_Buttons.Location = new System.Drawing.Point(0, 395);
-			this.p_Buttons.Name = "p_Buttons";
-			this.p_Buttons.Size = new System.Drawing.Size(632, 64);
-			this.p_Buttons.TabIndex = 0;
-			// 
-			// p_extra
-			// 
-			this.p_extra.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_extra.Controls.Add(this.p_Light8);
-			this.p_extra.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_extra.Location = new System.Drawing.Point(626, 0);
-			this.p_extra.Name = "p_extra";
-			this.p_extra.Size = new System.Drawing.Size(3, 64);
-			this.p_extra.TabIndex = 19;
-			// 
-			// p_Light8
-			// 
-			this.p_Light8.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light8.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light8.Location = new System.Drawing.Point(0, 0);
-			this.p_Light8.Name = "p_Light8";
-			this.p_Light8.Size = new System.Drawing.Size(2, 64);
-			this.p_Light8.TabIndex = 5;
-			// 
-			// p_Button0
-			// 
-			this.p_Button0.BackColor = System.Drawing.Color.LightGray;
-			this.p_Button0.Controls.Add(this.p_Light9);
-			this.p_Button0.Controls.Add(this.l_Button0);
-			this.p_Button0.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Button0.Location = new System.Drawing.Point(566, 0);
-			this.p_Button0.Name = "p_Button0";
-			this.p_Button0.Size = new System.Drawing.Size(60, 64);
-			this.p_Button0.TabIndex = 18;
-			this.p_Button0.Click += new System.EventHandler(this.Button_0_Pressed);
-			// 
-			// p_Light9
-			// 
-			this.p_Light9.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light9.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light9.Location = new System.Drawing.Point(0, 0);
-			this.p_Light9.Name = "p_Light9";
-			this.p_Light9.Size = new System.Drawing.Size(2, 64);
-			this.p_Light9.TabIndex = 5;
-			// 
-			// l_Button0
-			// 
-			this.l_Button0.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button0.Location = new System.Drawing.Point(6, 8);
-			this.l_Button0.Name = "l_Button0";
-			this.l_Button0.Size = new System.Drawing.Size(48, 48);
-			this.l_Button0.TabIndex = 3;
-			this.l_Button0.Text = "Button Null";
-			this.l_Button0.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.l_Button0.Click += new System.EventHandler(this.Button_0_Pressed);
-			// 
-			// p_Dark3
-			// 
-			this.p_Dark3.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.p_Dark3.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Dark3.Location = new System.Drawing.Point(565, 0);
-			this.p_Dark3.Name = "p_Dark3";
-			this.p_Dark3.Size = new System.Drawing.Size(1, 64);
-			this.p_Dark3.TabIndex = 17;
-			// 
-			// p_Button9
-			// 
-			this.p_Button9.BackColor = System.Drawing.Color.LightGray;
-			this.p_Button9.Controls.Add(this.p_Light7);
-			this.p_Button9.Controls.Add(this.l_Button9);
-			this.p_Button9.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Button9.Location = new System.Drawing.Point(503, 0);
-			this.p_Button9.Name = "p_Button9";
-			this.p_Button9.Size = new System.Drawing.Size(62, 64);
-			this.p_Button9.TabIndex = 16;
-			// 
-			// p_Light7
-			// 
-			this.p_Light7.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light7.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light7.Location = new System.Drawing.Point(0, 0);
-			this.p_Light7.Name = "p_Light7";
-			this.p_Light7.Size = new System.Drawing.Size(2, 64);
-			this.p_Light7.TabIndex = 5;
-			// 
-			// l_Button9
-			// 
-			this.l_Button9.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button9.Location = new System.Drawing.Point(6, 8);
-			this.l_Button9.Name = "l_Button9";
-			this.l_Button9.Size = new System.Drawing.Size(48, 48);
-			this.l_Button9.TabIndex = 3;
-			this.l_Button9.Text = "Button Neun";
-			this.l_Button9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// p_Dark7
-			// 
-			this.p_Dark7.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.p_Dark7.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Dark7.Location = new System.Drawing.Point(502, 0);
-			this.p_Dark7.Name = "p_Dark7";
-			this.p_Dark7.Size = new System.Drawing.Size(1, 64);
-			this.p_Dark7.TabIndex = 15;
-			// 
-			// p_Button8
-			// 
-			this.p_Button8.BackColor = System.Drawing.Color.LightGray;
-			this.p_Button8.Controls.Add(this.p_Light6);
-			this.p_Button8.Controls.Add(this.l_Button8);
-			this.p_Button8.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Button8.Location = new System.Drawing.Point(440, 0);
-			this.p_Button8.Name = "p_Button8";
-			this.p_Button8.Size = new System.Drawing.Size(62, 64);
-			this.p_Button8.TabIndex = 14;
-			// 
-			// p_Light6
-			// 
-			this.p_Light6.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light6.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light6.Location = new System.Drawing.Point(0, 0);
-			this.p_Light6.Name = "p_Light6";
-			this.p_Light6.Size = new System.Drawing.Size(2, 64);
-			this.p_Light6.TabIndex = 5;
-			// 
-			// l_Button8
-			// 
-			this.l_Button8.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button8.Location = new System.Drawing.Point(6, 8);
-			this.l_Button8.Name = "l_Button8";
-			this.l_Button8.Size = new System.Drawing.Size(48, 48);
-			this.l_Button8.TabIndex = 3;
-			this.l_Button8.Text = "Button Acht";
-			this.l_Button8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// p_Dark1
-			// 
-			this.p_Dark1.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.p_Dark1.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Dark1.Location = new System.Drawing.Point(439, 0);
-			this.p_Dark1.Name = "p_Dark1";
-			this.p_Dark1.Size = new System.Drawing.Size(1, 64);
-			this.p_Dark1.TabIndex = 13;
-			// 
-			// p_Button7
-			// 
-			this.p_Button7.BackColor = System.Drawing.Color.LightGray;
-			this.p_Button7.Controls.Add(this.p_Light5);
-			this.p_Button7.Controls.Add(this.l_Button7);
-			this.p_Button7.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Button7.Location = new System.Drawing.Point(377, 0);
-			this.p_Button7.Name = "p_Button7";
-			this.p_Button7.Size = new System.Drawing.Size(62, 64);
-			this.p_Button7.TabIndex = 12;
-			// 
-			// p_Light5
-			// 
-			this.p_Light5.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light5.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light5.Location = new System.Drawing.Point(0, 0);
-			this.p_Light5.Name = "p_Light5";
-			this.p_Light5.Size = new System.Drawing.Size(2, 64);
-			this.p_Light5.TabIndex = 5;
-			// 
-			// l_Button7
-			// 
-			this.l_Button7.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button7.Location = new System.Drawing.Point(6, 8);
-			this.l_Button7.Name = "l_Button7";
-			this.l_Button7.Size = new System.Drawing.Size(48, 48);
-			this.l_Button7.TabIndex = 3;
-			this.l_Button7.Text = "Button Sieben";
-			this.l_Button7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// p_Dark9
-			// 
-			this.p_Dark9.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.p_Dark9.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Dark9.Location = new System.Drawing.Point(376, 0);
-			this.p_Dark9.Name = "p_Dark9";
-			this.p_Dark9.Size = new System.Drawing.Size(1, 64);
-			this.p_Dark9.TabIndex = 11;
-			// 
-			// p_Button6
-			// 
-			this.p_Button6.BackColor = System.Drawing.Color.LightGray;
-			this.p_Button6.Controls.Add(this.p_Light4);
-			this.p_Button6.Controls.Add(this.l_Button6);
-			this.p_Button6.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Button6.Location = new System.Drawing.Point(314, 0);
-			this.p_Button6.Name = "p_Button6";
-			this.p_Button6.Size = new System.Drawing.Size(62, 64);
-			this.p_Button6.TabIndex = 10;
-			this.p_Button6.Click += new System.EventHandler(this.Button_6_Pressed);
-			// 
-			// p_Light4
-			// 
-			this.p_Light4.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light4.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light4.Location = new System.Drawing.Point(0, 0);
-			this.p_Light4.Name = "p_Light4";
-			this.p_Light4.Size = new System.Drawing.Size(2, 64);
-			this.p_Light4.TabIndex = 5;
-			// 
-			// l_Button6
-			// 
-			this.l_Button6.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button6.Location = new System.Drawing.Point(8, 8);
-			this.l_Button6.Name = "l_Button6";
-			this.l_Button6.Size = new System.Drawing.Size(50, 48);
-			this.l_Button6.TabIndex = 3;
-			this.l_Button6.Text = "Button Sechs";
-			this.l_Button6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.l_Button6.Click += new System.EventHandler(this.Button_6_Pressed);
-			// 
-			// p_Dark8
-			// 
-			this.p_Dark8.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.p_Dark8.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Dark8.Location = new System.Drawing.Point(313, 0);
-			this.p_Dark8.Name = "p_Dark8";
-			this.p_Dark8.Size = new System.Drawing.Size(1, 64);
-			this.p_Dark8.TabIndex = 9;
-			// 
-			// p_Button5
-			// 
-			this.p_Button5.BackColor = System.Drawing.Color.LightGray;
-			this.p_Button5.Controls.Add(this.p_Light3);
-			this.p_Button5.Controls.Add(this.l_Button5);
-			this.p_Button5.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Button5.Location = new System.Drawing.Point(251, 0);
-			this.p_Button5.Name = "p_Button5";
-			this.p_Button5.Size = new System.Drawing.Size(62, 64);
-			this.p_Button5.TabIndex = 8;
-			// 
-			// p_Light3
-			// 
-			this.p_Light3.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light3.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light3.Location = new System.Drawing.Point(0, 0);
-			this.p_Light3.Name = "p_Light3";
-			this.p_Light3.Size = new System.Drawing.Size(2, 64);
-			this.p_Light3.TabIndex = 5;
-			// 
-			// l_Button5
-			// 
-			this.l_Button5.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button5.Location = new System.Drawing.Point(6, 8);
-			this.l_Button5.Name = "l_Button5";
-			this.l_Button5.Size = new System.Drawing.Size(48, 48);
-			this.l_Button5.TabIndex = 3;
-			this.l_Button5.Text = "Button Fünf";
-			this.l_Button5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// p_Dark6
-			// 
-			this.p_Dark6.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.p_Dark6.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Dark6.Location = new System.Drawing.Point(250, 0);
-			this.p_Dark6.Name = "p_Dark6";
-			this.p_Dark6.Size = new System.Drawing.Size(1, 64);
-			this.p_Dark6.TabIndex = 7;
-			// 
-			// p_Button4
-			// 
-			this.p_Button4.BackColor = System.Drawing.Color.LightGray;
-			this.p_Button4.Controls.Add(this.p_Light2);
-			this.p_Button4.Controls.Add(this.l_Button4);
-			this.p_Button4.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Button4.Location = new System.Drawing.Point(188, 0);
-			this.p_Button4.Name = "p_Button4";
-			this.p_Button4.Size = new System.Drawing.Size(62, 64);
-			this.p_Button4.TabIndex = 6;
-			// 
-			// p_Light2
-			// 
-			this.p_Light2.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light2.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light2.Location = new System.Drawing.Point(0, 0);
-			this.p_Light2.Name = "p_Light2";
-			this.p_Light2.Size = new System.Drawing.Size(2, 64);
-			this.p_Light2.TabIndex = 5;
-			// 
-			// l_Button4
-			// 
-			this.l_Button4.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button4.Location = new System.Drawing.Point(6, 8);
-			this.l_Button4.Name = "l_Button4";
-			this.l_Button4.Size = new System.Drawing.Size(48, 48);
-			this.l_Button4.TabIndex = 3;
-			this.l_Button4.Text = "Button Vier";
-			this.l_Button4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// p_Dark5
-			// 
-			this.p_Dark5.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.p_Dark5.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Dark5.Location = new System.Drawing.Point(187, 0);
-			this.p_Dark5.Name = "p_Dark5";
-			this.p_Dark5.Size = new System.Drawing.Size(1, 64);
-			this.p_Dark5.TabIndex = 5;
-			// 
-			// p_Button3
-			// 
-			this.p_Button3.BackColor = System.Drawing.Color.LightGray;
-			this.p_Button3.Controls.Add(this.p_Light1);
-			this.p_Button3.Controls.Add(this.l_Button3);
-			this.p_Button3.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Button3.Location = new System.Drawing.Point(126, 0);
-			this.p_Button3.Name = "p_Button3";
-			this.p_Button3.Size = new System.Drawing.Size(61, 64);
-			this.p_Button3.TabIndex = 4;
-			// 
-			// p_Light1
-			// 
-			this.p_Light1.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light1.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light1.Location = new System.Drawing.Point(0, 0);
-			this.p_Light1.Name = "p_Light1";
-			this.p_Light1.Size = new System.Drawing.Size(2, 64);
-			this.p_Light1.TabIndex = 5;
-			// 
-			// l_Button3
-			// 
-			this.l_Button3.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button3.Location = new System.Drawing.Point(8, 8);
-			this.l_Button3.Name = "l_Button3";
-			this.l_Button3.Size = new System.Drawing.Size(48, 48);
-			this.l_Button3.TabIndex = 3;
-			this.l_Button3.Text = "Button Drei";
-			this.l_Button3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// p_Dark4
-			// 
-			this.p_Dark4.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.p_Dark4.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Dark4.Location = new System.Drawing.Point(125, 0);
-			this.p_Dark4.Name = "p_Dark4";
-			this.p_Dark4.Size = new System.Drawing.Size(1, 64);
-			this.p_Dark4.TabIndex = 3;
-			// 
-			// p_Button2
-			// 
-			this.p_Button2.BackColor = System.Drawing.Color.LightGray;
-			this.p_Button2.Controls.Add(this.p_Light10);
-			this.p_Button2.Controls.Add(this.l_Button2);
-			this.p_Button2.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Button2.Location = new System.Drawing.Point(63, 0);
-			this.p_Button2.Name = "p_Button2";
-			this.p_Button2.Size = new System.Drawing.Size(62, 64);
-			this.p_Button2.TabIndex = 2;
-			// 
-			// p_Light10
-			// 
-			this.p_Light10.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_Light10.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Light10.Location = new System.Drawing.Point(0, 0);
-			this.p_Light10.Name = "p_Light10";
-			this.p_Light10.Size = new System.Drawing.Size(2, 64);
-			this.p_Light10.TabIndex = 4;
-			// 
-			// l_Button2
-			// 
-			this.l_Button2.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button2.Location = new System.Drawing.Point(6, 8);
-			this.l_Button2.Name = "l_Button2";
-			this.l_Button2.Size = new System.Drawing.Size(48, 48);
-			this.l_Button2.TabIndex = 3;
-			this.l_Button2.Text = "Button Zwei";
-			this.l_Button2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// p_Dark2
-			// 
-			this.p_Dark2.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.p_Dark2.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Dark2.Location = new System.Drawing.Point(62, 0);
-			this.p_Dark2.Name = "p_Dark2";
-			this.p_Dark2.Size = new System.Drawing.Size(1, 64);
-			this.p_Dark2.TabIndex = 1;
-			// 
-			// p_Button1
-			// 
-			this.p_Button1.BackColor = System.Drawing.Color.LightGray;
-			this.p_Button1.Controls.Add(this.l_Button1);
-			this.p_Button1.Dock = System.Windows.Forms.DockStyle.Left;
-			this.p_Button1.Location = new System.Drawing.Point(0, 0);
-			this.p_Button1.Name = "p_Button1";
-			this.p_Button1.Size = new System.Drawing.Size(62, 64);
-			this.p_Button1.TabIndex = 0;
-			// 
-			// l_Button1
-			// 
-			this.l_Button1.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.l_Button1.Location = new System.Drawing.Point(6, 8);
-			this.l_Button1.Name = "l_Button1";
-			this.l_Button1.Size = new System.Drawing.Size(48, 48);
-			this.l_Button1.TabIndex = 3;
-			this.l_Button1.Text = "Button Eins";
-			this.l_Button1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// p_UpperLine
-			// 
-			this.p_UpperLine.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.p_UpperLine.Location = new System.Drawing.Point(0, 393);
-			this.p_UpperLine.Name = "p_UpperLine";
-			this.p_UpperLine.Size = new System.Drawing.Size(700, 2);
-			this.p_UpperLine.TabIndex = 1;
 			// 
 			// timer_st
 			// 
@@ -697,27 +213,18 @@ namespace MMI.DIAGNOSE
 			this.timer_eingabe.Interval = 1000;
 			this.timer_eingabe.Tick += new System.EventHandler(this.timer_eingabe_Tick);
 			// 
+			// timer_verbrauch
+			// 
+			this.timer_verbrauch.Enabled = true;
+			this.timer_verbrauch.Interval = 2000;
+			this.timer_verbrauch.Tick += new System.EventHandler(this.timer_verbrauch_Tick);
+			// 
 			// DIAGNOSEControl
 			// 
 			this.BackColor = System.Drawing.Color.LightGray;
-			this.Controls.Add(this.p_UpperLine);
-			this.Controls.Add(this.p_Buttons);
 			this.Name = "DIAGNOSEControl";
 			this.Size = new System.Drawing.Size(630, 460);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.BR185Control_Paint);
-			this.p_Buttons.ResumeLayout(false);
-			this.p_extra.ResumeLayout(false);
-			this.p_Button0.ResumeLayout(false);
-			this.p_Button9.ResumeLayout(false);
-			this.p_Button8.ResumeLayout(false);
-			this.p_Button7.ResumeLayout(false);
-			this.p_Button6.ResumeLayout(false);
-			this.p_Button5.ResumeLayout(false);
-			this.p_Button4.ResumeLayout(false);
-			this.p_Button3.ResumeLayout(false);
-			this.p_Button2.ResumeLayout(false);
-			this.p_Button1.ResumeLayout(false);
-			this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -825,6 +332,9 @@ namespace MMI.DIAGNOSE
 
 		public void Button_C_Pressed(object sender, System.EventArgs e)
 		{
+			CURRENT_DISPLAY retdisplay = CURRENT_DISPLAY.G;
+			if (localstate.type == TRAIN_TYPE.BR182) retdisplay = CURRENT_DISPLAY.Z_BR;
+
 			switch(localstate.DISPLAY)
 			{
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
@@ -833,10 +343,10 @@ namespace MMI.DIAGNOSE
 					localstate.TfnummerTemp = "";
 					localstate.marker_changed2 = false;
 					localstate.marker = 0;
-					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					localstate.DISPLAY = retdisplay;
 					break;
 				case CURRENT_DISPLAY.DSK:
-					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					localstate.DISPLAY = retdisplay;
 					break;
 			}
 			something_changed = true;
@@ -931,6 +441,10 @@ namespace MMI.DIAGNOSE
 			if (!Visible) return;
 			switch(localstate.DISPLAY)
 			{
+				case CURRENT_DISPLAY.Z_BR:
+					if (localstate.type == TRAIN_TYPE.BR182)
+						localstate.DISPLAY = CURRENT_DISPLAY.G;
+					break;
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
 					if (localstate.marker >= 0 && localstate.marker < 6)
 					{
@@ -964,6 +478,7 @@ namespace MMI.DIAGNOSE
 			switch(localstate.DISPLAY)
 			{
 				case CURRENT_DISPLAY.G:
+					if (localstate.type == TRAIN_TYPE.BR182) {/*nix*/}
 					if (IsBR101())
                         localstate.DISPLAY = CURRENT_DISPLAY.Zug_Tf_Nr;
 					else
@@ -1073,7 +588,9 @@ namespace MMI.DIAGNOSE
 					localstate.DISPLAY = CURRENT_DISPLAY.DSK;
 					break;
 				case CURRENT_DISPLAY.G:
-					localstate.DISPLAY = CURRENT_DISPLAY.Z_BR;
+					if (localstate.type == TRAIN_TYPE.BR182) {/*nix*/}
+					else
+						localstate.DISPLAY = CURRENT_DISPLAY.Z_BR;
 					break;
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
 					if (localstate.marker >= 0 && localstate.marker < 6)
@@ -1107,6 +624,10 @@ namespace MMI.DIAGNOSE
 			if (!Visible) return;
 			switch(localstate.DISPLAY)
 			{
+				case CURRENT_DISPLAY.Z_BR:
+					if (localstate.type == TRAIN_TYPE.BR182) 
+						localstate.DISPLAY = CURRENT_DISPLAY.Zugbesy;
+					break;
 				case CURRENT_DISPLAY.G:
 					break;
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
@@ -1171,22 +692,27 @@ namespace MMI.DIAGNOSE
 		public void Button_0_Pressed(object sender, System.EventArgs e)
 		{
 			if (!Visible) return;
+			CURRENT_DISPLAY retdisplay = CURRENT_DISPLAY.G;
+			if (localstate.type == TRAIN_TYPE.BR182 || localstate.type == TRAIN_TYPE.ER20) retdisplay = CURRENT_DISPLAY.Z_BR;
 			switch(localstate.DISPLAY)
 			{
 				case CURRENT_DISPLAY.Zugbesy:
-					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					localstate.DISPLAY = retdisplay;
 					break;
 				case CURRENT_DISPLAY.Z_BR:
-					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					localstate.DISPLAY = retdisplay;
 					break;
 				case CURRENT_DISPLAY.ST:
-					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					localstate.DISPLAY = retdisplay;
 					break;
 				case CURRENT_DISPLAY.V_EQUAL_0:
-					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					localstate.DISPLAY = retdisplay;
 					break;
 				case CURRENT_DISPLAY.V_GREATER_0:
-					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					localstate.DISPLAY = retdisplay;
+					break;
+				case CURRENT_DISPLAY.G:
+					if (localstate.type == TRAIN_TYPE.BR182) localstate.DISPLAY = retdisplay;
 					break;
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
 					if (localstate.marker >= 0 && localstate.marker < 6)
@@ -1218,6 +744,9 @@ namespace MMI.DIAGNOSE
 			Switcher s = new Switcher(ref localstate, m_conf.TopMost);
 			s.ShowDialog();
 			something_changed = true;
+
+			if (localstate.type == TRAIN_TYPE.ER20) localstate.DISPLAY = CURRENT_DISPLAY.Z_BR;
+
 			mmi_widget.SetTrainType(localstate.type.ToString());
 			mmi_widget.something_changed = true;
 			if (m_conf.FocusToZusi) Stuff.SetFocusToZusi();
@@ -1651,6 +1180,13 @@ namespace MMI.DIAGNOSE
 			//SetMaschinenTeil(true);
 		}
 		
+		public void SetDrehzahl(float valu)
+		{
+			localstate.Drehzahl = valu;
+			something_changed = true;
+			//SetMaschinenTeil(true);
+		}
+		
 		public void SetSpannung(float valu)
 		{
 			localstate.Spannung = valu;
@@ -1660,6 +1196,15 @@ namespace MMI.DIAGNOSE
 
 		public void SetUhrDatum(DateTime valu)
 		{
+			if (localstate.Spannung > 0f && localstate.Oberstrom > 0f)
+			{
+				double millisecs = Math.Abs(valu.Ticks - vtime.Ticks) / 10000000d;
+				if (millisecs > 0d)
+					SetVerbrauch( millisecs );
+			}
+
+			vtime = valu;
+
 			TimeSpan span = new TimeSpan(DateTime.Now.Ticks - lastTime.Ticks);
 
 			if (span.TotalMilliseconds < 100)
@@ -1667,8 +1212,7 @@ namespace MMI.DIAGNOSE
 				lastTime = DateTime.Now;
 				return;
 			}
-
-			vtime = valu;
+			
 			lastTime = DateTime.Now;
 			if (localstate.SHOW_CLOCK) something_changed = true;
 		}
@@ -1700,6 +1244,11 @@ namespace MMI.DIAGNOSE
 			localstate.E_Bremse = valu;
 			something_changed = true;
 		}
+		public void SetCDruck(float valu)
+		{
+			localstate.C_Druck = valu;
+			something_changed = true;
+		}
 		#endregion
 		public void DrawZugkraft(ref Graphics pg)
 		{
@@ -1726,88 +1275,123 @@ namespace MMI.DIAGNOSE
 				pg.DrawString(s, f, new SolidBrush(BLACK), 580, 293);
 		}
 
+		public void DrawAnalogUhr(ref Graphics pg)
+		{
+			// Uhr analog
+			// Rahmen
+			DrawFrame(ref pg, 468, 30, 160, 160);
+
+			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			Pen p = new Pen(new SolidBrush(BLACK), 1);
+			Pen p2 = new Pen(new SolidBrush(BLACK), 3);
+			Pen p3 = new Pen(new SolidBrush(BLACK), 4);
+
+			for (int i = 0; i < 60; i++)
+			{
+				if (Math.IEEERemainder(i, 5) == 0)
+				{
+					if (Math.IEEERemainder(i, 15) == 0)
+						pg.DrawLine(p2, (Point)uhrInnengrList[6*i], (Point)uhrAußenList[6*i]);
+					else 
+						pg.DrawLine(p, (Point)uhrInnengrList[6*i], (Point)uhrAußenList[6*i]);
+				}
+				else
+					pg.DrawLine(p, (Point)uhrInnenklList[6*i], (Point)uhrAußenList[6*i]);
+
+			}
+
+			// Std
+			int pos = vtime.Hour;
+			if (pos > 11) 
+				pos = ((pos-12) * 30) - 90;
+			else
+				pos = (pos * 30) - 90;
+
+
+			pos += Convert.ToInt32(vtime.Minute * 0.5);
+
+			if (pos < 0) pos += 360;
+			int pos2 = pos - 180; if (pos2 < 0) pos2 += 360;
+			pg.DrawLine(p3, (Point)uhrstdList[pos], center);
+			pg.DrawLine(p3, (Point)uhrrestList[pos2], center);
+
+			pos = (vtime.Minute * 6) - 90;
+			if (pos < 0) pos += 360;
+			pos2 = pos - 180; if (pos2 < 0) pos2 += 360;
+			pg.DrawLine(p2, (Point)uhrminList[pos], center);
+			pg.DrawLine(p2, (Point)uhrrestList[pos2], center);
+
+			pos = (vtime.Second * 6) - 90;
+			if (pos < 0) pos += 360;
+			pos2 = pos - 180; if (pos2 < 0) pos2 += 360;
+			pg.DrawLine(p, (Point)uhrsecList[pos], center);
+			pg.DrawLine(p, (Point)uhrrestList[pos2], center);
+		}
+		public void DrawDigitalUhr(ref Graphics pg)
+		{
+			// Uhr digital
+			// Rahmen
+			DrawFrameSunken(ref pg, 468, 1, 159, 111);
+			DrawFrameSunken(ref pg, 472, 5, 152, 50);
+			DrawFrameSunken(ref pg, 472, 54, 152, 55);
+			
+			Font f = new Font("Arial", 8, FontStyle.Regular, GraphicsUnit.Millimeter);
+			
+			string s = "";
+
+			s = vtime.ToShortTimeString() + ":";
+
+			if (vtime.Second < 10)
+				s += "0"+vtime.Second.ToString();
+			else
+				s += vtime.Second.ToString();
+
+			pg.DrawString(s, f, new SolidBrush(BLACK), 483, 65);
+		}
+		public void DrawSmallUhr(ref Graphics pg)
+		{
+			// Uhr oben rechts digital
+			DrawFrame(ref pg, 508, 1, 120, 38);
+
+			string s = "";
+
+			s = vtime.ToShortTimeString() + ":";
+
+			if (vtime.Second < 10)
+				s += "0"+vtime.Second.ToString();
+			else
+				s += vtime.Second.ToString();
+
+			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			pg.DrawString(s, f, new SolidBrush(BLACK), 538, 12);
+		}
 		public void DrawUhr(ref Graphics pg)
 		{
 			if (localstate.DISPLAY == CURRENT_DISPLAY.G || localstate.DISPLAY == CURRENT_DISPLAY.Zugbesy || localstate.DISPLAY == CURRENT_DISPLAY.Z_BR)
 			{
-				// Uhr analog
-				// Rahmen
-				DrawFrame(ref pg, 468, 30, 160, 160);
-
-				string s = localstate.ZugkraftGesammt.ToString() + " kN";
-
-				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
-
-				Pen p = new Pen(new SolidBrush(BLACK), 1);
-				Pen p2 = new Pen(new SolidBrush(BLACK), 3);
-				Pen p3 = new Pen(new SolidBrush(BLACK), 4);
-
-				for (int i = 0; i < 60; i++)
-				{
-					if (Math.IEEERemainder(i, 5) == 0)
-					{
-						if (Math.IEEERemainder(i, 15) == 0)
-							pg.DrawLine(p2, (Point)uhrInnengrList[6*i], (Point)uhrAußenList[6*i]);
-						else 
-							pg.DrawLine(p, (Point)uhrInnengrList[6*i], (Point)uhrAußenList[6*i]);
-					}
-					else
-						pg.DrawLine(p, (Point)uhrInnenklList[6*i], (Point)uhrAußenList[6*i]);
-
-				}
-
-				// Std
-				int pos = vtime.Hour;
-				if (pos > 11) 
-					pos = ((pos-12) * 30) - 90;
+				if (localstate.type == TRAIN_TYPE.BR182 || localstate.type == TRAIN_TYPE.ER20)
+                    DrawDigitalUhr(ref pg);
 				else
-					pos = (pos * 30) - 90;
-
-
-				pos += Convert.ToInt32(vtime.Minute * 0.5);
-
-				if (pos < 0) pos += 360;
-				int pos2 = pos - 180; if (pos2 < 0) pos2 += 360;
-				pg.DrawLine(p3, (Point)uhrstdList[pos], center);
-				pg.DrawLine(p3, (Point)uhrrestList[pos2], center);
-
-				pos = (vtime.Minute * 6) - 90;
-				if (pos < 0) pos += 360;
-				pos2 = pos - 180; if (pos2 < 0) pos2 += 360;
-				pg.DrawLine(p2, (Point)uhrminList[pos], center);
-				pg.DrawLine(p2, (Point)uhrrestList[pos2], center);
-
-				pos = (vtime.Second * 6) - 90;
-				if (pos < 0) pos += 360;
-				pos2 = pos - 180; if (pos2 < 0) pos2 += 360;
-				pg.DrawLine(p, (Point)uhrsecList[pos], center);
-				pg.DrawLine(p, (Point)uhrrestList[pos2], center);
+					DrawAnalogUhr(ref pg);
+					
 			}
 			else
 			{
-				// Uhr oben rechts digital
-				DrawFrame(ref pg, 508, 1, 120, 38);
-
-				string s = "";
-
-				s = vtime.ToShortTimeString() + ":";
-
-				if (vtime.Second < 10)
-					s += "0"+vtime.Second.ToString();
-				else
-					s += vtime.Second.ToString();
-
-				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
-
-				pg.DrawString(s, f, new SolidBrush(BLACK), 538, 12);
+				DrawSmallUhr(ref pg);
 			}
 
 		}
 
 		public void DrawSpannung(ref Graphics pg)
 		{
-			if (IsBombardier() || IsADtranz()) DrawSpannungBombardier(ref pg);
-			else DrawSpannungSiemens(ref pg);
+			if (IsBombardier() || IsADtranz()) 
+				DrawSpannungBombardier(ref pg);
+			else if (localstate.type == TRAIN_TYPE.BR182)
+				DrawSpannungTaurus(ref pg);
+			else if (localstate.type != TRAIN_TYPE.ER20)
+				DrawSpannungSiemens(ref pg);
 		}
 		public void DrawSpannungSiemens(ref Graphics pg)
 		{
@@ -1886,6 +1470,87 @@ namespace MMI.DIAGNOSE
 				else
 				{
 					pg.DrawString("HS an", f, new SolidBrush(Color.WhiteSmoke), 59+i*60+allone, 283);
+				}
+			}
+		}
+		public void DrawSpannungTaurus(ref Graphics pg)
+		{
+			float height = (localstate.Spannung-10) * 23f;
+
+			if (height < 0) height = 0;
+			else if (height > 220) height = 220;
+
+			int allone = 30;
+			int y = -35;
+
+			if (localstate.traction > 1) allone = 0;
+
+			for(int i = 1; i <= localstate.traction; i++)
+			{
+				pg.FillRectangle(new SolidBrush(MMI_BLUE), i*60+allone, 50+220-height+y, 40, height);
+				// großer Rahmen
+				DrawFrameSunken(ref pg, i*60+allone, 50+y, 40, 220);
+				if (!localstate.LM_HS)
+					pg.FillRectangle(new SolidBrush(MMI_BLUE), i*60+allone, 280+y, 40, 20);
+				// HS Rahmen
+				DrawFrameSunken(ref pg, i*60+allone, 280+y, 40, 20);
+			}
+
+			//Beschriftung
+			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			for(int i = 0; i < 11; i++)
+			{
+				pg.SmoothingMode = SmoothingMode.None;
+				if (Math.IEEERemainder(i+10, 5) == 0)
+				{
+					pg.DrawLine(new Pen(BLACK),48+allone, 269-i*21.75f+y, 59+allone, 269-i*21.75f+y);
+					pg.DrawString((i+10).ToString(), f, new SolidBrush(BLACK), 25+allone, 260-i*21.6f+y);
+				}
+				else
+					pg.DrawLine(new Pen(BLACK),54+allone, 269-i*21.75f+y, 59+allone, 269-i*21.75f+y);
+				pg.SmoothingMode = SMOOTHING_MODE;	
+			}
+			pg.DrawString("kV", f, new SolidBrush(BLACK), 23+allone, 80+y);
+			pg.DrawLine(new Pen(BLACK),48+allone, 289+y, 59+allone, 289+y);
+			pg.DrawString("0", f, new SolidBrush(BLACK), 33+allone, 280+y);
+
+			Pen p = new Pen(BLACK);
+			p.DashStyle = DashStyle.Dash;
+
+			if (localstate.traction > 1)
+			{
+
+				for(int i = 0; i < localstate.traction; i++)
+				{
+					pg.DrawLine(p,60+allone+i*60, 160+y, 99+allone+i*60, 160+y);
+					pg.DrawString("Lok"+(i+1).ToString(), f, new SolidBrush(BLACK), 60+i*60, 310+y);
+				}
+				DrawFrameSunken(ref pg, 15, 2, 120+(localstate.traction-1)*60, 335+y);
+			}
+			else
+			{
+				pg.DrawLine(p,60+allone, 160+y, 99+allone, 160+y);
+				// TODO
+				DrawFrameRaised(ref pg, 60, 305+y, 78, 25);
+
+				pg.DrawString("Spannung", f, new SolidBrush(BLACK), 60, 309+y);
+
+				DrawFrameSunken(ref pg, 40, 2, 120, 335+y);
+			}
+
+			f = new Font("Arial", 3.5f, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			for(int i = 0; i < localstate.traction; i++)
+			{
+				if (localstate.LM_HS)
+				{
+					f = new Font("Arial", 3.0f, FontStyle.Bold, GraphicsUnit.Millimeter);
+					pg.DrawString("HS aus", f, new SolidBrush(BLACK), 60+i*60+allone, 283+y);
+				}
+				else
+				{
+					pg.DrawString("HS an", f, new SolidBrush(Color.WhiteSmoke), 59+i*60+allone, 283+y);
 				}
 			}
 		}
@@ -1976,6 +1641,10 @@ namespace MMI.DIAGNOSE
 		{
 			if (IsBombardier()  || IsADtranz())
 				DrawOberstromBombardier(ref pg);
+			else if (localstate.type == TRAIN_TYPE.BR182)
+				DrawOberstromTaurus(ref pg);
+			else if (localstate.type == TRAIN_TYPE.ER20)
+				DrawTankinhaltEurorunner(ref pg);
 			else
 				DrawOberstromSiemens(ref pg);
 		}
@@ -2061,6 +1730,154 @@ namespace MMI.DIAGNOSE
 				pg.DrawString("  A", f, new SolidBrush(BLACK), 353, 62);
 			}
 		}
+		public void DrawOberstromTaurus(ref Graphics pg)
+		{
+			if (localstate.traction == 1)
+			{
+				if (localstate.DISPLAY == CURRENT_DISPLAY.Z_BR) return;
+				float height = (localstate.Oberstrom) / 2.4f;
+
+				if (height < 0) height = 0;
+				else if (height > 250) height = 250;
+
+				int y = -35;
+
+				pg.FillRectangle(new SolidBrush(MMI_BLUE), 240, 50+250-height+y, 40, height);
+				// großer Rahmen
+				DrawFrameSunken(ref pg, 240, 50+y, 40, 250);
+
+				//Beschriftung
+				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			
+				DrawFrameSunken(ref pg, 185, 2, 125, 335+y);
+	
+				DrawFrameRaised(ref pg, 208, 305+y, 82, 25);
+
+				for(int i = 0; i < 13; i++)
+				{
+					pg.SmoothingMode = SmoothingMode.None;
+					if (Math.IEEERemainder(i, 2) == 0 || i == 0)
+					{
+						pg.DrawLine(new Pen(BLACK),150+48+30, 299-i*20.82f+y, 150+59+30, 299-i*20.82f+y);
+						if (i == 0)
+							pg.DrawString((i*50).ToString(), f, new SolidBrush(BLACK), 150+35+30, 290-i*20.82f+y);
+						else
+							pg.DrawString((i*50).ToString(), f, new SolidBrush(BLACK), 150+18+30, 290-i*20.82f+y);
+					}
+					else
+						pg.DrawLine(new Pen(BLACK),150+54+30, 299-i*20.82f+y, 150+59+30, 299-i*20.82f+y);
+					pg.SmoothingMode = SMOOTHING_MODE;	
+				}
+
+				pg.DrawString("Oberstrom", f, new SolidBrush(BLACK), 208, 309+y);
+				pg.DrawString("  A", f, new SolidBrush(BLACK), 203, 62+y);
+			}
+			else
+			{
+				// Mehrfachtraktion
+				float height = (localstate.Oberstrom) / 4.528f * localstate.traction;
+
+				if (height < 0) height = 0;
+				else if (height > 265) height = 265;
+
+				int y = -35;
+
+				pg.FillRectangle(new SolidBrush(MMI_BLUE), 390, 50+250-height+y+15-7, 40, height);
+				// großer Rahmen
+				DrawFrameSunken(ref pg, 390, 50+y-7, 40, 265);
+
+				//Beschriftung
+				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			
+				DrawFrameSunken(ref pg, 330, 2, 130, 310-10);
+	
+				//DrawFrameRaised(ref pg, 358, 305, 82, 25);
+
+				for(int i = 0; i < 13; i++)
+				{
+					pg.SmoothingMode = SmoothingMode.None;
+					if ((Math.IEEERemainder(i, 2) == 0 || i == 0) && i != 12)
+					{
+						pg.DrawLine(new Pen(BLACK,2), 300+48+30, 299-i*22.08f+y+15-7, 300+59+30, 299-i*22.08f+y+15-7);
+						if (i == 0)
+							pg.DrawString((i*100).ToString(), f, new SolidBrush(BLACK), 300+35+30, 290-i*22.08f+y+15-7);
+						else if (i >= 10)
+							pg.DrawString((i*100).ToString(), f, new SolidBrush(BLACK), 300+10+30, 290-i*22.08f+y+15-7);
+						else
+							pg.DrawString((i*100).ToString(), f, new SolidBrush(BLACK), 300+18+30, 290-i*22.08f+y+15-7);
+					}
+					else if (i == 12)
+						pg.DrawLine(new Pen(BLACK,2),300+48+30, 299-i*22.08f+y+15-7, 300+59+30, 299-i*22.08f+y+15-7);
+					else
+						pg.DrawLine(new Pen(BLACK),300+54+30, 299-i*22.08f+y+15-7, 300+59+30, 299-i*22.08f+y+15-7);
+
+					pg.SmoothingMode = SMOOTHING_MODE;	
+				}
+
+				if (localstate.Oberstrom > 0)
+				{
+					pg.FillRectangle(new SolidBrush(MMI_BLUE), 336, 309+y+15-8, 120, 18);
+					pg.DrawString("Gesammtstrom", f, new SolidBrush(Color.WhiteSmoke), 340, 309+y+15-8);
+				}
+				else
+                    pg.DrawString("Gesammtstrom", f, new SolidBrush(BLACK), 340, 309+y+15-8);
+
+				DrawFrameRaised(ref pg, 336, 309+y+15-8, 120, 18);
+
+				pg.DrawString("  A", f, new SolidBrush(BLACK), 353, 62+y-7);
+			}
+		}
+		public void DrawTankinhaltEurorunner(ref Graphics pg)
+		{
+			// Mehrfachtraktion
+			float height = 250;
+
+			int y = -35;
+
+			pg.FillRectangle(new SolidBrush(MMI_BLUE), 390, 50+250-height+y+15-7, 40, height);
+			// großer Rahmen
+			DrawFrameSunken(ref pg, 390, 50+y-7, 40, 265);
+
+			//Beschriftung
+			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+		
+			DrawFrameSunken(ref pg, 330, 2, 130, 310-10);
+
+			//DrawFrameRaised(ref pg, 358, 305, 82, 25);
+
+			float factor = 25.76f/2f;
+
+			for(int i = 0; i < 21; i++)
+			{
+				pg.SmoothingMode = SmoothingMode.None;
+				if ((Math.IEEERemainder(i, 4) == 0 || i == 0))
+				{
+					pg.DrawLine(new Pen(BLACK,2), 300+48+30, 299-i*factor+y+15-7, 300+59+30, 299-i*factor+y+15-7);
+					if (i == 0)
+						pg.DrawString((i*5).ToString(), f, new SolidBrush(BLACK), 300+35+30, 290-i*factor+y+15-7);
+					else if (i < 20)
+						pg.DrawString((i*5).ToString(), f, new SolidBrush(BLACK), 300+27+30, 290-i*factor+y+15-7);
+					else
+						pg.DrawString((i*5).ToString(), f, new SolidBrush(BLACK), 300+18+30, 290-i*factor+y+15-7);
+				}
+				else if (Math.IEEERemainder(i, 2) == 0)
+					pg.DrawLine(new Pen(BLACK,2), 300+48+30, 299-i*factor+y+15-7, 300+59+30, 299-i*factor+y+15-7);
+				else
+					pg.DrawLine(new Pen(BLACK),300+54+30, 299-i*factor+y+15-7, 300+59+30, 299-i*factor+y+15-7);
+
+				pg.SmoothingMode = SMOOTHING_MODE;	
+			}
+
+			pg.DrawString("  Tankfüllung", f, new SolidBrush(BLACK), 343, 309+y+15-8);
+
+			DrawFrameRaised(ref pg, 336, 309+y+15-8, 120, 18);
+
+			pg.DrawString(" %", f, new SolidBrush(BLACK), 353, 72+y-7);
+
+			Pen p = new Pen(BLACK); p.DashStyle = DashStyle.Dash;
+			pg.DrawLine(p, 300+59+31, 221, 300+59+31+40, 221);
+		}
+
 		public void DrawOberstromBombardier(ref Graphics pg)
 		{
 			if (localstate.traction == 1)
@@ -2145,6 +1962,7 @@ namespace MMI.DIAGNOSE
 			}
 
 			string s = "";
+			int y, x;
 			Pen p_dg_3 = new Pen(new SolidBrush(DARK), 2);
 			Pen p_dg_1 = new Pen(new SolidBrush(DARK), 1);
 			Pen p_ws_3 = new Pen(new SolidBrush(BRIGHT), 2);
@@ -2155,31 +1973,69 @@ namespace MMI.DIAGNOSE
 			Color StTextColor = BLACK;
 			if (inverse_display) StTextColor = MMI_BLUE;
 
-			if (localstate.störungmgr.Current.Type != ENUMStörung.NONE)
+			if (localstate.type == TRAIN_TYPE.BR182 || localstate.type == TRAIN_TYPE.ER20)
 			{
-				if (STÖRUNG_BG == Color.Gold)
+				y = 20-50;
+				x = -435;
+				if (localstate.störungmgr.Current.Type != ENUMStörung.NONE)
 				{
-					pg.FillRectangle(new SolidBrush(STÖRUNG_BG), 438, 338, 190, 50);
-				}
+					if (STÖRUNG_BG == Color.Gold)
+					{
+						pg.FillRectangle(new SolidBrush(STÖRUNG_BG), 438+x, 338+y, 312, 30);
+					}
+					DrawFrame(ref pg, 438+x, 338+y, 312, 30);
 				
-				Störung st = localstate.störungmgr.Current;
+					Störung st = localstate.störungmgr.Current;
 
-				s = "St. in "+st.Name;
-				pg.DrawString(s, f, new SolidBrush(StTextColor), 462, 352);
-				if (IsSiemens()) DrawStatusStörRahmen(ref pg, true, false);
-			}
-			else if (localstate.störungmgr.GetPassives().Count > 1 || INIT)
-			{
-				if (STÖRUNG_BG == Color.Gold)
+					s = "St in "+st.Name;
+					pg.DrawString(s, f, new SolidBrush(StTextColor), 455+x+61, 352+y-10);
+					if (IsSiemens() && localstate.type != TRAIN_TYPE.ER20) DrawStatusStörRahmen(ref pg, true, false);
+				}
+				else if (localstate.störungmgr.GetPassives().Count > 1 || INIT)
 				{
-					if (inverse_display)
-						pg.FillRectangle(new SolidBrush(MMI_ORANGE), 438, 338, 190, 50);
-					else
-						pg.FillRectangle(new SolidBrush(STÖRUNG_BG), 438, 338, 190, 50);
-				}				
-				s = "          St";
-				pg.DrawString(s, f, new SolidBrush(StTextColor), 462, 352);
-				if (IsSiemens()) DrawStatusStörRahmen(ref pg, true, false);
+					if (STÖRUNG_BG == Color.Gold)
+					{
+						if (inverse_display)
+							pg.FillRectangle(new SolidBrush(MMI_ORANGE), 438+x, 338+y, 312, 30);
+						else
+							pg.FillRectangle(new SolidBrush(STÖRUNG_BG), 438+x, 338+y, 312, 30);
+					}	
+					DrawFrame(ref pg, 438+x, 338+y, 312, 30);
+					s = "          St";
+					pg.DrawString(s, f, new SolidBrush(StTextColor), 462+x+61, 352+y-10);
+					if (IsSiemens() && localstate.type != TRAIN_TYPE.ER20) DrawStatusStörRahmen(ref pg, true, false);
+				}
+			}
+			else
+			{
+				y = 20;
+				x = 0;
+				if (localstate.störungmgr.Current.Type != ENUMStörung.NONE)
+				{
+					if (STÖRUNG_BG == Color.Gold)
+					{
+						pg.FillRectangle(new SolidBrush(STÖRUNG_BG), 438, 338+y, 190, 50);
+					}
+				
+					Störung st = localstate.störungmgr.Current;
+
+					s = "St in "+st.Name;
+					pg.DrawString(s, f, new SolidBrush(StTextColor), 455, 352+y);
+					if (IsSiemens()) DrawStatusStörRahmen(ref pg, true, false);
+				}
+				else if (localstate.störungmgr.GetPassives().Count > 1 || INIT)
+				{
+					if (STÖRUNG_BG == Color.Gold)
+					{
+						if (inverse_display)
+							pg.FillRectangle(new SolidBrush(MMI_ORANGE), 438, 338+y, 190, 50);
+						else
+							pg.FillRectangle(new SolidBrush(STÖRUNG_BG), 438, 338+y, 190, 50);
+					}				
+					s = "          St";
+					pg.DrawString(s, f, new SolidBrush(StTextColor), 462, 352+y);
+					if (IsSiemens()) DrawStatusStörRahmen(ref pg, true, false);
+				}
 			}
 				
 
@@ -2188,6 +2044,11 @@ namespace MMI.DIAGNOSE
 		}
 		public void DrawStatus(ref Graphics pg)
 		{
+			if (localstate.type == TRAIN_TYPE.BR182 || localstate.type == TRAIN_TYPE.ER20)
+				return;
+
+
+			int y = 20;
 			Pen p_dg_3 = new Pen(new SolidBrush(DARK), 2);
 			Pen p_dg_1 = new Pen(new SolidBrush(DARK), 1);
 			Pen p_ws_3 = new Pen(new SolidBrush(BRIGHT), 2);
@@ -2207,15 +2068,15 @@ namespace MMI.DIAGNOSE
 
 				if	(s.Substring(0,1) == "!" &&IsSiemens())
 				{
-					pg.FillRectangle(new SolidBrush(Color.Gold), 196, 338, 242, 50);
+					pg.FillRectangle(new SolidBrush(Color.Gold), 196, 338+y, 242, 50);
 					s = s.Substring(1, s.Length-1);
-					pg.DrawString(s, f, new SolidBrush(StöTextColor), 208, 352);
+					pg.DrawString(s, f, new SolidBrush(StöTextColor), 208, 352+y);
 				}
 				else
 				{
-					pg.FillRectangle(new SolidBrush(STATUS_BLUE), 196, 338, 242, 50);
+					pg.FillRectangle(new SolidBrush(STATUS_BLUE), 196, 338+y, 242, 50);
 					if (s.Substring(0,1) == "!") s = s.Substring(1, s.Length-1);
-					pg.DrawString(s, f, new SolidBrush(StaTextColor), 208, 352);
+					pg.DrawString(s, f, new SolidBrush(StaTextColor), 208, 352+y);
 				}
 				
 				
@@ -2227,29 +2088,30 @@ namespace MMI.DIAGNOSE
 		}
 		public void DrawStatusStörRahmen(ref Graphics pg, bool störung, bool status)
 		{
+			int y = 20;
 			//Stör
-			if (störung) DrawFrame(ref pg, 438, 338, 190, 50);
+			if (störung) DrawFrame(ref pg, 438, 338+y, 190, 50);
 
 			//Status
-			if (status) DrawFrame(ref pg, 196, 338, 242, 50);
+			if (status) DrawFrame(ref pg, 196, 338+y, 242, 50);
 
 			if (IsBombardier())
 			{	
 				//kleine Felder
-				DrawFrame(ref pg, 145, 338, 50, 50);
-				DrawFrame(ref pg, 94, 338, 50, 50);
+				DrawFrame(ref pg, 145, 338+y, 50, 50);
+				DrawFrame(ref pg, 94, 338+y, 50, 50);
 
 				// großer Rahmen
-				DrawFrame(ref pg, 1, 335, 629, 56);
+				DrawFrame(ref pg, 0, 335+y, 630, 56);
 			}
 			else if (IsADtranz())
 			{
 				//kleine Felder
-				DrawFrame(ref pg, 145, 338, 50, 50);
-				DrawFrame(ref pg, 4, 338, 140, 50);
+				DrawFrame(ref pg, 145, 338+y, 50, 50);
+				DrawFrame(ref pg, 4, 338+y, 140, 50);
 
 				// großer Rahmen
-				DrawFrame(ref pg, 1, 335, 629, 56);
+				DrawFrame(ref pg, 0, 335+y, 630, 56);
 			}
 
 		}
@@ -2262,12 +2124,23 @@ namespace MMI.DIAGNOSE
 				else
 					DrawZugkraftBalkenBombardierEinfach(ref pg);
 			}
+			else if (localstate.type == TRAIN_TYPE.BR182)
+			{
+				if (localstate.traction > 1)
+					DrawZugkraftBalkenTaurusMehrfach(ref pg);
+				else
+					DrawZugkraftBalkenTaurusEinfach(ref pg);
+			}
+			else if (localstate.type == TRAIN_TYPE.ER20)
+			{
+				DrawZugkraftBalkenEurorunnerMehrfach(ref pg);
+			}
 			else
 			{
 				if (localstate.traction > 1)
 					DrawZugkraftBalkenSiemensMehrfach(ref pg);
 				else
-                    DrawZugkraftBalkenSiemensEinfach(ref pg);
+					DrawZugkraftBalkenSiemensEinfach(ref pg);
 			}
 		}
 		public void DrawZugkraftBalkenBombardierEinfach(ref Graphics pg)
@@ -2301,12 +2174,20 @@ namespace MMI.DIAGNOSE
 			Brush b;
 			if (localstate.E_Bremse <= 0)
 			{           
-				zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * 4f));
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * 4f));
+				}
+				catch (Exception) {}
 				b = new SolidBrush(MMI_BLUE);
 			}
 			else
 			{
-				zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft));
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft));
+				}
+				catch (Exception) {}
 				b = new SolidBrush(MMI_ORANGE);
 			}
 			
@@ -2369,16 +2250,20 @@ namespace MMI.DIAGNOSE
 
 				//Pfeil
 				int iheight = 0;
-				if (localstate.E_Bremse <= 0)
+				try
 				{
-					iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 6.25f);
-					//b = new SolidBrush(MMI_BLUE);
+					if (localstate.E_Bremse <= 0)
+					{
+						iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 6.25f);
+						//b = new SolidBrush(MMI_BLUE);
+					}
+					else
+					{
+						iheight = Convert.ToInt32(localstate.E_Bremse * 39.0625f);
+						//b = new SolidBrush(MMI_ORANGE);
+					}
 				}
-				else
-				{
-					iheight = Convert.ToInt32(localstate.E_Bremse * 39.0625f);
-					//b = new SolidBrush(MMI_ORANGE);
-				}
+				catch (Exception) {}
 
 				Point[] p = {new Point(i*110-60,290-iheight), new Point(i*110-60-22,290-iheight+7), new Point(i*110-60-14,290-iheight), new Point(i*110-60-22,290-iheight-7)};
 				pg.FillPolygon(b, p);
@@ -2415,12 +2300,22 @@ namespace MMI.DIAGNOSE
 			Brush b;
 			if (localstate.Zugkraft >= 0)
 			{           
-				zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * 4f * localstate.traction));
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * 4f * localstate.traction));
+				}
+				catch (Exception) {}
+
 				b = new SolidBrush(MMI_BLUE);
 			}
 			else
 			{
-				zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * localstate.traction));
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * localstate.traction));
+				}
+				catch (Exception) {}
+
 				b = new SolidBrush(MMI_ORANGE);
 			}
 			
@@ -2487,12 +2382,22 @@ namespace MMI.DIAGNOSE
 				int iheight = 0;
 				if (localstate.E_Bremse <= 0)
 				{
-					iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 6.25f);
+					try
+					{
+						iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 6.25f);
+					}
+					catch (Exception) {}
+
 					b = new SolidBrush(MMI_BLUE);
 				}
 				else
 				{
-					iheight = Convert.ToInt32(localstate.E_Bremse * 39.0625f);
+					try
+					{
+						iheight = Convert.ToInt32(localstate.E_Bremse * 39.0625f);
+					}
+					catch (Exception) {}
+
 					b = new SolidBrush(MMI_ORANGE);
 				}
 
@@ -2512,7 +2417,7 @@ namespace MMI.DIAGNOSE
 				height = (localstate.Zugkraft) * 2.77778f;
 			}
 
-			if (height > 250) height = 250;
+			if (height > 250f) height = 250f;
 
 			//Beschriftung
 			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
@@ -2528,14 +2433,22 @@ namespace MMI.DIAGNOSE
 
 			int zk = 0; 
 			Brush b;
-			if (localstate.Zugkraft >= 0)
+			if (localstate.Zugkraft >= 0f)
 			{           
-				zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * 4f));
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * 4f));
+				}
+				catch (Exception) {}
 				b = new SolidBrush(MMI_BLUE);
 			}
 			else
 			{
-				zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft));
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft));
+				}
+				catch (Exception) {}
 				b = new SolidBrush(MMI_ORANGE);
 			}
 
@@ -2619,12 +2532,20 @@ namespace MMI.DIAGNOSE
 				int iheight = 0;
 				if (localstate.E_Bremse <= 0)
 				{
-					iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 5.208333f);
+					try
+					{
+						iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 5.208333f);
+					}
+					catch (Exception) {}
 					b = new SolidBrush(MMI_BLUE);
 				}
 				else
 				{
-					iheight = Convert.ToInt32(localstate.E_Bremse * 39.0625f);
+					try
+					{
+						iheight = Convert.ToInt32(localstate.E_Bremse * 39.0625f);
+					}
+					catch (Exception) {}
 					b = new SolidBrush(MMI_ORANGE);
 				}
 
@@ -2644,7 +2565,8 @@ namespace MMI.DIAGNOSE
 				pg.DrawLine(new Pen(Color.Black, 2), p2[0], p2[1]);
 
 				pg.DrawLine(Pens.WhiteSmoke, plus_w_1, plus_w_2);
-				pg.DrawLine(Pens.WhiteSmoke, plus_s_1, plus_s_2);
+				if (localstate.E_Bremse <= 0)
+					pg.DrawLine(Pens.WhiteSmoke, plus_s_1, plus_s_2);
 			}
 		}
 		public void DrawZugkraftBalkenSiemensMehrfach(ref Graphics pg)
@@ -2679,12 +2601,22 @@ namespace MMI.DIAGNOSE
 			Brush b;
 			if (localstate.Zugkraft >= 0)
 			{           
-				zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * 4f * localstate.traction));
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * 4f * localstate.traction));
+				}
+				catch (Exception) {}
+
 				b = new SolidBrush(MMI_BLUE);
 			}
 			else
 			{
-				zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * localstate.traction));
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * localstate.traction));
+				}
+				catch (Exception) {}
+
 				b = new SolidBrush(MMI_ORANGE);
 			}
 
@@ -2762,12 +2694,22 @@ namespace MMI.DIAGNOSE
 				int iheight = 0;
 				if (localstate.E_Bremse <= 0)
 				{
-					iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 6.6796875f);
+					try
+					{
+						iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 6.6796875f);
+					}
+					catch (Exception) {}
+
 					b = new SolidBrush(MMI_BLUE);
 				}
 				else
 				{
-					iheight = Convert.ToInt32(localstate.E_Bremse * 44.53125f);
+					try
+					{
+						iheight = Convert.ToInt32(localstate.E_Bremse * 44.53125f);
+					}
+					catch (Exception) {}
+
 					b = new SolidBrush(MMI_ORANGE);
 				}
 
@@ -2787,9 +2729,511 @@ namespace MMI.DIAGNOSE
 				pg.DrawLine(new Pen(Color.Black, 2), p2[0], p2[1]);
 
 				pg.DrawLine(Pens.WhiteSmoke, plus_w_1, plus_w_2);
-				pg.DrawLine(Pens.WhiteSmoke, plus_s_1, plus_s_2);
+				if (localstate.E_Bremse <= 0)
+					pg.DrawLine(Pens.WhiteSmoke, plus_s_1, plus_s_2);
 			}
 		}
+		public void DrawZugkraftBalkenTaurusEinfach(ref Graphics pg)
+		{
+			float height = 0f;
+			if (localstate.Zugkraft < 0)
+			{
+				height = (localstate.Zugkraft) * -1.5625f;
+			}
+			else
+			{
+				height = (localstate.Zugkraft) * 2.5f;
+			}
+
+			if (height > 250) height = 250;
+
+			Brush b;
+			Font f = new Font("Arial", 7, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			pg.DrawString("Zug-/", f, new SolidBrush(MMI_BLUE), 510, 220);
+			pg.DrawString("Brems-", f, new SolidBrush(Color.Gold), 500, 245);
+			pg.DrawString("Kraft", f, new SolidBrush(BLACK), 510, 270);
+
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			int y = -30;
+			for(int i = 1; i <= 4; i++)
+			{
+				if (localstate.Zugkraft > 0)
+					pg.FillRectangle(new SolidBrush(MMI_BLUE), i*110-60, 50+250-height+y, 40, height);
+				else
+					pg.FillRectangle(new SolidBrush(MMI_ORANGE), i*110-60, 50+250-height+y, 40, height);
+				                                                                        
+				DrawFrameSunken(ref pg, i*110-60, 50+y, 40, 250);
+				// Rand
+				DrawFrame(ref pg, i*110-105, 5, 105, 330+y);
+
+				// Skala pos
+				if (localstate.E_Bremse <= 0)
+					for(int k = 0; k < 21; k++)
+					{
+						pg.SmoothingMode = SmoothingMode.None;
+						if (Math.IEEERemainder(k, 2) == 0 || k == 0)
+						{
+							pg.DrawLine(new Pen(BLACK,2), i*110-60-12, 300-k*12.566f+y, i*110-60, 300-k*12.566f+y);
+							if (k==0)
+								pg.DrawString((k*5).ToString(), f, new SolidBrush(BLACK), i*110-60-24, 292-k*12.566f+y);
+							else if (k != 20)
+								pg.DrawString((k*5).ToString(), f, new SolidBrush(BLACK), i*110-60-32, 292-k*12.566f+y);
+						}
+						//else
+						pg.DrawLine(new Pen(BLACK), i*110-60-6, 300-k*12.566f+y, i*110-60, 300-k*12.566f+y);
+						pg.SmoothingMode = SMOOTHING_MODE;	
+					}
+				else
+					for(int k = 0; k < 17; k++)
+					{
+						pg.SmoothingMode = SmoothingMode.None;
+						if (Math.IEEERemainder(k, 2) == 0 || k == 0)
+						{
+							pg.DrawLine(new Pen(BLACK,2), i*110-60-12, 300-k*15.625f+y, i*110-60, 300-k*15.625f+y);
+							if (k < 3)
+								pg.DrawString((k*2.5f).ToString(), f, new SolidBrush(BLACK), i*110-60-24, 292-k*15.625f+y);
+							else if (k != 16)
+								pg.DrawString((k*2.5f).ToString(), f, new SolidBrush(BLACK), i*110-60-32, 292-k*15.625f+y);
+						}
+						//else
+						pg.DrawLine(new Pen(BLACK), i*110-60-6, 300-k*15.6251f+y, i*110-60, 300-k*15.625f+y);
+						pg.SmoothingMode = SMOOTHING_MODE;	
+					}
+
+
+				f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+				pg.DrawString("kN", f, new SolidBrush(BLACK), i*110-100-2, 8);
+				f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+				
+				if (height > 0)
+				{
+					if (localstate.Zugkraft >= 0)
+						pg.FillRectangle(new SolidBrush(MMI_BLUE), i*110-60-40, 308+y, 94, 22);
+					else
+						pg.FillRectangle(new SolidBrush(MMI_ORANGE), i*110-60-40, 308+y, 94, 22);
+					pg.DrawString("Fahrmotor "+i.ToString(), f, Brushes.WhiteSmoke, i*110-60-38, 310+y);
+				}
+				else
+				{
+					pg.DrawString("Fahrmotor "+i.ToString(), f, new SolidBrush(BLACK), i*110-60-38, 310+y);
+				}
+				DrawFrameRaised(ref g, i*110-60-40, 308+y, 94, 22);
+
+				//Pfeil
+				int iheight = 0;
+				if (localstate.E_Bremse <= 0)
+				{
+					try
+					{
+						if (localstate.IsOEBB)
+							iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 4.6875f /*5.208333f*/ * (40/30f) * (280f/300f));
+						else
+							iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 4.6875f /*5.208333f*/);
+					}
+					catch (Exception) {}
+
+					b = new SolidBrush(MMI_BLUE);
+				}
+				else
+				{
+					if (!(localstate.E_Bremse > 11 || localstate.E_Bremse < 0))
+					{
+						try
+						{
+							if (localstate.IsOEBB)
+								iheight = Convert.ToInt32(localstate.E_Bremse * 39.0625f * (6f/10f));
+							else
+								iheight = Convert.ToInt32(localstate.E_Bremse * 39.0625f);
+						}
+						catch (Exception) {}
+					}
+					b = new SolidBrush(MMI_ORANGE);
+				}
+
+				Point[] p = {new Point(i*110-40,300-iheight+y), new Point(i*110-10,300-iheight+6+y), new Point(i*110-10,300-iheight-7+y)};
+				Point[] p2 = {new Point(i*110-40-1,300-iheight+y), new Point(i*110-10+1,300-iheight+6+1+y), new Point(i*110-10+1,300-iheight-7-1+y)};
+
+				Point plus_w_1 = new Point(i*110-35+15,300-iheight+y); Point plus_w_2 = new Point(i*110-35+21,300-iheight+y); 
+				Point plus_s_1 = new Point(i*110-35+18,300-iheight-3+y); Point plus_s_2 = new Point(i*110-35+18,300-iheight+3+y);
+				
+				pg.FillPolygon(b, p);
+				pg.DrawLine(Pens.WhiteSmoke, p[0], p[2]);
+				pg.DrawLine(Pens.Gray, p[1], p[2]);
+				pg.DrawLine(Pens.Gray, p[0], p[1]);
+
+				pg.DrawLine(Pens.Black, p2[0], p2[2]);
+				pg.DrawLine(new Pen(Color.Black, 2), p2[1], p2[2]);
+				pg.DrawLine(new Pen(Color.Black, 2), p2[0], p2[1]);
+
+				pg.DrawLine(Pens.WhiteSmoke, plus_w_1, plus_w_2);
+				if (localstate.E_Bremse <= 0)
+					pg.DrawLine(Pens.WhiteSmoke, plus_s_1, plus_s_2);
+			}
+		}
+		public void DrawZugkraftBalkenTaurusMehrfach(ref Graphics pg)
+		{
+			float height = 0f;
+			if (localstate.Zugkraft < 0)
+			{
+				height = (localstate.Zugkraft) * -0.828125f*2f;
+			}
+			else
+			{
+				height = (localstate.Zugkraft * 4) * 0.75714f;
+			}
+
+			if (height > 285) height = 285;
+
+			//DrawFrame(ref pg, 1, 4, 320, 310);
+
+			const int y = -20;
+
+			//Beschriftung
+			Font f = new Font("Arial", 7, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			pg.DrawString("Zug-/", f, new SolidBrush(MMI_BLUE), 510, 220);
+			pg.DrawString("Brems-", f, new SolidBrush(Color.Gold), 500, 245);
+			pg.DrawString("Kraft", f, new SolidBrush(BLACK), 510, 270);
+
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			int zk = 0; 
+			Brush b;
+			if (localstate.Zugkraft >= 0)
+			{       
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * 4f * localstate.traction));
+				}
+				catch (Exception) {}
+
+				b = new SolidBrush(MMI_BLUE);
+			}
+			else
+			{
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * localstate.traction));
+				}
+				catch (Exception) {}
+
+				b = new SolidBrush(MMI_ORANGE);
+			}
+
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if ((localstate.type == TRAIN_TYPE.BR182 && localstate.Zugkraft < 0) || (localstate.type == TRAIN_TYPE.ER20 && localstate.FahrstufenSchalter < 6))
+                pg.DrawString("kN", f, new SolidBrush(BLACK), 14, 43-7);
+			else
+				pg.DrawString("kN", f, new SolidBrush(BLACK), 14, 25-7);
+
+			for(int i = 1; i <= localstate.traction; i++)
+			{
+				if (localstate.Zugkraft > 0)
+					pg.FillRectangle(new SolidBrush(MMI_BLUE), i*68-18, 15+285-height+y-7, 40, height);
+				else
+					pg.FillRectangle(new SolidBrush(MMI_ORANGE), i*68-18, 15+285-height+y-7, 40, height);
+				
+				DrawFrameSunken(ref pg, i*68-18, 15-7, 40, 285+y);
+
+				// Skala pos
+				if (localstate.E_Bremse <= 0)
+					for(int k = 0; k < 15; k++)
+					{
+						pg.SmoothingMode = SmoothingMode.None;
+						if (Math.IEEERemainder(k, 2) == 0 || k == 0)
+						{
+							pg.DrawLine(new Pen(BLACK,2), i*68-18-12, 300-k*18.90625f+y-7, i*68-18, 300-k*18.90625f+y-7);
+							if (i == 1)
+							{
+								if (k==0)
+									pg.DrawString((k*25).ToString(), f, new SolidBrush(BLACK), i*68-18-24, 292-k*18.90625f+y-7);
+								else if (k > 3)
+									pg.DrawString((k*25).ToString(), f, new SolidBrush(BLACK), i*68-18-40, 292-k*18.90625f+y-7);
+								else
+									pg.DrawString((k*25).ToString(), f, new SolidBrush(BLACK), i*68-18-32, 292-k*18.90625f+y-7);
+							}
+						}
+						//else
+						pg.DrawLine(new Pen(BLACK), i*68-18-6, 300-k*18.90625f+y-7, i*68-18, 300-k*18.90625f+y-7);
+						pg.SmoothingMode = SMOOTHING_MODE;	
+					}
+				else
+					for(int k = 0; k < 33; k++)
+					{
+						pg.SmoothingMode = SmoothingMode.None;
+						if (Math.IEEERemainder(k, 5) == 0 || k == 0)
+						{
+							pg.DrawLine(new Pen(BLACK,2), i*68-18-12, 300-k*8.28125f+y-7, i*68-18-6, 300-k*8.28125f+y-7);
+							if (i == 1)
+							{
+								if (k==0)
+									pg.DrawString((k*5).ToString(), f, new SolidBrush(BLACK), i*68-18-24, 292-k*8.28125f+y-7);
+								else if (k > 15)
+									pg.DrawString((k*5).ToString(), f, new SolidBrush(BLACK), i*68-18-40, 292-k*8.28125f+y-7);
+								else
+									pg.DrawString((k*5).ToString(), f, new SolidBrush(BLACK), i*68-18-32, 292-k*8.28125f+y-7);
+							}
+						}
+						//else
+						pg.DrawLine(new Pen(BLACK), i*68-18-6, 300-k*8.28125f+y-7, i*68-18, 300-k*8.28125f+y-7);
+						pg.SmoothingMode = SMOOTHING_MODE;	
+					}
+
+				if (localstate.Zugkraft > 0)
+					pg.FillRectangle(new SolidBrush(MMI_BLUE), i*68-20, 310+y-7, 48, 18);
+				else if (localstate.Zugkraft < 0)
+					pg.FillRectangle(new SolidBrush(MMI_ORANGE), i*68-20, 310+y-7, 48, 18);
+
+				if (localstate.Zugkraft == 0)
+                    pg.DrawString("Lok "+i.ToString(), f, new SolidBrush(BLACK), i*68-18, 310+y-7);
+				else
+					pg.DrawString("Lok "+i.ToString(), f, new SolidBrush(Color.WhiteSmoke), i*68-18, 310+y-7);
+
+				//Pfeil
+				int iheight = 0;
+				if (localstate.E_Bremse <= 0)
+				{
+					try
+					{
+						if (localstate.IsOEBB)
+                            iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 5.67857f * (40/30f) * (280f/300f));
+						else
+							iheight = Convert.ToInt32(localstate.FahrstufenSchalter * 5.67857f);
+
+						b = new SolidBrush(MMI_BLUE);
+					}
+					catch (Exception) {}
+				}
+				else
+				{
+					try
+					{
+						if (localstate.IsOEBB)
+                            iheight = Convert.ToInt32(localstate.E_Bremse * 27.62f * 1.5f * (6f/10f));
+						else
+							iheight = Convert.ToInt32(localstate.E_Bremse * 27.62f * 1.5f);
+					}
+					catch (Exception) {}
+
+					b = new SolidBrush(MMI_ORANGE);
+				}
+
+				Point[] p = {new Point(i*68-18+20,300-iheight+y-7), new Point(i*68-18+50,300-iheight+6+y-7), new Point(i*68-18+50,300-iheight-7+y-7)};
+				Point[] p2 = {new Point(i*68-18+20-1,300-iheight+y-7), new Point(i*68-18+50+1,300-iheight+6+1+y-7), new Point(i*68-18+50+1,300-iheight-7-1+y-7)};
+
+				Point plus_w_1 = new Point(i*68+8+15,300-iheight+y-7); Point plus_w_2 = new Point(i*68+8+21,300-iheight+y-7); 
+				Point plus_s_1 = new Point(i*68+8+18,300-iheight-3+y-7); Point plus_s_2 = new Point(i*68+8+18,300-iheight+3+y-7);
+				
+				pg.FillPolygon(b, p);
+				pg.DrawLine(Pens.WhiteSmoke, p[0], p[2]);
+				pg.DrawLine(Pens.Gray, p[1], p[2]);
+				pg.DrawLine(Pens.Gray, p[0], p[1]);
+
+
+				pg.DrawLine(new Pen(BLACK), p2[0], p2[2]);
+				pg.DrawLine(new Pen(BLACK, 2), p2[1], p2[2]);
+				pg.DrawLine(new Pen(BLACK, 2), p2[0], p2[1]);
+
+				/*
+				pg.DrawLine(Pens.Black, p2[0], p2[2]);
+				pg.DrawLine(new Pen(Color.Black, 2), p2[1], p2[2]);
+				pg.DrawLine(new Pen(Color.Black, 2), p2[0], p2[1]);
+				*/
+
+				pg.DrawLine(Pens.WhiteSmoke, plus_w_1, plus_w_2);
+				if (localstate.E_Bremse <= 0)
+                    pg.DrawLine(Pens.WhiteSmoke, plus_s_1, plus_s_2);
+			}
+
+			for (int i = 1; i < 5; i++)
+			{
+				// Rahmen um "Lok x"
+				DrawFrameRaised(ref pg, i*68-20, 310+y-7, 48, 18);
+			}
+		}
+		
+		public void DrawZugkraftBalkenEurorunnerMehrfach(ref Graphics pg)
+		{
+			float height = 0f;
+			if (localstate.Zugkraft < 0)
+			{
+				height = (localstate.Zugkraft) * -0.828125f*2f * 1.4f;
+			}
+			else
+			{
+				height = (localstate.Zugkraft * 4) * 0.75714f * 1.4f;
+			}
+
+			if (height > 285) height = 285;
+
+			//DrawFrame(ref pg, 1, 4, 320, 310);
+
+			const int y = -20;
+
+			//Beschriftung
+			Font f = new Font("Arial", 7, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			pg.DrawString("Zug-/", f, new SolidBrush(MMI_BLUE), 510, 220);
+			pg.DrawString("Brems-", f, new SolidBrush(Color.Gold), 500, 245);
+			pg.DrawString("Kraft", f, new SolidBrush(BLACK), 510, 270);
+
+			f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			int zk = 0; 
+			Brush b;
+			if (localstate.Zugkraft >= 0)
+			{       
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * 4f * localstate.traction));
+				}
+				catch (Exception) {}
+
+				b = new SolidBrush(MMI_BLUE);
+			}
+			else
+			{
+				try
+				{
+					zk = Convert.ToInt32(Math.Abs(localstate.Zugkraft * localstate.traction));
+				}
+				catch (Exception) {}
+
+				b = new SolidBrush(MMI_ORANGE);
+			}
+
+			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if ((localstate.type == TRAIN_TYPE.BR182 && localstate.Zugkraft < 0) || (localstate.type == TRAIN_TYPE.ER20 && localstate.FahrstufenSchalter < 6))
+				pg.DrawString("kN", f, new SolidBrush(BLACK), 14, 20-7);
+			else
+				pg.DrawString("kN", f, new SolidBrush(BLACK), 14, 25-7);
+
+			for(int i = 1; i <= localstate.traction; i++)
+			{
+				if (localstate.Zugkraft > 0)
+					pg.FillRectangle(new SolidBrush(MMI_BLUE), i*68-18, 15+285-height+y-7, 40, height);
+				else
+					pg.FillRectangle(new SolidBrush(MMI_ORANGE), i*68-18, 15+285-height+y-7, 40, height);
+				
+				DrawFrameSunken(ref pg, i*68-18, 15-7, 40, 285+y);
+
+				float factor = 18.90625f * 1.4f;
+				float neg_factor = 8.28125f * 1.4f;
+
+				// Skala pos
+				if (localstate.E_Bremse <= 0)
+					for(int k = 0; k < 13; k++)
+					{
+						pg.SmoothingMode = SmoothingMode.None;
+						if (Math.IEEERemainder(k, 2) == 0 || k == 0)
+						{
+							pg.DrawLine(new Pen(BLACK,2), i*68-18-12, 300-k*factor+y-7, i*68-18, 300-k*factor+y-7);
+							if (i == 1)
+							{
+								if (k==0)
+									pg.DrawString((k*25).ToString(), f, new SolidBrush(BLACK), i*68-18-24, 292-k*factor+y-7);
+								else if (k > 3)
+									pg.DrawString((k*25).ToString(), f, new SolidBrush(BLACK), i*68-18-40, 292-k*factor+y-7);
+								else
+									pg.DrawString((k*25).ToString(), f, new SolidBrush(BLACK), i*68-18-32, 292-k*factor+y-7);
+							}
+						}
+						//else
+						pg.DrawLine(new Pen(BLACK), i*68-18-6, 300-k*factor+y-7, i*68-18, 300-k*factor+y-7);
+						pg.SmoothingMode = SMOOTHING_MODE;	
+					}
+				else
+					for(int k = 0; k < 33; k++)
+					{
+						pg.SmoothingMode = SmoothingMode.None;
+						if (Math.IEEERemainder(k, 5) == 0 || k == 0)
+						{
+							pg.DrawLine(new Pen(BLACK,2), i*68-18-12, 300-k*neg_factor+y-7, i*68-18-6, 300-k*neg_factor+y-7);
+							if (i == 1)
+							{
+								if (k==0)
+									pg.DrawString((k*5).ToString(), f, new SolidBrush(BLACK), i*68-18-24, 292-k*neg_factor+y-7);
+								else if (k > 15)
+									pg.DrawString((k*5).ToString(), f, new SolidBrush(BLACK), i*68-18-40, 292-k*neg_factor+y-7);
+								else
+									pg.DrawString((k*5).ToString(), f, new SolidBrush(BLACK), i*68-18-32, 292-k*neg_factor+y-7);
+							}
+						}
+						//else
+						pg.DrawLine(new Pen(BLACK), i*68-18-6, 300-k*neg_factor+y-7, i*68-18, 300-k*neg_factor+y-7);
+						pg.SmoothingMode = SMOOTHING_MODE;	
+					}
+
+				if (localstate.Zugkraft > 0)
+					pg.FillRectangle(new SolidBrush(MMI_BLUE), i*68-20, 310+y-7, 48, 18);
+				else if (localstate.Zugkraft < 0)
+					pg.FillRectangle(new SolidBrush(MMI_ORANGE), i*68-20, 310+y-7, 48, 18);
+
+				if (localstate.Zugkraft == 0)
+					pg.DrawString("Lok "+i.ToString(), f, new SolidBrush(BLACK), i*68-18, 310+y-7);
+				else
+					pg.DrawString("Lok "+i.ToString(), f, new SolidBrush(Color.WhiteSmoke), i*68-18, 310+y-7);
+
+				//Pfeil
+				int iheight = 0;
+				int steller = localstate.FahrstufenSchalter;
+				if (steller > 5)
+				{
+					steller -= 6;
+					try
+					{
+						iheight = Convert.ToInt32(steller * 5.67857f / 25f * 40f / 300f * 235f * 1.4f);
+						b = new SolidBrush(MMI_BLUE);
+					}
+					catch (Exception) {}
+				}
+				else
+				{
+					try
+					{
+						iheight = Convert.ToInt32((6-steller)  * 27.62f * 1.4f);
+					}
+					catch (Exception) {}
+
+					b = new SolidBrush(MMI_ORANGE);
+				}
+
+				Point[] p = {new Point(i*68-18+20,300-iheight+y-7), new Point(i*68-18+50,300-iheight+6+y-7), new Point(i*68-18+50,300-iheight-7+y-7)};
+				Point[] p2 = {new Point(i*68-18+20-1,300-iheight+y-7), new Point(i*68-18+50+1,300-iheight+6+1+y-7), new Point(i*68-18+50+1,300-iheight-7-1+y-7)};
+
+				Point plus_w_1 = new Point(i*68+8+15,300-iheight+y-7); Point plus_w_2 = new Point(i*68+8+21,300-iheight+y-7); 
+				Point plus_s_1 = new Point(i*68+8+18,300-iheight-3+y-7); Point plus_s_2 = new Point(i*68+8+18,300-iheight+3+y-7);
+				
+				pg.FillPolygon(b, p);
+				pg.DrawLine(Pens.WhiteSmoke, p[0], p[2]);
+				pg.DrawLine(Pens.Gray, p[1], p[2]);
+				pg.DrawLine(Pens.Gray, p[0], p[1]);
+
+
+				pg.DrawLine(new Pen(BLACK), p2[0], p2[2]);
+				pg.DrawLine(new Pen(BLACK, 2), p2[1], p2[2]);
+				pg.DrawLine(new Pen(BLACK, 2), p2[0], p2[1]);
+
+				/*
+				pg.DrawLine(Pens.Black, p2[0], p2[2]);
+				pg.DrawLine(new Pen(Color.Black, 2), p2[1], p2[2]);
+				pg.DrawLine(new Pen(Color.Black, 2), p2[0], p2[1]);
+				*/
+
+				pg.DrawLine(Pens.WhiteSmoke, plus_w_1, plus_w_2);
+				if (localstate.E_Bremse <= 0)
+					pg.DrawLine(Pens.WhiteSmoke, plus_s_1, plus_s_2);
+			}
+
+			for (int i = 1; i < 5; i++)
+			{
+				// Rahmen um "Lok x"
+				DrawFrameRaised(ref pg, i*68-20, 310+y-7, 48, 18);
+			}
+		}
+		
 		private void DrawST(ref Graphics pg)
 		{
 			if (localstate.type == TRAIN_TYPE.BR152 || localstate.type == TRAIN_TYPE.BR189)
@@ -2880,6 +3324,9 @@ namespace MMI.DIAGNOSE
 					case ENUMStörung.S01_ZUSIKomm:
 						DrawS01(ref pg, false);
 						break;
+					case ENUMStörung.S11_ZUSIKomm:
+						DrawS11(ref pg, false);
+						break;
 					case ENUMStörung.S02_Trennschütz:
 						DrawS02(ref pg, false);
 						break;
@@ -2894,6 +3341,9 @@ namespace MMI.DIAGNOSE
 				{
 					case ENUMStörung.S01_ZUSIKomm:
 						DrawS01(ref pg, true);
+						break;
+					case ENUMStörung.S11_ZUSIKomm:
+						DrawS11(ref pg, false);
 						break;
 					case ENUMStörung.S02_Trennschütz:
 						DrawS02(ref pg, true);
@@ -2972,6 +3422,39 @@ namespace MMI.DIAGNOSE
 			}
 		}
 
+		private void DrawS11(ref Graphics pg, bool greater)
+		{
+			Brush b_ws;
+
+			if (BRIGHT == Color.DarkGray)
+				b_ws = new SolidBrush(Color.White);
+			else
+				b_ws = new SolidBrush(BRIGHT);
+
+			Brush b_ws_alt = new SolidBrush(BLACK);
+			Brush b_blue = new SolidBrush(Color.Blue);
+
+			int y = 60;
+
+			Font f = new Font("Arial", 11, FontStyle.Bold, GraphicsUnit.Point);
+			string s = "";
+
+			Störung st = localstate.störungmgr.LastStörung;
+			s += st.Priority.ToString()+"  ";
+			s += st.Name+"  ";
+			s += st.Description;
+
+			pg.DrawString(s, f, b_ws_alt, 140, 12);
+
+			f = new Font("Arial", 14, FontStyle.Bold, GraphicsUnit.Point);
+
+			pg.DrawString("Die Kommunikation mit ZUSI ist im Augenblick gestört!", f, b_ws_alt, 50, y);
+			pg.DrawString("ZUSI ist bereits mit dem TCP Server verbunden!", f, b_ws_alt, 50, y+20);
+			pg.DrawString("- Verbindung zwischen ZUSI und TCP Server trennen", f, b_ws_alt, 50, y+40);
+			pg.DrawString("- Display meldet sich automatisch an Server an", f, b_ws_alt, 50, y+60);
+			pg.DrawString("- ZUSI wieder verbinden", f, b_ws_alt, 50, y+80);
+		}
+
 		private void DrawS02(ref Graphics pg, bool greater)
 		{
 			Brush b_ws;
@@ -3021,7 +3504,10 @@ namespace MMI.DIAGNOSE
 
 			something_changed = false;
 
-			BR185Control_Paint(this, new PaintEventArgs(this.CreateGraphics(), new Rectangle(0,0,this.Width, this.Height)));
+			if (m_conf.DoubleBuffer)
+				BR185Control_Paint(this, new PaintEventArgs(this.CreateGraphics(), new Rectangle(0,0,this.Width, this.Height)));
+			else
+				this.Refresh();
 
 			#region alter Code
 			//GC.Collect();
@@ -3075,14 +3561,24 @@ namespace MMI.DIAGNOSE
 		{
 			if (localstate.DISPLAY == CURRENT_DISPLAY.G || localstate.DISPLAY == CURRENT_DISPLAY.Zugbesy || localstate.DISPLAY == CURRENT_DISPLAY.Z_BR)
 			{
-				// Datum oben rechts
-				DrawFrame(ref pg, 468, 1, 160, 30);
 
 				string s = MMI.EBuLa.Tools.Misc.getDateString(vtime);
 
-				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+				
 
-				pg.DrawString(s, f, new SolidBrush(BLACK), 498, 8);
+				if (localstate.type == TRAIN_TYPE.BR182 || localstate.type == TRAIN_TYPE.ER20)
+				{
+					Font f = new Font("Arial", 5, FontStyle.Regular, GraphicsUnit.Millimeter);
+					pg.DrawString(s, f, new SolidBrush(BLACK), 480, 18);
+				}
+				else
+				{
+					// Datum oben rechts
+					DrawFrame(ref pg, 468, 1, 160, 30);
+
+					Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+					pg.DrawString(s, f, new SolidBrush(BLACK), 498, 8);
+				}
 			}
 			else
 			{
@@ -3099,9 +3595,6 @@ namespace MMI.DIAGNOSE
 		}
 		public void DrawZug(ref Graphics pg)
 		{
-			// Zugnummer
-			DrawFrame(ref pg, 468, 189, 160, 30);
-
 			string help = localstate.Zugnummer;
 			int length = help.Length;
 
@@ -3113,11 +3606,95 @@ namespace MMI.DIAGNOSE
 
 			string s = "Zug " + help;
 
-			if (localstate.Zugnummer == "<INIT>") return;
-
 			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
-			pg.DrawString(s, f, new SolidBrush(BLACK), 510, 196);
+			if (localstate.type == TRAIN_TYPE.BR182)
+			{
+				DrawFrame(ref pg, 468, 118, 160, 30);
+				if (localstate.Zugnummer == "<INIT>") return;
+
+				pg.DrawString("Zug", f, new SolidBrush(BLACK), 475, 125);
+				if (help.Length > 5)
+					pg.DrawString(help, f, new SolidBrush(BLACK), 560, 125);
+				else if (help.Length > 4)
+					pg.DrawString(help, f, new SolidBrush(BLACK), 568, 125);
+				else if (help.Length > 3)
+					pg.DrawString(help, f, new SolidBrush(BLACK), 576, 125);
+				else if (help.Length > 2)
+					pg.DrawString(help, f, new SolidBrush(BLACK), 584, 125);
+				else if (help.Length > 1)
+					pg.DrawString(help, f, new SolidBrush(BLACK), 592, 125);
+				else
+					pg.DrawString(help, f, new SolidBrush(BLACK), 600, 125);
+			}
+			else
+			{
+				// Zugnummer
+				DrawFrame(ref pg, 468, 189, 160, 30);
+				if (localstate.Zugnummer == "<INIT>") return;
+				pg.DrawString(s, f, new SolidBrush(BLACK), 510, 196);
+			}
+		}
+		public void DrawVerbrauch(ref Graphics pg)
+		{
+			bool kwh = true; string help;
+			//kwh = (localstate.Energie > 999f);                            
+			
+			if (kwh)
+                help = Math.Round(localstate.Energie/1000d, 0).ToString();
+			else
+				help = Math.Round(localstate.Energie, 0).ToString();
+
+			Font f = new Font("Arial", 5f, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+			if (localstate.type == TRAIN_TYPE.BR182)
+			{
+				DrawFrame(ref pg, 468, 150, 160, 32);
+				//DrawFrame(ref pg, 468, 184, 160, 32);
+                
+				if (kwh)
+					pg.DrawString("kWh", f, new SolidBrush(BLACK), 575, 155);
+				else
+					pg.DrawString("Wh", f, new SolidBrush(BLACK), 575, 155);
+
+				const int x = 45;
+
+				help = InsertPoints(help);
+
+				if (help.Length > 13)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 483-x, 155);
+				else if (help.Length > 12)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 492-x, 155);
+				else if (help.Length > 11)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 501-x, 155);
+				else if (help.Length > 10)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 510-x, 155);
+			    else if (help.Length > 9)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 519-x, 155);
+				else if (help.Length > 8)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 528-x, 155);
+				else if (help.Length > 7)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 537-x, 155);
+				else if (help.Length > 6)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 546-x, 155);
+				else if (help.Length > 5)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 555-x, 155);
+				else if (help.Length > 4)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 564-x, 155);
+				else if (help.Length > 3)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 573-x, 155);
+				else if (help.Length > 2)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 582-x, 155);
+				else if (help.Length > 1)
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 591-x, 155);
+				else
+					pg.DrawString(help, f, new SolidBrush(MMI_BLUE), 600-x, 155);
+			}
+			else
+			{
+				//DrawFrame(ref pg, 468, 189, 160, 30);
+				//pg.DrawString(help, f, new SolidBrush(BLACK), 510, 196);
+			}
 		}
 		public void DrawLinie(ref Graphics pg)
 		{
@@ -3133,104 +3710,378 @@ namespace MMI.DIAGNOSE
 		}
 		public void SetButtons()
 		{
-			switch(localstate.DISPLAY)
+			if (localstate.type == TRAIN_TYPE.BR182)
 			{
-				case CURRENT_DISPLAY.G:
-					if (IsBombardier() || IsADtranz())
-                        l_Button1.Text = "An-triebe";
-					else
-						l_Button1.Text = "";
-					l_Button2.Text = "W";
-					l_Button3.Text = "";
-					if (IsBR101())
-                        l_Button4.Text = "Zug- Num.";
-					else
-						l_Button4.Text = "Zug- Besy";
-					l_Button5.Text = "";
-					if (IsMMI())
-                        l_Button6.Text = "Ein Displ.";
-					else
-						l_Button6.Text = "";
-					l_Button7.Text = "Z / Br";
-					l_Button8.Text = "";
-					l_Button9.Text = "";
-					l_Button0.Text = "";
-					break;
-				case CURRENT_DISPLAY.Z_BR:
-					if (IsBombardier() || IsADtranz())
-						l_Button1.Text = "An-triebe";
-					else
-						l_Button1.Text = "";
-					l_Button2.Text = "W";
-					l_Button3.Text = "";
-					if (IsBombardier() || IsADtranz())
-						l_Button4.Text = "Zug- Besy";
-					else
-						l_Button4.Text = "";
-					l_Button5.Text = "";
-					if (IsMMI())
-						l_Button6.Text = "Ein Displ.";
-					else
-						l_Button6.Text = "";
-					l_Button7.Text = "";
-					l_Button8.Text = "";
-					l_Button9.Text = "";
-					l_Button0.Text = "G";
-					break;
-				case CURRENT_DISPLAY.Zugbesy:
-					l_Button1.Text = "ZDE";
-					l_Button2.Text = "Zug-/ Tf-Nr.";
-					l_Button3.Text = "Lok-DE";
-					l_Button4.Text = "";
-					l_Button5.Text = "";
-					l_Button6.Text = "";
-					l_Button7.Text = "DSK";
-					if (IsBombardier() || IsADtranz())
-						l_Button8.Text = "Prü-fen";
-					else
-						l_Button8.Text = "Prü-lauf";
-					l_Button9.Text = "";
-					l_Button0.Text = "G";
-					break;
-				case CURRENT_DISPLAY.Zug_Tf_Nr:
-					l_Button1.Text = "1";
-					l_Button2.Text = "2";
-					l_Button3.Text = "3";
-					l_Button4.Text = "4";
-					l_Button5.Text = "5";
-					l_Button6.Text = "6";
-					l_Button7.Text = "7";
-					l_Button8.Text = "8";
-					l_Button9.Text = "9";
-					l_Button0.Text = "0";
-					break;
-				case CURRENT_DISPLAY.DSK:
-					l_Button1.Text = "1";
-					l_Button2.Text = "2";
-					l_Button3.Text = "3";
-					l_Button4.Text = "4";
-					l_Button5.Text = "5";
-					l_Button6.Text = "6";
-					l_Button7.Text = "7";
-					l_Button8.Text = "8";
-					l_Button9.Text = "9";
-					l_Button0.Text = "0";
-					break;
-				default:
-					l_Button1.Text = "";
-					l_Button2.Text = "";
-					l_Button3.Text = "";
-					l_Button4.Text = "";
-					l_Button5.Text = "";
-					l_Button6.Text = "";
-					l_Button7.Text = "";
-					l_Button8.Text = "";
-					l_Button9.Text = "";
-					l_Button0.Text = "G";
-					break;
+				switch(localstate.DISPLAY)
+				{
+					case CURRENT_DISPLAY.G:
+						buttons[1,0] = ""; buttons[1,1] = "";
+						buttons[2,0] = ""; buttons[2,1] = "";//"W";
+						buttons[3,0] = ""; buttons[3,1] = "";
+						buttons[4,0] = "Status"; buttons[4,1] = "";
+						buttons[5,0] = ""; buttons[5,1] = "";
+						buttons[6,0] = ""; buttons[6,1] = "";
+						buttons[7,0] = ""; buttons[7,1] = "";
+						buttons[8,0] = "Ein-"; buttons[8,1] = "gabe";
+						buttons[9,0] = ""; buttons[9,1] = "";
+						buttons[10,0] = "   G"; buttons[10,1] = "";
+						break;
+					case CURRENT_DISPLAY.Z_BR:
+						buttons[1,0] = ""; buttons[1,1] = "";
+						buttons[2,0] = ""; buttons[2,1] = "";//"W";
+						buttons[3,0] = " U/I-"; buttons[3,1] = "Prim";
+						buttons[4,0] = "Status"; buttons[4,1] = "";
+						buttons[5,0] = ""; buttons[5,1] = "";
+						buttons[6,0] = ""; buttons[6,1] = "";
+						buttons[7,0] = ""; buttons[7,1] = "";
+						buttons[8,0] = "Ein-"; buttons[8,1] = "gabe";
+						buttons[9,0] = ""; buttons[9,1] = "";
+						buttons[10,0] = ""; buttons[10,1] = "";
+						break;
+					case CURRENT_DISPLAY.Zugbesy:
+						buttons[1,0] = ""; buttons[1,1] = "";//"ZDE";
+						buttons[2,0] = "Zug-/"; buttons[2,1] = "Tf-Nr.";
+						buttons[3,0] = ""; buttons[3,1] = "";
+						buttons[4,0] = ""; buttons[4,1] = "";
+						buttons[5,0] = ""; buttons[5,1] = ""; 
+						buttons[6,0] = ""; buttons[6,1] = "";
+						buttons[7,0] = " DSK"; buttons[7,1] = "";
+						buttons[8,0] = ""; buttons[8,1] = "";
+						buttons[9,0] = ""; buttons[9,1] = "";
+						buttons[10,0] = "   G"; buttons[10,1] = "";
+						break;
+					case CURRENT_DISPLAY.Zug_Tf_Nr:
+						buttons[1,0] = "   1"; buttons[1,1] = "";
+						buttons[2,0] = "   2"; buttons[2,1] = "";
+						buttons[3,0] = "   3"; buttons[3,1] = "";
+						buttons[4,0] = "   4";	buttons[4,1] = "";
+						buttons[5,0] = "   5"; buttons[5,1] = ""; 
+						buttons[6,0] = "   6"; buttons[6,1] = "";
+						buttons[7,0] = "   7"; buttons[7,1] = "";
+						buttons[8,0] = "   8"; buttons[8,1] = "";
+						buttons[9,0] = "   9"; buttons[9,1] = "";
+						buttons[10,0] = "   0"; buttons[10,1] = "";
+						break;
+					case CURRENT_DISPLAY.DSK:
+						buttons[1,0] = "   1"; buttons[1,1] = "";
+						buttons[2,0] = "   2"; buttons[2,1] = "";
+						buttons[3,0] = "   3"; buttons[3,1] = "";
+						buttons[4,0] = "   4";	buttons[4,1] = "";
+						buttons[5,0] = "   5"; buttons[5,1] = ""; 
+						buttons[6,0] = "   6"; buttons[6,1] = "";
+						buttons[7,0] = "   7"; buttons[7,1] = "";
+						buttons[8,0] = "   8"; buttons[8,1] = "";
+						buttons[9,0] = "   9"; buttons[9,1] = "";
+						buttons[10,0] = "   0"; buttons[10,1] = "";
+						break;
+					default:
+						buttons[1,0] = ""; buttons[1,1] = "";
+						buttons[2,0] = ""; buttons[2,1] = "";
+						buttons[3,0] = ""; buttons[3,1] = "";
+						buttons[4,0] = ""; buttons[4,1] = "";
+						buttons[5,0] = ""; buttons[5,1] = ""; 
+						buttons[6,0] = ""; buttons[6,1] = "";
+						buttons[7,0] = ""; buttons[7,1] = "";
+						buttons[8,0] = ""; buttons[8,1] = "";
+						buttons[9,0] = ""; buttons[9,1] = "";
+						buttons[10,0] = "   G"; buttons[10,1] = "";
+						break;
+				}
+			}
+			else if (localstate.type == TRAIN_TYPE.ER20)
+			{
+				buttons[1,0] = ""; buttons[1,1] = "";
+				buttons[2,0] = ""; buttons[2,1] = "";
+				buttons[3,0] = ""; buttons[3,1] = "";
+				buttons[4,0] = ""; buttons[4,1] = "";
+				buttons[5,0] = ""; buttons[5,1] = ""; 
+				buttons[6,0] = ""; buttons[6,1] = "";
+				buttons[7,0] = ""; buttons[7,1] = "";
+				buttons[8,0] = ""; buttons[8,1] = "";
+				buttons[9,0] = ""; buttons[9,1] = "";
+				buttons[10,0] = ""; buttons[10,1] = "";
+			}
+			else
+			{
+				switch(localstate.DISPLAY)
+				{
+					case CURRENT_DISPLAY.G:
+						buttons[1,0] = ""; buttons[1,1] = "";
+						buttons[2,0] = ""; buttons[2,1] = "";//"W";
+						buttons[3,0] = ""; buttons[3,1] = "";
+						if (IsBR101())
+						{
+							buttons[4,0] = "Zug-";                        
+							buttons[4,1] = "Num.";
+						}
+						else
+						{
+							buttons[4,0] = "Zug-";
+							buttons[4,1] = "Besy";
+						}
+						buttons[5,0] = ""; buttons[5,1] = "";
+						if (IsMMI())
+						{
+							buttons[6,0] = " Ein";
+							buttons[6,1] = "Displ.";
+						}
+						else
+						{
+							buttons[6,0] = "";
+							buttons[6,1] = "";
+						}
+						buttons[7,0] = "Z / Br"; buttons[7,1] = "";
+						buttons[8,0] = ""; buttons[8,1] = "";
+						buttons[9,0] = ""; buttons[9,1] = "";
+						buttons[10,0] = ""; buttons[10,1] = "";
+						break;
+					case CURRENT_DISPLAY.Z_BR:
+						buttons[1,0] = ""; buttons[1,1] = "";
+						buttons[2,0] = ""; buttons[2,1] = "";//"W";
+						buttons[3,0] = ""; buttons[3,1] = "";
+						if (IsBR101() || IsBombardier())
+						{
+							buttons[4,0] = "Zug-";                        
+							buttons[4,1] = "Num.";
+						}
+						else
+						{
+							buttons[4,0] = "";
+							buttons[4,1] = "";
+						}
+						buttons[5,0] = ""; buttons[5,1] = "";
+						if (IsMMI())
+						{
+							buttons[6,0] = " Ein";
+							buttons[6,1] = "Displ.";
+						}
+						else
+						{
+							buttons[6,0] = "";
+							buttons[6,1] = "";
+						}
+						buttons[7,0] = ""; buttons[7,1] = "";
+						buttons[8,0] = ""; buttons[8,1] = "";
+						buttons[9,0] = ""; buttons[9,1] = "";
+						buttons[10,0] = "   G"; buttons[10,1] = "";
+						break;
+					case CURRENT_DISPLAY.Zugbesy:
+						buttons[1,0] = ""; buttons[1,1] = "";//"ZDE";
+						buttons[2,0] = "Zug-/"; buttons[2,1] = "Tf-Nr.";
+						buttons[3,0] = ""; buttons[3,1] = "";
+						buttons[4,0] = ""; buttons[4,1] = "";
+						buttons[5,0] = ""; buttons[5,1] = ""; 
+						buttons[6,0] = ""; buttons[6,1] = "";
+						buttons[7,0] = " DSK"; buttons[7,1] = "";
+						if (IsBombardier() || IsADtranz())
+						{
+							buttons[8,0] = "";//"Prü-fen";
+							buttons[8,1] = "";
+						}
+						else
+						{
+							buttons[8,0] = "";//Prü-lauf";
+							buttons[8,1] = "";
+						}
+						buttons[9,0] = ""; buttons[9,1] = "";
+						buttons[10,0] = "   G"; buttons[10,1] = "";
+						break;
+					case CURRENT_DISPLAY.Zug_Tf_Nr:
+						buttons[1,0] = "   1"; buttons[1,1] = "";
+						buttons[2,0] = "   2"; buttons[2,1] = "";
+						buttons[3,0] = "   3"; buttons[3,1] = "";
+						buttons[4,0] = "   4";	buttons[4,1] = "";
+						buttons[5,0] = "   5"; buttons[5,1] = ""; 
+						buttons[6,0] = "   6"; buttons[6,1] = "";
+						buttons[7,0] = "   7"; buttons[7,1] = "";
+						buttons[8,0] = "   8"; buttons[8,1] = "";
+						buttons[9,0] = "   9"; buttons[9,1] = "";
+						buttons[10,0] = "   0"; buttons[10,1] = "";
+						break;
+					case CURRENT_DISPLAY.DSK:
+						buttons[1,0] = "   1"; buttons[1,1] = "";
+						buttons[2,0] = "   2"; buttons[2,1] = "";
+						buttons[3,0] = "   3"; buttons[3,1] = "";
+						buttons[4,0] = "   4";	buttons[4,1] = "";
+						buttons[5,0] = "   5"; buttons[5,1] = ""; 
+						buttons[6,0] = "   6"; buttons[6,1] = "";
+						buttons[7,0] = "   7"; buttons[7,1] = "";
+						buttons[8,0] = "   8"; buttons[8,1] = "";
+						buttons[9,0] = "   9"; buttons[9,1] = "";
+						buttons[10,0] = "   0"; buttons[10,1] = "";
+						break;
+					default:
+						buttons[1,0] = ""; buttons[1,1] = "";
+						buttons[2,0] = ""; buttons[2,1] = "";
+						buttons[3,0] = ""; buttons[3,1] = "";
+						buttons[4,0] = ""; buttons[4,1] = "";
+						buttons[5,0] = ""; buttons[5,1] = ""; 
+						buttons[6,0] = ""; buttons[6,1] = "";
+						buttons[7,0] = ""; buttons[7,1] = "";
+						buttons[8,0] = ""; buttons[8,1] = "";
+						buttons[9,0] = ""; buttons[9,1] = "";
+						buttons[10,0] = "   G"; buttons[10,1] = "";
+						break;
+				}
 			}
 		}	
 
+		public void DrawButtons(ref Graphics pg)
+		{
+			for(int i = 0; i < 10; i++)
+			{
+				if (IsADtranz() || IsBombardier())
+				{
+					// Kasten
+					DrawFrame(ref pg, i*63, 410, 62, 49);
+
+					// Text
+					string s1 = buttons[i+1,0];
+					string s2 = buttons[i+1,1];
+
+					Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+					pg.DrawString(s1, f, new SolidBrush(BLACK), i*63+8, 415);
+					pg.DrawString(s2, f, new SolidBrush(BLACK), i*63+8, 435);
+				}
+				else
+				{
+					// Kasten
+					DrawFrameRaised(ref pg, i*63, 413, 62, 45);
+					DrawFrameSunkenSmall(ref pg, i*63+1, 413+1, 62-2, 45-2);
+
+					// Text
+					string s1 = buttons[i+1,0];
+					string s2 = buttons[i+1,1];
+
+					Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
+
+					pg.DrawString(s1, f, new SolidBrush(BLACK), i*63+8, 415);
+					pg.DrawString(s2, f, new SolidBrush(BLACK), i*63+8, 435);
+				}
+			}
+        }
+		public void DrawLargeButtons(ref Graphics pg)
+		{
+			for(int i = 0; i < 10; i++)
+			{
+				// Kasten
+				pg.FillRectangle(new SolidBrush(Misc.FILL_BLACK), i*90, 342, 90, 70); 
+			}
+
+			// Feld 1: Teilnehmer
+			Font f = new Font("Arial", 3.7f, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("Teilnehmer", f, Brushes.WhiteSmoke, 5, 345);
+
+			pg.FillRectangle(Brushes.DarkGray, 5, 375, 80, 30);
+
+			f = new Font("Arial", 5f, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString(localstate.traction.ToString(), f, Brushes.Black, 37, 380);
+
+			// Feld 2: kN oder HS
+			if (localstate.LM_HS && localstate.type == TRAIN_TYPE.BR182)
+			{
+				// "El"-Symbol
+				Point[] points1 = {new Point(90+6,342+35), new Point(135,342+1), new Point(180-6,342+35), new Point(135,342+69)};
+				Point[] points2 = {new Point(90+6+4,342+35), new Point(135,342+1+4), new Point(180-6-4,342+35), new Point(135,342+69-4)};
+				pg.FillPolygon(Brushes.WhiteSmoke, points1);
+				pg.FillPolygon(new SolidBrush(MMI_BLUE), points2);
+				pg.DrawPolygon(new Pen(Brushes.Black, 2), points2);
+
+				pg.FillRectangle(Brushes.WhiteSmoke, 120, 363, 6, 12);
+				pg.DrawRectangle(Pens.Black, 120, 363, 6, 12); 
+				pg.FillRectangle(Brushes.WhiteSmoke, 150-6, 363, 6, 12);
+				pg.DrawRectangle(Pens.Black, 150-6, 363, 6, 12); 
+
+				pg.FillRectangle(Brushes.WhiteSmoke, 120, 383, 30, 8);
+				pg.DrawRectangle(Pens.Black, 120, 383, 30, 8); 
+			}
+			else if (localstate.Drehzahl < 500 && localstate.type == TRAIN_TYPE.ER20)
+			{
+				// Text "Motor steht"
+				f = new Font("Arial", 7f, FontStyle.Bold, GraphicsUnit.Millimeter);
+				pg.DrawString("Motor", f, Brushes.WhiteSmoke, 94, 346);
+				pg.DrawString("steht", f, Brushes.WhiteSmoke, 98, 374);
+			}
+			else
+			{
+				if (localstate.Zugkraft <= 0)
+				{
+					f = new Font("Arial", 16f, FontStyle.Bold, GraphicsUnit.Millimeter);
+					pg.DrawString("kN", f, Brushes.WhiteSmoke, 88, 342);
+
+					Pen p = new Pen(Brushes.WhiteSmoke, 7);
+					p.DashCap = DashCap.Round;
+					p.EndCap = LineCap.Triangle;
+					pg.DrawLine(p, 90+1, 342+69, 180-1, 342+1);
+				}
+			}
+
+			// Feld 3: "Fz steht"
+			/*
+			if (localstate.Geschwindigkeit < 0.5f)
+			{
+				// Text "Fz steht"
+				f = new Font("Arial", 7f, FontStyle.Bold, GraphicsUnit.Millimeter);
+				pg.DrawString("Fz", f, Brushes.WhiteSmoke, 116+90, 346);
+				pg.DrawString("steht", f, Brushes.WhiteSmoke, 98+90, 374);
+			}
+			*/
+
+			// Feld 4: Zugsammelschiene
+
+			// Feld 5: Bremse
+			if (localstate.C_Druck > 0.1f)
+			{
+				pg.FillRectangle(Brushes.WhiteSmoke, 381, 363, 48, 25);
+				pg.FillEllipse(Brushes.WhiteSmoke, 387, 358, 35, 35);
+				pg.DrawEllipse(new Pen(Misc.FILL_BLACK), 387, 358, 35, 35);
+				pg.FillEllipse(new SolidBrush(Misc.FILL_BLACK), 390, 361, 29, 29);
+
+				pg.FillRectangle(Brushes.WhiteSmoke, 363, 371, 9, 9);
+				pg.FillRectangle(Brushes.WhiteSmoke, 438, 371, 9, 9);
+
+				Point[] p1 = {new Point(370,375-8), new Point(370,375+9), new Point(370+9,375)};
+				Point[] p2 = {new Point(370+69,375-8), new Point(370+69,375+9), new Point(370-9+69,375)};
+				pg.FillPolygon(Brushes.WhiteSmoke, p1);
+				pg.FillPolygon(Brushes.WhiteSmoke, p2);
+			}
+
+			// Feld 6: (leer)
+
+			// Feld 7: Zugkraft
+			f = new Font("Arial", 6f, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("kN", f, Brushes.WhiteSmoke, 565, 345);
+
+			pg.FillRectangle(Brushes.DarkGray, 545, 375, 80, 30);
+
+			f = new Font("Arial", 5f, FontStyle.Bold, GraphicsUnit.Millimeter);
+			
+			Color col = MMI_BLUE;
+			float kn = localstate.ZugkraftGesammt * localstate.traction;
+
+			if (kn < 0)
+			{
+				kn *= -1;
+				col = Color.Gold;
+			}
+
+			if (kn >= 1000)
+				pg.DrawString(kn.ToString(), f, new SolidBrush(col), 570, 380);
+			else if (kn >= 100)
+				pg.DrawString(kn.ToString(), f, new SolidBrush(col), 580, 380);
+			else if (kn >= 10)
+				pg.DrawString(kn.ToString(), f, new SolidBrush(col), 590, 380);
+			else
+				pg.DrawString(kn.ToString(), f, new SolidBrush(col), 600, 380);
+
+			for(int i = 0; i < 10; i++)
+			{
+				// Kasten
+				DrawFrameRaised(ref pg, i*90, 342, 90, 70);
+				DrawFrameSunkenSmall(ref pg, i*90+1, 342+1, 90-2, 70-2);
+			}
+		}
 		public void FillKasten(ref Graphics pg, int tz, bool fill)
 		{
 			Color color = MMI_BLUE;
@@ -3401,7 +4252,8 @@ namespace MMI.DIAGNOSE
 			{
 				DrawFrame(ref pg, 5, 5, 420, 240);
 				DrawFrame(ref pg, 5, 250, 420, 50);
-				DrawFrame(ref pg, 5, 305, 420, 30);
+				if (localstate.type != TRAIN_TYPE.BR182)
+					DrawFrame(ref pg, 5, 305, 420, 30);
 			}
 
 			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
@@ -3459,7 +4311,12 @@ namespace MMI.DIAGNOSE
 				else
 					pg.DrawString("Kein LZB-Betrieb", f, new SolidBrush(BLACK), 110, 265);
 				if (localstate.DSK_Gesperrt)
-					pg.DrawString("DSK Kurzzeitspeicher geperrt", f, new SolidBrush(BLACK), 60, 310);
+				{
+					if (localstate.type == TRAIN_TYPE.BR182)
+						pg.DrawString("DSK Kurzzeitspeicher geperrt", f, new SolidBrush(BLACK), 60, 210);
+					else
+						pg.DrawString("DSK Kurzzeitspeicher geperrt", f, new SolidBrush(BLACK), 60, 310);
+				}
 			}
 
 		}
@@ -3469,7 +4326,10 @@ namespace MMI.DIAGNOSE
 			DrawFrame(ref pg, 518, 43, 110, 48);
 			DrawFrame(ref pg, 518, 105, 110, 50);
 			DrawFrame(ref pg, 518, 170, 110, 50);
-			DrawFrame(ref pg, 518, 235, 110, 112);
+			if (localstate.type == TRAIN_TYPE.BR182)
+                DrawFrame(ref pg, 518, 235, 110, 102);
+			else
+				DrawFrame(ref pg, 518, 235, 110, 112);
 
 			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
 
@@ -3547,7 +4407,10 @@ namespace MMI.DIAGNOSE
 			DrawSeitlicheSoftkeys(ref pg);
 
 			// großer Rahmen
-			DrawFrame(ref pg, 1, 43, 505, 304);
+			if (localstate.type == TRAIN_TYPE.BR182)
+				DrawFrame(ref pg, 1, 43, 505, 294);
+			else
+				DrawFrame(ref pg, 1, 43, 505, 304);
 
 			DrawZugnummer(ref pg);
 			DrawTfNummer(ref pg);
@@ -3657,7 +4520,11 @@ namespace MMI.DIAGNOSE
 
 			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
 
-			DrawFrame(ref pg, 5, 43, 500, 304);
+			if (localstate.type == TRAIN_TYPE.BR182)
+                DrawFrame(ref pg, 5, 43, 500, 294);
+			else
+				DrawFrame(ref pg, 5, 43, 500, 304);
+
 			if (localstate.DSK_Gesperrt)
 				pg.DrawString("Entsperren des", f, new SolidBrush(BLACK), 180, 80);
 			else
@@ -3867,7 +4734,7 @@ namespace MMI.DIAGNOSE
 
 		private void BR185Control_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
-			if (m_backBuffer == null)
+			if (m_backBuffer == null && USE_DOUBLE_BUFFER)
 			{
 				m_backBuffer= new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
 			}
@@ -3883,9 +4750,9 @@ namespace MMI.DIAGNOSE
 			g.TextRenderingHint = TEXT_MODE;
 
 			if (inverse_display)
-                g.Clear(Color.Black);
+				g.Clear(Misc.FILL_BLACK);
 			else
-				g.Clear(Color.LightGray);
+				g.Clear(Misc.FILL_GRAY);
 
 			SetButtons();
 
@@ -3921,6 +4788,7 @@ namespace MMI.DIAGNOSE
 					DrawStörung(ref g);
 					DrawStatus(ref g);
 					if (IsBombardier() || IsADtranz())	DrawStatusStörRahmen(ref g, true, true);
+					DrawVerbrauch(ref g);
 					break;
 				case CURRENT_DISPLAY.Zugbesy:
 					DrawZug(ref g);
@@ -3932,23 +4800,118 @@ namespace MMI.DIAGNOSE
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
 					DrawTitle(ref g);
 					DrawZugTfNummer(ref g);
+					DrawStörung(ref g);
+					DrawStatus(ref g);
+					if (IsBombardier() || IsADtranz()) DrawStatusStörRahmen(ref g, true, true);
 					break;
 				case CURRENT_DISPLAY.DSK:
 					DrawTitle(ref g);
 					DrawDSK(ref g);
+					DrawStörung(ref g);
+					DrawStatus(ref g);
 					break;
 				default:
 					DrawTitle(ref g);
+					if (IsBombardier() || IsADtranz()) DrawStatusStörRahmen(ref g, true, true);
 					break;
 			}
 
+			DrawButtons(ref g);
+			if (localstate.type == TRAIN_TYPE.BR182 || localstate.type == TRAIN_TYPE.ER20) 
+				DrawLargeButtons(ref g);
+
+			/*
+			try
+			{
+				 
+				if (device == null) return;
+
+				device.RenderState.CullMode = Microsoft.DirectX.Direct3D.Cull.None;
+    
+				// Turn off Direct3D lighting
+				device.RenderState.Lighting = false;
+    
+				// Turn on the z-buffer
+				device.RenderState.ZBufferEnable = false;
+
+				//texture = Microsoft.DirectX.Direct3D.Texture.FromBitmap(device, m_backBuffer, Microsoft.DirectX.Direct3D.Usage.AutoGenerateMipMap, Microsoft.DirectX.Direct3D.Pool.Managed);
+				texture = Microsoft.DirectX.Direct3D.TextureLoader.FromFile(device, Application.StartupPath + 
+					@"\Pictures\abb.jpg");
+ 
+
+				vertexBuffer = new Microsoft.DirectX.Direct3D.VertexBuffer(
+					typeof(Microsoft.DirectX.Direct3D.CustomVertex.PositionTextured), 6, device, 0, 
+					Microsoft.DirectX.Direct3D.CustomVertex.PositionTextured.Format, Microsoft.DirectX.Direct3D.Pool.Default);
+
+				Microsoft.DirectX.GraphicsStream stm = vertexBuffer.Lock(0, 0, 0);
+
+				Microsoft.DirectX.Direct3D.CustomVertex.PositionTextured[] verts1 =
+					new Microsoft.DirectX.Direct3D.CustomVertex.PositionTextured[3];
+
+				verts1[0].X=0; verts1[0].Y=0; verts1[0].Z=0.5f;
+				verts1[0].Tu = 0; verts1[0].Tv = 0;
+				
+				verts1[1].X=100; verts1[1].Y=100; verts1[1].Z=0.5f;
+				verts1[1].Tu = 1; verts1[1].Tv = 1;
+
+				verts1[2].X=0; verts1[2].Y=100; verts1[2].Z=0.5f;
+				verts1[2].Tu = 0; verts1[2].Tv = 1;
+				stm.Write(verts1);
+
+				
+				Microsoft.DirectX.Direct3D.CustomVertex.PositionTextured[] verts2 =
+					new Microsoft.DirectX.Direct3D.CustomVertex.PositionTextured[3];
+
+				verts2[0].X=0; verts2[0].Y=0; verts2[0].Z=0.5f;
+				verts2[0].Tu = 0; verts2[0].Tv = 0;
+
+				verts2[1].X=100; verts2[1].Y=0; verts2[1].Z=0.5f;
+				verts2[1].Tu = 1; verts2[1].Tv = 0;
+				
+				verts2[2].X=100; verts2[2].Y=100; verts2[2].Z=0.5f;
+				verts2[2].Tu = 1; verts2[2].Tv = 1;
+
+				stm.Write(verts2);
+				
+				
+				vertexBuffer.Unlock();
+
+
+				//Clear the backbuffer to a blue color 
+				device.Clear(Microsoft.DirectX.Direct3D.ClearFlags.Target, Misc.FILL_GRAY, 1.0f, 0);
+				//Begin the scene
+				device.BeginScene();
+    
+				// Rendering of scene objects can happen here
+				device.SetTexture(0,texture);
+				device.SetStreamSource(0, vertexBuffer, 0);
+				device.VertexFormat = Microsoft.DirectX.Direct3D.CustomVertex.PositionTextured.Format;
+				device.DrawPrimitives(Microsoft.DirectX.Direct3D.PrimitiveType.TriangleList, 0, 2);
+			
+
+				//End the scene
+				device.EndScene();
+				device.Present();
+
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+			*/
+						
 			if (USE_DOUBLE_BUFFER)
 			{
 				//g.Dispose();
 
 				//Copy the back buffer to the screen
-				e.Graphics.DrawImageUnscaled(m_backBuffer,0,0);
+				e.Graphics.DrawImage(m_backBuffer,0,0);
+
+				//m_backBuffer.Dispose();
+				e.Graphics.Dispose();
 			}
+			
+			
 
 			//graph_main.Render(this.CreateGraphics());
 		}
@@ -4057,6 +5020,7 @@ namespace MMI.DIAGNOSE
 				BLACK = Color.Black;
 			}
 
+			/*
 			foreach(Control c in this.p_Buttons.Controls)
 			{
 				if (c.GetType() == typeof(System.Windows.Forms.Panel) && c.Name.StartsWith("p_Button"))
@@ -4093,6 +5057,7 @@ namespace MMI.DIAGNOSE
 				}
 
 			}
+			*/
 
 
             
@@ -4210,6 +5175,42 @@ namespace MMI.DIAGNOSE
 				}
 				something_changed = true;
 			}   			
+		}
+
+		private void SetVerbrauch(double time)
+		{
+			if (time <= 0d || time > 10d) return;
+			
+			double add = ((double)localstate.Spannung * 1000d * (double)localstate.Oberstrom / (3600d/time) * (double)localstate.traction );
+			localstate.Energie += add;
+		}
+
+		private void timer_verbrauch_Tick(object sender, System.EventArgs e)
+		{
+			if (localstate != null && m_conf != null)
+			{
+				m_conf.Energie = localstate.Energie;
+				m_conf.SaveFile();
+			}
+		}
+
+		private string InsertPoints(string text)
+		{
+			string retval = ""; int counter = -1;
+
+			for(int i = text.Length-1; i >= 0; i--)
+			{   
+                counter++;     
+				if (counter == 3)
+				{
+					counter = 0;
+					retval = text[i].ToString() + "." + retval;
+				}
+				else
+					retval = text[i].ToString() + retval;				
+			}
+
+			return retval;
 		}
 	}
 }

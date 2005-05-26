@@ -15,7 +15,7 @@ namespace MMI.VT612
 {	   
 	public class VT612Control : System.Windows.Forms.UserControl
 	{
-		const bool USE_DOUBLE_BUFFER = true;
+		bool USE_DOUBLE_BUFFER = false;
 		const int ZUGKRAFT = 96;
 		const int BREMSKRAFT = 120;
 
@@ -108,6 +108,17 @@ namespace MMI.VT612
 		#endregion
 		public VT612Control(MMI.EBuLa.Tools.XMLLoader conf)
 		{
+			if (!conf.DoubleBuffer)
+			{
+				//This turns off internal double buffering of all custom GDI+ drawing
+				this.SetStyle(ControlStyles.DoubleBuffer, true);
+				this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+				this.SetStyle(ControlStyles.UserPaint, true);
+				USE_DOUBLE_BUFFER = false;
+			}
+			else
+				USE_DOUBLE_BUFFER = true;
+
 			InitializeComponent();
 
 			uhrAußen = new ISphere(468+80, 41+80, 74);
@@ -131,7 +142,7 @@ namespace MMI.VT612
 
 			zugkraft_thread = new Thread(new ThreadStart(MoveZugkraft));
 
-			int interval = Convert.ToInt32(Math.Round((1d/(double)conf.FramesPerSecond)*1000d));
+			int interval = Convert.ToInt32(Math.Round((1d/(double)conf.FramesPerSecondLow)*1000d));
 			timer1.Interval = interval;
 			timer1.Enabled = true;
 			
@@ -1380,7 +1391,7 @@ namespace MMI.VT612
 				Störung st = localstate.störungmgr.Current;
 
 				s = "St. in "+st.Name;
-				pg.DrawString(s, f, new SolidBrush(StTextColor), 462, 352);
+				pg.DrawString(s, f, new SolidBrush(StTextColor), 441, 352);
 			}
 			else if (localstate.störungmgr.GetPassives().Count > 1)
 			{
@@ -1412,7 +1423,10 @@ namespace MMI.VT612
 
 			something_changed = false;
 
-			BR185Control_Paint(this, new PaintEventArgs(this.CreateGraphics(), new Rectangle(0,0,this.Width, this.Height)));
+			if (USE_DOUBLE_BUFFER)
+				BR185Control_Paint(this, new PaintEventArgs(this.CreateGraphics(), new Rectangle(0,0,this.Width, this.Height)));
+			else
+				this.Refresh();
 
 			#region alter Code
 			//GC.Collect();
@@ -1892,7 +1906,7 @@ namespace MMI.VT612
 		private void BR185Control_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
 
-			if (m_backBuffer == null)
+			if (m_backBuffer == null && USE_DOUBLE_BUFFER)
 			{
 				m_backBuffer= new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
 			}
@@ -1909,9 +1923,9 @@ namespace MMI.VT612
 			g.TextRenderingHint = TEXT_MODE;
 
 			if (inverse_display)
-                g.Clear(Color.Black);
+                g.Clear(Misc.FILL_BLACK);
 			else
-				g.Clear(Color.LightGray);
+				g.Clear(Misc.FILL_GRAY);
 
 			SetButtons();
 

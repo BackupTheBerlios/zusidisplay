@@ -75,7 +75,7 @@ namespace MMI.DAVID
 			if (t == null)
 			{
 				t = new Thread(new ThreadStart(net.Connect));
-				t.Priority = ThreadPriority.Lowest;
+				t.Priority = m_XMLConf.thread_prio;
 				t.IsBackground = true;
 				t.Start();
 				Thread.Sleep(0);

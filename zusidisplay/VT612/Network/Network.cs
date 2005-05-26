@@ -6,6 +6,8 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Collections;
 
+using MMI.EBuLa.Tools;
+
 namespace MMI.VT612
 {
 	public class Network : MMI.EBuLa.Tools.INetwork
@@ -50,6 +52,29 @@ namespace MMI.VT612
 		public void SetConnected(bool con)
 		{
 			c.IsCONNECTED = con;
+		}
+
+		public bool GetConnectedStatus()
+		{
+			return c.IsCONNECTED;
+		}
+
+		public void SetStatus(MMI.EBuLa.Tools.ENUMStörung Stoerung)
+		{
+			SetStatus(Stoerung, false);
+		}
+
+		public void SetStatus(MMI.EBuLa.Tools.ENUMStörung Stoerung, bool delete)
+		{
+			if (delete)
+			{
+				c.localstate.störungmgr.DeleteStörung(Stoerung);
+			}
+			else
+			{
+				MMI.EBuLa.Tools.Störung st = new MMI.EBuLa.Tools.Störung(MMI.EBuLa.Tools.ENUMStörung.S11_ZUSIKomm);
+				c.localstate.störungmgr.Add(st);
+			}
 		}
 
 		/*public void Listen()

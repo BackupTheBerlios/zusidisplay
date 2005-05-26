@@ -19,7 +19,7 @@ namespace MMI.EBuLa.Tools
 
 	public enum ZUGBEEINFLUSSUNG
 	{
-		I54=1, I60, I60R, PZB90_15, PZB90_16, PZ80, PZ80R, LZB80_I80, SIGNUM
+		I54=1, I60, I60R, PZB90_15, PZB90_16, PZ80, PZ80R, LZB80_I80, SIGNUM, NONE
 	}
 
 	public enum TÜRSCHlIESSUNG
@@ -41,14 +41,19 @@ namespace MMI.EBuLa.Tools
 
 		public bool LM_Zugart_O = false;
 		public bool LM_Zugart_M = false;
-		public bool LM_Zugart_U = true;
+		public bool LM_Zugart_U = false;
 
 		public bool LM_LZB_Ü = false;
-		public bool LM_LZB_B = true;
+		public bool LM_LZB_B = false;
 		public bool LM_LZB_S = false;
 		public bool LM_LZB_G = false;
 		public bool LM_LZB_H = false;
 		public bool LM_LZB_ENDE = false;
+
+		public bool LM_GNT_Ü = false;
+		public bool LM_GNT_B = false;
+		public bool LM_GNT_S = false;
+		public bool LM_GNT_G = false;
 
 		public bool LM_PZB_AKTIV = false;
 
@@ -57,20 +62,24 @@ namespace MMI.EBuLa.Tools
 		public bool LM_Befehl = false;
 
 		public bool LM_Sifa = false;
-		public bool LM_HS = true;
-		public bool LM_TÜR = false;
-		public bool LM_NBÜ_EP = true;
+		public bool LM_HS = false;
+		public bool LM_TÜR = true;
+		public bool LM_NBÜ_EP = false;
 
 		public bool LM_AFB = false;
 
 		public bool LM_INTEGRA_GELB = false;
 		public bool LM_INTEGRA_ROT = false;
+		public bool LM_INTEGRA_GELB2 = false;
+		public bool LM_INTEGRA_ROT2 = false;
 
 		public bool addtionalhours = false;
 		public bool SHOW_CLOCK = true;
 
+		public bool NBÜ_Aktiv = false;
+
 		public bool Reisezug = false;
-		public ZUGBEEINFLUSSUNG PZB_System = ZUGBEEINFLUSSUNG.I54;
+		public ZUGBEEINFLUSSUNG PZB_System = ZUGBEEINFLUSSUNG.NONE;
 		public float Brh = 0f;
 		public BREMSSTELLUNG Bremsstellung = BREMSSTELLUNG.G;
 
@@ -81,7 +90,7 @@ namespace MMI.EBuLa.Tools
 		public float AFB_SollGeschwindigkeit = 0f;
 		public float LZB_SollGeschwindigkeit = 0f;
 		public float LZB_ZielGeschwindigkeit = 0f;
-		public int LZB_ZielWeg = 0;
+		public float LZB_ZielWeg = 0;
 		public float Zugkraft = 0f;
 		public float ZugkraftGesammt = 0f;
 
@@ -100,8 +109,6 @@ namespace MMI.EBuLa.Tools
 
 		public bool LM_MG = false;
 
-
-
 		public bool LM_Zugart_O2 = false;
 		public bool LM_Zugart_M2 = false;
 		public bool LM_Zugart_U2 = true;
@@ -113,11 +120,18 @@ namespace MMI.EBuLa.Tools
 		public bool LM_LZB_H2 = false;
 		public bool LM_LZB_ENDE2 = false;
 
+		public bool LM_GNT_Ü2 = false;
+		public bool LM_GNT_B2 = true;
+		public bool LM_GNT_S2 = false;
+		public bool LM_GNT_G2 = false;
+						
 		public bool LM_PZB_AKTIV2 = false;
 
 		public bool LM_1000Hz2 = false;
 		public bool LM_500Hz2 = false;
 		public bool LM_Befehl2 = false;
+
+		public double Energie = 0d;
 
 		#endregion
 
@@ -134,7 +148,15 @@ namespace MMI.EBuLa.Tools
 			LM_LZB_H2 = false;
 			LM_LZB_ENDE2 = false;
 
+			LM_GNT_Ü2 = false;
+			LM_GNT_B2 = true;
+			LM_GNT_S2 = false;
+			LM_GNT_G2 = false;
+
 			LM_PZB_AKTIV2 = false;
+
+			LM_INTEGRA_GELB2 = false;
+			LM_INTEGRA_ROT2 = false;
 
 			LM_1000Hz2 = false;
 			LM_500Hz2 = false;

@@ -52,6 +52,29 @@ namespace MMI.DAVID
 			c.IsCONNECTED = con;
 		}
 
+		public bool GetConnectedStatus()
+		{
+			return c.IsCONNECTED;
+		}
+
+		public void SetStatus(MMI.EBuLa.Tools.ENUMStörung Stoerung)
+		{
+			SetStatus(Stoerung, false);
+		}
+
+		public void SetStatus(MMI.EBuLa.Tools.ENUMStörung Stoerung, bool delete)
+		{
+			if (delete)
+			{
+				c.localstate.störungmgr.DeleteStörung(Stoerung);
+			}
+			else
+			{
+				MMI.EBuLa.Tools.Störung st = new MMI.EBuLa.Tools.Störung(MMI.EBuLa.Tools.ENUMStörung.S11_ZUSIKomm);
+				c.localstate.störungmgr.Add(st);
+			}
+		}
+		
 		/*public void Listen()
 		{
 			SocketPermission permission = new SocketPermission(System.Security.Permissions.PermissionState.Unrestricted);

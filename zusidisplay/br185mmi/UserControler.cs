@@ -66,7 +66,7 @@ namespace MMI.MMIBR185
 			{
 				t = new Thread(new ThreadStart(net.Connect));
 				t.IsBackground = true;
-				t.Priority = ThreadPriority.Lowest;
+				t.Priority = m_XMLConf.thread_prio;
 				t.Start();
 				Thread.Sleep(1);
 			}

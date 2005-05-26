@@ -25,6 +25,8 @@ namespace MMI.EBuLa
 		const SmoothingMode SMOOTHING_MODE = SmoothingMode.AntiAlias;
 		const TextRenderingHint TEXT_MODE = TextRenderingHint.AntiAliasGridFit;
 
+		bool SomethingChanged = false;
+
 		#region Members
         public System.DateTime vtime;
         private System.Timers.Timer vtimer;
@@ -227,6 +229,10 @@ namespace MMI.EBuLa
 		private System.Windows.Forms.PictureBox J_07;
 		private System.Windows.Forms.PictureBox J_10;
 		private System.Windows.Forms.PictureBox J_11;
+		private System.Windows.Forms.Timer timer_refresh;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label l_ESF_Pos;
+		private System.Windows.Forms.Label l_ESF_Neg;
 
         private MMI.EBuLa.Tools.SoundInterface Sound;
 
@@ -239,6 +245,11 @@ namespace MMI.EBuLa
 
         public EbulaControl(MMI.EBuLa.Tools.XMLLoader XMLConf, bool isDAVID)
         {
+			//This turns off internal double buffering of all custom GDI+ drawing
+			this.SetStyle(ControlStyles.DoubleBuffer, true);
+			this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			this.SetStyle(ControlStyles.UserPaint, true);
+
             // Dieser Aufruf ist für den Windows Form-Designer erforderlich.
             InitializeComponent();
 
@@ -306,6 +317,9 @@ namespace MMI.EBuLa
 						Thread.Sleep(0);
 					}
 				}
+
+				L_TOP.Location = new Point(260, L_TOP.Location.Y);
+				L_DOWN.Location = new Point(260, L_DOWN.Location.Y);
 
 				fsdwason = true;
 				SetButtons(false);
@@ -524,6 +538,10 @@ namespace MMI.EBuLa
 			this.J_08 = new System.Windows.Forms.PictureBox();
 			this.J_07 = new System.Windows.Forms.PictureBox();
 			this.J_11 = new System.Windows.Forms.PictureBox();
+			this.timer_refresh = new System.Windows.Forms.Timer(this.components);
+			this.label1 = new System.Windows.Forms.Label();
+			this.l_ESF_Pos = new System.Windows.Forms.Label();
+			this.l_ESF_Neg = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.timer_Uhr)).BeginInit();
 			this.PanelButton.SuspendLayout();
 			this.PanelDown.SuspendLayout();
@@ -542,7 +560,7 @@ namespace MMI.EBuLa
 			// timer_Uhr
 			// 
 			this.timer_Uhr.Enabled = true;
-			this.timer_Uhr.Interval = 900;
+			this.timer_Uhr.Interval = 990;
 			this.timer_Uhr.SynchronizingObject = this;
 			this.timer_Uhr.Elapsed += new System.Timers.ElapsedEventHandler(this.timer_Uhr_Elapsed);
 			// 
@@ -2116,9 +2134,9 @@ namespace MMI.EBuLa
 			// Down_Timer
 			// 
 			this.Down_Timer.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.Down_Timer.Location = new System.Drawing.Point(8, 6);
+			this.Down_Timer.Location = new System.Drawing.Point(6, 6);
 			this.Down_Timer.Name = "Down_Timer";
-			this.Down_Timer.Size = new System.Drawing.Size(72, 18);
+			this.Down_Timer.Size = new System.Drawing.Size(76, 18);
 			this.Down_Timer.TabIndex = 127;
 			// 
 			// Down_Radio
@@ -2319,9 +2337,46 @@ namespace MMI.EBuLa
 			this.J_11.TabStop = false;
 			this.J_11.Visible = false;
 			// 
+			// timer_refresh
+			// 
+			this.timer_refresh.Enabled = true;
+			this.timer_refresh.Tick += new System.EventHandler(this.timer_refresh_Tick);
+			// 
+			// label1
+			// 
+			this.label1.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.label1.Location = new System.Drawing.Point(424, 392);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(32, 18);
+			this.label1.TabIndex = 179;
+			this.label1.Text = "ESF";
+			// 
+			// l_ESF_Pos
+			// 
+			this.l_ESF_Pos.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.l_ESF_Pos.Location = new System.Drawing.Point(456, 392);
+			this.l_ESF_Pos.Name = "l_ESF_Pos";
+			this.l_ESF_Pos.Size = new System.Drawing.Size(88, 18);
+			this.l_ESF_Pos.TabIndex = 180;
+			this.l_ESF_Pos.Text = "+ 0 kWh";
+			this.l_ESF_Pos.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// l_ESF_Neg
+			// 
+			this.l_ESF_Neg.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.l_ESF_Neg.Location = new System.Drawing.Point(544, 392);
+			this.l_ESF_Neg.Name = "l_ESF_Neg";
+			this.l_ESF_Neg.Size = new System.Drawing.Size(72, 18);
+			this.l_ESF_Neg.TabIndex = 181;
+			this.l_ESF_Neg.Text = "- 0 kWh";
+			this.l_ESF_Neg.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
 			// EbulaControl
 			// 
 			this.BackColor = System.Drawing.Color.WhiteSmoke;
+			this.Controls.Add(this.l_ESF_Neg);
+			this.Controls.Add(this.l_ESF_Pos);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.J_11);
 			this.Controls.Add(this.J_07);
 			this.Controls.Add(this.J_08);
@@ -2501,9 +2556,11 @@ namespace MMI.EBuLa
 
             SetButtons(true);
 
+			control.XMLConf.UseDB = true;
+
 			if (control.XMLConf.UseDB)
 			{
-				Zugauswahl z = new Zugauswahl(ref control);
+				Zugauswahl z = new Zugauswahl(ref control, L_TOP);
 				//kh.Form = z;
 				z.ShowDialog();
 
@@ -2513,8 +2570,8 @@ namespace MMI.EBuLa
 
 				if (z.DialogResult == DialogResult.Cancel)
 				{
-					//control.buffer_trainnumber = "";
-					//control.buffer_traintype = "";
+					control.buffer_trainnumber = "";
+					control.buffer_traintype = "";
 					return;
 				}
 			}
@@ -2600,6 +2657,7 @@ namespace MMI.EBuLa
 					L_Zug.Text = control.buffer_trainnumber;
             }
 
+			LoadESF();
         }
 
         private void vtimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -2621,6 +2679,7 @@ namespace MMI.EBuLa
 
         private void UpdateControl()
         { 
+			SomethingChanged = true;
             try
             {
 				if (control.Route == null)
@@ -2651,16 +2710,21 @@ namespace MMI.EBuLa
                 // down timer
 				if (control.timer_on) 
 				{
-					Down_Timer.Text = "Timer(km)";
+					Down_Timer.Text = "T(km)";
 				}
 				else if (control.move_via_time)
 				{
-					Down_Timer.Text = "Timer(Uhr)";
+					Down_Timer.Text = "T(Uhr)";
 				}
 				else
                 {
-                    Down_Timer.Text = "manuell";
+                    Down_Timer.Text = "man";
                 }
+
+				if (control.gnt) Down_Timer.Text += " GNT";
+
+				if (control.left) Down_RW.Text = "RW/l";
+				else Down_RW.Text = "RW/r";
 
                 // DOWN SPEED
                 for (int i = (int)control.Route.Position; i >= 0; i--)
@@ -2681,7 +2745,10 @@ namespace MMI.EBuLa
 					}
 					else
 					{
-						Down_Speed.Text = e.m_speed;
+						if (control.gnt)
+                            Down_Speed.Text = e.m_gnt_speed;
+						else
+							Down_Speed.Text = e.m_speed;
 						break;
 					}
                 }
@@ -2784,12 +2851,12 @@ namespace MMI.EBuLa
                             l.Text = "";
                             continue;
                         }
-						l.Location = new Point(248, l.Location.Y);
+						l.Location = new Point(260, l.Location.Y);
 
                         Entry e = (Entry)control.Route.Entrys[pos-1+(int)control.Route.Offset];
-                        if (e.m_type == EntryType.RADIO_MARKER || e.m_type == EntryType.RADIO_MARKER_ENDING || e.m_type == EntryType.GNT_BEGINNING || e.m_type == EntryType.GNT_ENDING || e.m_type == EntryType.LZB_BEGINNING || e.m_type == EntryType.LZB || e.m_type == EntryType.LZB_ENDING)
+                        if (e.m_type == EntryType.RADIO_MARKER || e.m_type == EntryType.RADIO_MARKER_ENDING || e.m_type == EntryType.GNT_BEGINNING || e.m_type == EntryType.GNT_ENDING || e.m_type == EntryType.LZB_BEGINNING || e.m_type == EntryType.LZB || e.m_type == EntryType.LZB_ENDING || e.m_type == EntryType.VERKUERTZT)
                         { 
-							if (e.m_type != EntryType.RADIO_MARKER && e.m_type != EntryType.RADIO_MARKER_ENDING)
+							if (e.m_type != EntryType.RADIO_MARKER && e.m_type != EntryType.RADIO_MARKER_ENDING && e.m_type != EntryType.VERKUERTZT)
 							{
 								l.Text = "";
 								l.Size = new Size(0, l.Height);
@@ -3161,111 +3228,7 @@ namespace MMI.EBuLa
 
 		private void DrawSpecial()
 		{
-			if (m_backBuffer == null)
-			{
-				m_backBuffer= new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
-			}
-
-			if (USE_DOUBLE_BUFFER)
-				g = Graphics.FromImage(m_backBuffer);
-			else
-				g = this.CreateGraphics();
 			
-			g.Clear(this.BackColor);
-
-			//Paint your graphis on g here
-
-			Pen p = new Pen(BLACK, 2);
-
-			Font f = new Font("Arial", 4, GraphicsUnit.Millimeter);
-
-			foreach(DictionaryEntry e in ht)
-			{
-				EntryType type = (EntryType)e.Value;
-				int pos = (int)e.Key;
-				string s = "";
-
-				switch(type)
-				{
-					case EntryType.GNT_BEGINNING:
-						s = "GNT";
-						break;
-					case EntryType.GNT_ENDING:
-						s = "GNT";
-						break;
-					case EntryType.LZB_BEGINNING:
-						s = "LZB";
-						break;
-					case EntryType.LZB_ENDING:
-						s = "LZB";
-						break;
-					case EntryType.RADIO_MARKER:
-						s = "";
-						break;
-					case EntryType.RADIO_MARKER_ENDING:
-						s = "";
-						break;
-				}
-
-				if (s != "")
-				{
-					g.DrawRectangle(p, 248, 80+(12-pos)*24, 40, 18);
-					g.DrawString(s, f, new SolidBrush(BLACK), 248, 80+(12-pos)*24); 
-
-					if (type == EntryType.GNT_ENDING || type == EntryType.LZB_ENDING)
-					{
-						g.DrawLine(p, 248, 80+(12-pos)*24+18, 248+40, 80+(12-pos)*24);
-					}
-				}
-				else if (type == EntryType.RADIO_MARKER || type == EntryType.RADIO_MARKER_ENDING)
-				{
-					g.FillEllipse(new SolidBrush(BLACK), 232-2, 80+(12-pos)*24-3, 7, 9);
-					g.FillEllipse(new SolidBrush(BLACK), 232+5, 80+(12-pos)*24+6, 9, 7);
-					g.DrawLine(new Pen(BLACK, 4), 232-1, 80+(12-pos)*24, 232+6, 80+(12-pos)*24-3+6+7);
-					if (type == EntryType.RADIO_MARKER_ENDING)
-					{
-						g.DrawLine(p, 232-2, 80+(12-pos)*24+6+7, 232+5+7, 80+(12-pos)*24-1);
-					}
-				}
-
-			}
-
-			if (control.Route.Entrys.Count > 0)
-			{
-				//Zacken
-
-				Pen pen = new Pen(BLACK, 2);
-				int maxpos = 12;
-				if (control.Route.Entrys.Count < 12) maxpos = control.Route.Entrys.Count;
-
-				for (int i = (int)control.Route.Offset; i < (int)control.Route.Offset+maxpos; i++)
-				{
-					int s = ((Entry)control.Route.Entrys[i]).zack;
-					if ( s < 1) continue;
-					int width = 6;
-					int x = 451+5;
-					int i_pos = i - (int)control.Route.Offset;
-					int y = 80+(12-i_pos)*24 - 28;
-					Point[] pp = {new Point(x+width, y), new Point(x, y+6), new Point(x+width, y+12), new Point(x, y+18), new Point(x+width, y+24)};
-					g.DrawLines(pen, pp);
-
-					if ( s < 2) continue;
-					x = x-4;
-					Point[] pp2 = {new Point(x+width, y), new Point(x, y+6), new Point(x+width, y+12), new Point(x, y+18), new Point(x+width, y+24)};
-					g.DrawLines(pen, pp2);
-
-				}
-			}
-
-
-			g.SmoothingMode = SMOOTHING_MODE;
-			g.TextRenderingHint = TEXT_MODE;
-
-			if (USE_DOUBLE_BUFFER)
-			{
-				//Copy the back buffer to the screen
-				this.CreateGraphics().DrawImageUnscaled(m_backBuffer,0,0);
-			}
 		}
 
         private void B_Zeit_Click(object sender, System.EventArgs e)
@@ -3435,32 +3398,37 @@ namespace MMI.EBuLa
             if (control.XMLConf.FocusToZusi) control.SetFocusToZusi();
         }
 
-        public void Button_Up_Pressed(object sender, System.EventArgs e)
-        {
+		public void Button_Up_Pressed(object sender, System.EventArgs e)
+		{
 			if (control.sound) Sound.PlaySound();
-			control.NextPage();
+
+			if (control.move_via_time || control.timer_on)
+			{
+				control.NextPage();
+			}
+			else
+			{
+				control.NextEntry(false);
+			}
 			UpdateControl();
 			if (control.XMLConf.FocusToZusi) control.SetFocusToZusi();
-			/*
-            if (control.sound) Sound.PlaySound();
-            control.NextEntry();
-            UpdateControl();
-            if (control.XMLConf.FocusToZusi) control.SetFocusToZusi();
-			*/
         }
 
         public void Button_Down_Pressed(object sender, System.EventArgs e)
         {
 			if (control.sound) Sound.PlaySound();
-			control.PrevPage();
+
+			if (control.move_via_time || control.timer_on)
+			{
+				control.PrevPage();
+			}
+			else
+			{
+				control.PrevEntry();
+			}
+			
 			UpdateControl();
 			if (control.XMLConf.FocusToZusi) control.SetFocusToZusi();        
-			/*
-			if (control.sound) Sound.PlaySound();
-            control.PrevEntry();
-            UpdateControl();
-            if (control.XMLConf.FocusToZusi) control.SetFocusToZusi();        
-			*/
         }
 
         public void Button_Right_Pressed(object sender, System.EventArgs e)
@@ -3653,6 +3621,13 @@ namespace MMI.EBuLa
 
         private void SetButtons(bool numbers)
         {
+			if (!control.XMLConf.UseDB)
+			{
+				B_GW.Enabled = false;
+				//B_GNT.Enabled = false;
+			}
+			if (control.Route != null && control.Route.one_track) B_GW.Enabled = false;
+
 			control.keysarenumbers = numbers;
             if (numbers)
             {
@@ -3686,12 +3661,10 @@ namespace MMI.EBuLa
                 B_LaD.Text = "LaD";
                 B_LaT.Text = "LaT";
                 B_LW.Text = "LW";
-				if (control.left) B_GW.Text = "<GW>";
-				else B_GW.Text = "GW";
+				B_GW.Text = "GW";
                 B_Zeit.Text = "Zeit";
                 B_Plan.Text = "Plan";
-				if (control.gnt) B_GNT.Text = "<GNT>";
-				else B_GNT.Text = "GNT";
+				B_GNT.Text = "GNT";
                 B_G.Text = "G";
 
                 B_Zug.Visible = true;
@@ -3699,20 +3672,15 @@ namespace MMI.EBuLa
                 B_LaD.Visible = false;
                 B_LaT.Visible = false;
                 B_LW.Visible = false;
-                B_GW.Visible = true;
+                B_GW.Visible = B_GW.Enabled;
                 B_Zeit.Visible = true;
                 B_Plan.Visible = !fsdwason;
-                B_GNT.Visible = true;
+                B_GNT.Visible = B_GNT.Enabled;
                 B_G.Visible = true;
             }
 
-			if (control.Route != null && control.Route.one_track) B_GW.Enabled = false;
+			
 
-			if (!control.XMLConf.UseDB)
-			{
-				B_GW.Enabled = false;
-				//B_GNT.Enabled = false;
-			}
         }
 
         private void timer_SyncUhr_Tick(object sender, System.EventArgs e)
@@ -3753,7 +3721,7 @@ namespace MMI.EBuLa
 				if (!control.move_via_time)
 				{
 					// Zusi nicht lokal vorhanden
-					timer_Sync.Interval = 10000;
+					timer_Sync.Interval = 1000;
 					if (control != null)
 					{
 						control.use_zusi_time = false;
@@ -3766,7 +3734,7 @@ namespace MMI.EBuLa
             }
 
 
-            timer_Sync.Interval = 10000;
+            timer_Sync.Interval = 1000;
 
 			if (control.use_zusi_time)
 			{
@@ -4002,9 +3970,138 @@ namespace MMI.EBuLa
 			}
 		}
 
-		private void EbulaControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+		private void EbulaControl_Paint(object sender, System.Windows.Forms.PaintEventArgs ea)
 		{
-			DrawSpecial();
+			if (m_backBuffer == null)
+			{
+				m_backBuffer= new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
+			}
+
+			if (USE_DOUBLE_BUFFER)
+				g = Graphics.FromImage(m_backBuffer);
+			else
+				g = ea.Graphics;
+			
+			g.Clear(this.BackColor);
+
+			//Paint your graphis on g here
+
+			Pen p = new Pen(BLACK, 2);
+
+			Font f = new Font("Arial", 4, GraphicsUnit.Millimeter);
+
+			foreach(DictionaryEntry e in ht)
+			{
+				EntryType type = (EntryType)e.Value;
+				int pos = (int)e.Key;
+				string s = "";
+
+				switch(type)
+				{
+					case EntryType.GNT_BEGINNING:
+						s = "GNT";
+						break;
+					case EntryType.GNT_ENDING:
+						s = "GNT";
+						break;
+					case EntryType.LZB_BEGINNING:
+						s = "LZB";
+						break;
+					case EntryType.LZB_ENDING:
+						s = "LZB";
+						break;
+					case EntryType.RADIO_MARKER:
+						s = "";
+						break;
+					case EntryType.RADIO_MARKER_ENDING:
+						s = "";
+						break;
+					case EntryType.VERKUERTZT:
+						s = "";
+						break;
+				}
+
+				if (s != "")
+				{
+					Font f2 = new Font("Arial", 3, GraphicsUnit.Millimeter);
+					g.DrawRectangle(p, 230, 80+(12-pos)*24, 28, 18);
+					g.DrawString(s, f2, new SolidBrush(BLACK), 232, 82+(12-pos)*24); 
+
+					if (type == EntryType.GNT_ENDING || type == EntryType.LZB_ENDING)
+					{
+						g.DrawLine(p, 230, 80+(12-pos)*24+18, 230+28, 80+(12-pos)*24);
+					}
+				}
+				if (type == EntryType.VERKUERTZT)
+				{
+					Font f3 = new Font("Zusi standard", 14F, System.Drawing.GraphicsUnit.Point);
+					g.DrawString("º", f3, new SolidBrush(BLACK), 230, 78+(12-pos)*24); 
+				}
+				else if (type == EntryType.RADIO_MARKER || type == EntryType.RADIO_MARKER_ENDING)
+				{
+					g.FillEllipse(new SolidBrush(BLACK), 232-2, 80+(12-pos)*24-3, 7, 9);
+					g.FillEllipse(new SolidBrush(BLACK), 232+5, 80+(12-pos)*24+6, 9, 7);
+					g.DrawLine(new Pen(BLACK, 4), 232-1, 80+(12-pos)*24, 232+6, 80+(12-pos)*24-3+6+7);
+					if (type == EntryType.RADIO_MARKER_ENDING)
+					{
+						g.DrawLine(p, 232-2, 80+(12-pos)*24+6+7, 232+5+7, 80+(12-pos)*24-1);
+					}
+				}
+
+			}
+
+			if (control.Route.Entrys.Count > 0)
+			{
+				//Zacken
+
+				Pen pen = new Pen(BLACK, 2);
+				int maxpos = 12;
+				if (control.Route.Entrys.Count < 12) maxpos = control.Route.Entrys.Count;
+
+				for (int i = (int)control.Route.Offset; i < (int)control.Route.Offset+maxpos; i++)
+				{
+					int s = ((Entry)control.Route.Entrys[i]).zack;
+					if ( s < 1) continue;
+					int width = 6;
+					int x = 451+5;
+					int i_pos = i - (int)control.Route.Offset;
+					int y = 80+(12-i_pos)*24 - 28;
+					Point[] pp = {new Point(x+width, y), new Point(x, y+6), new Point(x+width, y+12), new Point(x, y+18), new Point(x+width, y+24)};
+					g.DrawLines(pen, pp);
+
+					if ( s < 2) continue;
+					x = x-4;
+					Point[] pp2 = {new Point(x+width, y), new Point(x, y+6), new Point(x+width, y+12), new Point(x, y+18), new Point(x+width, y+24)};
+					g.DrawLines(pen, pp2);
+
+				}
+			}
+
+			l_ESF_Pos.Text = "+ " + Math.Round(m_conf.Energie/1000f,0).ToString() + " kWh";
+
+
+			g.SmoothingMode = SMOOTHING_MODE;
+			g.TextRenderingHint = TEXT_MODE;
+
+			if (USE_DOUBLE_BUFFER)
+			{
+				//Copy the back buffer to the screen
+				this.CreateGraphics().DrawImageUnscaled(m_backBuffer,0,0);
+			}
+		}
+
+		private void timer_refresh_Tick(object sender, System.EventArgs e)
+		{
+			if (!SomethingChanged) return;
+
+			SomethingChanged = false;
+
+			this.Refresh();
+		}
+		private void LoadESF()
+		{
+			m_conf.FastReadFile();
+			SomethingChanged = true;
 		}
     }
 }

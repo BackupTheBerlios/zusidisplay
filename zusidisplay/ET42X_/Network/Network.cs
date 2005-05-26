@@ -14,7 +14,7 @@ namespace MMI.ET42X
 		Socket s;
 		Socket new_socket;
 		TextBox messages;
-		ET42XControl c;
+		public ET42XControl c;
 		ArrayList sockets_list = new ArrayList();
 		MMI.EBuLa.Tools.SuperNetwork sn;
 		
@@ -26,10 +26,14 @@ namespace MMI.ET42X
 
 		public void Dispose()
 		{
-			if (s!=null) s.Shutdown(SocketShutdown.Both);
-			if (new_socket != null) new_socket.Shutdown(SocketShutdown.Both);
-			s = null;
-			new_socket =null;
+			try
+			{
+				if (s!=null) s.Shutdown(SocketShutdown.Both);
+				if (new_socket != null) new_socket.Shutdown(SocketShutdown.Both);
+				s = null;
+				new_socket =null;
+			}
+			catch(Exception){}
 		}
 
 		public void Connect()
@@ -52,6 +56,29 @@ namespace MMI.ET42X
 		public void SetConnected(bool con)
 		{
 			c.IsCONNECTED = con;
+		}
+
+		public bool GetConnectedStatus()
+		{
+			return c.IsCONNECTED;
+		}
+
+		public void SetStatus(ENUMStörung Stoerung)
+		{
+			SetStatus(Stoerung, false);
+		}
+
+		public void SetStatus(ENUMStörung Stoerung, bool delete)
+		{
+			if (delete)
+			{
+				c.localstate.störungmgr.DeleteStörung(Stoerung);
+			}
+			else
+			{
+				Störung st = new Störung(ENUMStörung.S11_ZUSIKomm);
+				c.localstate.störungmgr.Add(st);
+			}
 		}
 
 		/*public void Listen()
@@ -232,6 +259,10 @@ namespace MMI.ET42X
 					c.SetGeschwindigkeit(valu);
 					break;
 				case 2: // HLL
+					c.SetHl_Druck(valu);
+					break;
+				case 3: // C-Druck
+					c.SetCDruck(valu);					
 					break;
 				case 4: // HBL
 					break;

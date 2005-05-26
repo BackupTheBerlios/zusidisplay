@@ -122,7 +122,7 @@ namespace MMI.EBuLa
 			this.groupBox1.Location = new System.Drawing.Point(24, 72);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(248, 80);
-			this.groupBox1.TabIndex = 4;
+			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Datum:";
 			// 
@@ -130,7 +130,7 @@ namespace MMI.EBuLa
 			// 
 			this.dateP.Location = new System.Drawing.Point(24, 40);
 			this.dateP.Name = "dateP";
-			this.dateP.TabIndex = 1;
+			this.dateP.TabIndex = 0;
 			// 
 			// groupBox2
 			// 
@@ -144,7 +144,7 @@ namespace MMI.EBuLa
 			this.groupBox2.Location = new System.Drawing.Point(24, 168);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(248, 88);
-			this.groupBox2.TabIndex = 5;
+			this.groupBox2.TabIndex = 3;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Uhrzeit:";
 			// 
@@ -153,7 +153,7 @@ namespace MMI.EBuLa
 			this.label3.Location = new System.Drawing.Point(160, 32);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(56, 16);
-			this.label3.TabIndex = 9;
+			this.label3.TabIndex = 4;
 			this.label3.Text = "Sekunde";
 			// 
 			// label2
@@ -161,7 +161,7 @@ namespace MMI.EBuLa
 			this.label2.Location = new System.Drawing.Point(96, 32);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(40, 16);
-			this.label2.TabIndex = 8;
+			this.label2.TabIndex = 2;
 			this.label2.Text = "Minute";
 			// 
 			// label1
@@ -169,7 +169,7 @@ namespace MMI.EBuLa
 			this.label1.Location = new System.Drawing.Point(32, 32);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(40, 16);
-			this.label1.TabIndex = 7;
+			this.label1.TabIndex = 0;
 			this.label1.Text = "Stunde";
 			// 
 			// Sec
@@ -182,7 +182,7 @@ namespace MMI.EBuLa
 																0});
 			this.Sec.Name = "Sec";
 			this.Sec.Size = new System.Drawing.Size(40, 20);
-			this.Sec.TabIndex = 6;
+			this.Sec.TabIndex = 5;
 			// 
 			// Min
 			// 
@@ -194,7 +194,7 @@ namespace MMI.EBuLa
 																0});
 			this.Min.Name = "Min";
 			this.Min.Size = new System.Drawing.Size(40, 20);
-			this.Min.TabIndex = 5;
+			this.Min.TabIndex = 3;
 			// 
 			// Std
 			// 
@@ -206,7 +206,7 @@ namespace MMI.EBuLa
 																0});
 			this.Std.Name = "Std";
 			this.Std.Size = new System.Drawing.Size(40, 20);
-			this.Std.TabIndex = 4;
+			this.Std.TabIndex = 1;
 			// 
 			// button1
 			// 
@@ -214,7 +214,7 @@ namespace MMI.EBuLa
 			this.button1.Location = new System.Drawing.Point(296, 184);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(32, 32);
-			this.button1.TabIndex = 6;
+			this.button1.TabIndex = 4;
 			this.button1.Text = "C";
 			this.button1.Click += new System.EventHandler(this.B_C_Click);
 			// 
@@ -224,7 +224,7 @@ namespace MMI.EBuLa
 			this.button2.Location = new System.Drawing.Point(296, 224);
 			this.button2.Name = "button2";
 			this.button2.Size = new System.Drawing.Size(32, 32);
-			this.button2.TabIndex = 7;
+			this.button2.TabIndex = 5;
 			this.button2.Text = "E";
 			this.button2.Click += new System.EventHandler(this.B_E_Click);
 			// 
@@ -235,7 +235,7 @@ namespace MMI.EBuLa
 			this.cbZusiZeit.Location = new System.Drawing.Point(24, 24);
 			this.cbZusiZeit.Name = "cbZusiZeit";
 			this.cbZusiZeit.Size = new System.Drawing.Size(304, 24);
-			this.cbZusiZeit.TabIndex = 8;
+			this.cbZusiZeit.TabIndex = 0;
 			this.cbZusiZeit.Text = "Zusi Zeit (Registry) benutzen";
 			this.cbZusiZeit.CheckedChanged += new System.EventHandler(this.cbZusiZeit_CheckedChanged);
 			// 
@@ -246,7 +246,7 @@ namespace MMI.EBuLa
 			this.cbAdditionHours.Location = new System.Drawing.Point(24, 48);
 			this.cbAdditionHours.Name = "cbAdditionHours";
 			this.cbAdditionHours.Size = new System.Drawing.Size(304, 24);
-			this.cbAdditionHours.TabIndex = 9;
+			this.cbAdditionHours.TabIndex = 1;
 			this.cbAdditionHours.Text = "12 Std zur Zusi Zeit (TCP) addieren";
 			// 
 			// DateTimeField

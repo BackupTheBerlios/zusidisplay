@@ -15,9 +15,16 @@ namespace MMI.MMIBR185
 {	   
 	public class BR185Control : System.Windows.Forms.UserControl
 	{
-		const bool USE_DOUBLE_BUFFER = true;
+		bool USE_DOUBLE_BUFFER = false;
+
+		public bool PREVENT_DRAW = false;
+
+		public bool ZUSI_AT_TCP_SERVER = false;
+
+		private bool DrawDots = true, InternalDrawDots = true;
 
 		Square[] LMs = new Square[7];
+		Line[] LINEs = new Line[3];
 		DateTime lastTime = new DateTime(0);
 
 		#region Declarations
@@ -53,7 +60,7 @@ namespace MMI.MMIBR185
 			PZB_1000, PZB_500, PZB_Befehl,
 			PZB_ZA_O, PZB_ZA_M, PZB_ZA_U,
 			PZB_AKTIV, HS, ZS, TÜR, SIFA, NBÜ_EP,
-			INTEGRA_GELB, INTEGRA_ROT;
+			INTEGRA_GELB, INTEGRA_ROT, ZUB_GELB, ZUB_ROT, ZUB_BLAU;
 		Line LZB_S_TEXT, LZB_G_TEXT, PZB_1000_TEXT, PZB_500_TEXT,
 			M_Status1, M_Status2, M_Status3;
 		private System.Windows.Forms.Panel p_Buttons;
@@ -91,6 +98,8 @@ namespace MMI.MMIBR185
 		private System.Windows.Forms.PictureBox pictureBox1;
 
 		bool on = true;
+		private System.Windows.Forms.Timer timer_Doppelpunkt;
+		private System.Windows.Forms.Timer timerDisableDots;
 		bool isEmbeded = false;
 
 		#endregion
@@ -101,9 +110,18 @@ namespace MMI.MMIBR185
 
 		public BR185Control(MMI.EBuLa.Tools.XMLLoader conf)
 		{
-			InitializeComponent();
+			if (!conf.DoubleBuffer)
+			{
+				//This turns off internal double buffering of all custom GDI+ drawing
+				this.SetStyle(ControlStyles.DoubleBuffer, true);
+				this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+				this.SetStyle(ControlStyles.UserPaint, true);
+				USE_DOUBLE_BUFFER = false;
+			}
+			else
+				USE_DOUBLE_BUFFER = true;
 
-			//this.SetStyle(ControlStyles.DoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+			InitializeComponent();
 
 			m_conf = conf;
 
@@ -160,9 +178,13 @@ namespace MMI.MMIBR185
 			// INTEGRA
 			INTEGRA_GELB = new Square(this, new Point(57,263), new Point(57+39,263+47), "INT", Color.Yellow, false, 0, false, "");
 			INTEGRA_ROT = new Square(this, new Point(96, 263), new Point(96+38,263+47), "INT", Color.Red, false, 0, false, "");
+			ZUB_GELB = new Square(this, new Point(57,263), new Point(57+39,263+47), "ZUB", Color.Yellow, false, 0, false, "");
+			ZUB_ROT = new Square(this, new Point(96, 263), new Point(96+38,263+47), "ZUB", Color.Red, false, 0, false, "");
+			ZUB_BLAU = new Square(this, new Point(57,263), new Point(57+39,263+47), "ZUB", MMI_BLUE, false, 0, false, "");
+
 
 			// Maschinenstatus
-			M_Status1 = new Line(this, new Point(326,311), new Point(554,337), "Keine Verbindung zu Zusi", MMI_BLUE, false, 0);
+			M_Status1 = new Line(this, new Point(325,310), new Point(554,337), "Keine Verbindung zu TCP Server", MMI_BLUE, false, 0);
 
 			SetButtons();
 
@@ -233,6 +255,8 @@ namespace MMI.MMIBR185
 			this.l_Button1 = new System.Windows.Forms.Label();
 			this.p_UpperLine = new System.Windows.Forms.Panel();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			this.timer_Doppelpunkt = new System.Windows.Forms.Timer(this.components);
+			this.timerDisableDots = new System.Windows.Forms.Timer(this.components);
 			this.p_Buttons.SuspendLayout();
 			this.p_Button0.SuspendLayout();
 			this.p_Button9.SuspendLayout();
@@ -590,6 +614,17 @@ namespace MMI.MMIBR185
 			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this.pictureBox1.TabIndex = 2;
 			this.pictureBox1.TabStop = false;
+			// 
+			// timer_Doppelpunkt
+			// 
+			this.timer_Doppelpunkt.Enabled = true;
+			this.timer_Doppelpunkt.Interval = 1000;
+			this.timer_Doppelpunkt.Tick += new System.EventHandler(this.timer_Doppelpunkt_Tick);
+			// 
+			// timerDisableDots
+			// 
+			this.timerDisableDots.Interval = 500;
+			this.timerDisableDots.Tick += new System.EventHandler(this.timerDisableDots_Tick);
 			// 
 			// BR185Control
 			// 
@@ -956,16 +991,64 @@ namespace MMI.MMIBR185
 			something_changed = true;
 		}
 
-		public void SetLM_INTEGRA_GELB(bool state)
+		public void SetLM_INTEGRA(float state)
 		{
-			localstate.LM_INTEGRA_GELB = state;
+			if (state == 0f) // Keine LM + Kein Schalter
+			{
+				localstate.LM_INTEGRA_GELB = false;
+				localstate.LM_INTEGRA_ROT = false;
+			}
+			else if (state == 1f) // Keine LM + Schalter
+			{
+				localstate.LM_INTEGRA_GELB = false;
+				localstate.LM_INTEGRA_ROT = false;
+			}
+			else if (state == 2f) // LM Gelb + Kein Schalter
+			{
+				localstate.LM_INTEGRA_GELB = true;
+				localstate.LM_INTEGRA_ROT = false;
+			}
+			else if (state == 3f) // LM Gelb + Schalter
+			{
+				localstate.LM_INTEGRA_GELB = true;
+				localstate.LM_INTEGRA_ROT = false;
+			}
+			else if (state == 4f) // LM Rot + Kein Schalter
+			{
+				localstate.LM_INTEGRA_GELB = false;
+				localstate.LM_INTEGRA_ROT = true;
+			}
+			else if (state == 5f) // LM Rot + Schalter
+			{
+				localstate.LM_INTEGRA_GELB = false;
+				localstate.LM_INTEGRA_ROT = true;
+			}
 			something_changed = true;
 		}
-		public void SetLM_INTEGRA_ROT(bool state)
+		public void SetLM_GNT_Ü(bool state)
 		{
-			localstate.LM_INTEGRA_ROT = state;
+			localstate.LM_GNT_Ü = state;
 			something_changed = true;
 		}
+
+		public void SetLM_GNT_S(bool state)
+		{
+			localstate.LM_GNT_S = state;
+			something_changed = true;
+		}
+
+		public void SetLM_GNT_B(bool state)
+		{
+			localstate.LM_GNT_B = state;
+			something_changed = true;
+		}
+
+		public void SetLM_GNT_G(bool state)
+		{
+			localstate.LM_GNT_G = state;
+			something_changed = true;
+		}
+
 		public void SetReisezug(bool state)
 		{
 			localstate.Reisezug = state;
@@ -1026,6 +1109,8 @@ namespace MMI.MMIBR185
 				PZB_1000_TEXT.Text = "Überwachungsgeschwindigkeit: "+localstate.Zugart+"km/h";
 			}
 
+			InitTrainControl();
+
 			something_changed = true;		
 		}
 		public void SetBrh(float valu)
@@ -1075,11 +1160,13 @@ namespace MMI.MMIBR185
 			localstate.LZB_ZielGeschwindigkeit = valu;
 			something_changed = true;
 		}
-		public void SetLZB_ZielWeg(int valu)
+		public void SetLZB_ZielWeg(float valu)
 		{
-			if (Math.Abs(localstate.LZB_ZielWeg - valu) > 9)
+			//if (Math.Abs(localstate.LZB_ZielWeg - valu) > 9f)
+			{
 				something_changed = true;
-			localstate.LZB_ZielWeg = valu;			
+				localstate.LZB_ZielWeg = valu;			
+			}
 		}
 		public void SetGeschwindigkeit(float valu)
 		{
@@ -1144,6 +1231,8 @@ namespace MMI.MMIBR185
 
 			vtime = valu;
 			lastTime = DateTime.Now;
+			//DrawDots = !DrawDots;
+
 			if (localstate.SHOW_CLOCK) something_changed = true;
 		}
 		public void DrawZugkraft_Fahrstufen(ref Graphics pg)
@@ -1209,7 +1298,8 @@ namespace MMI.MMIBR185
 			// farbige balken
 			if (localstate.Zugkraft_Thread < 0)
 			{
-				float norm_zugkraft = localstate.Zugkraft_Thread / 150f * 145f + 2f;
+				float norm_zugkraft = localstate.Zugkraft_Thread / 150f * 145f;
+				if (localstate.Zugkraft_Thread >= -2f) norm_zugkraft = 0f;
 				pg.FillPie(sb_orange, center2.X, center2.Y, radius*2, radius*2, 270, norm_zugkraft);
 			}
 			else if (localstate.Zugkraft_Thread > 0)
@@ -1247,7 +1337,8 @@ namespace MMI.MMIBR185
 			}
 			else if (localstate.Zugkraft_Thread < 0)
 			{
-				norm_zugkraft2 = localstate.Zugkraft_Thread / 150f * 145f + 2f;
+				norm_zugkraft2 = localstate.Zugkraft_Thread / 150f * 145f;
+				if (localstate.Zugkraft_Thread >= -2f) norm_zugkraft2 = 0f;
 
 				if (localstate.TrainType == TRAIN_TYPE.DBpzfa766_1)
 				{
@@ -1615,7 +1706,11 @@ namespace MMI.MMIBR185
 
 			something_changed = false;
 
-			BR185Control_Paint(this, new PaintEventArgs(this.CreateGraphics(), new Rectangle(0,0,this.Width, this.Height)));
+			if (USE_DOUBLE_BUFFER)
+				BR185Control_Paint(this, new PaintEventArgs(this.CreateGraphics(), new Rectangle(0,0,this.Width, this.Height)));
+			else
+				this.Refresh();
+			
 
 			#region alter Code
 			//GC.Collect();
@@ -1681,7 +1776,7 @@ namespace MMI.MMIBR185
 
 		public void DrawMelder(ref Graphics pg)
 		{
-			if (!CONNECTED)
+			if (!CONNECTED || ZUSI_AT_TCP_SERVER)
 			{
 				M_Status1.Draw(ref pg);
 			}
@@ -1948,7 +2043,13 @@ namespace MMI.MMIBR185
 			{
 				pg.FillRectangle(sb_mb, 326, 230, 182, 30);
 				Font f = new Font("Tahoma", 4, FontStyle.Regular, GraphicsUnit.Millimeter);
-				pg.DrawString("Keine Verbindung zu Zusi", f, sb_wh, 332f, 236f);
+				pg.DrawString("Keine Verbindung zu TCP Server", f, sb_wh, 332f, 236f);
+			}
+			if (ZUSI_AT_TCP_SERVER)
+			{
+				pg.FillRectangle(sb_mb, 326, 230, 182, 30);
+				Font f = new Font("Tahoma", 4, FontStyle.Regular, GraphicsUnit.Millimeter);
+				pg.DrawString("Zusi mit TCP Server verbunden", f, sb_wh, 332f, 236f);
 			}
 
 			// Störmelder
@@ -1978,19 +2079,20 @@ namespace MMI.MMIBR185
 		}
 		public void DrawLZBAnzeige(ref Graphics pg)
 		{
+			Font f = new Font("ZusiDigital standard", 11, FontStyle.Bold);
+			Brush b = new SolidBrush(Color.Red);
+			Brush sb = new SolidBrush(Color.Black);
+
 			if (localstate.LM_LZB_Ü)
 			{
 				//Graphics pg = graph_main.g;
-				string weg = localstate.LZB_ZielWeg.ToString();
+				string weg = (Convert.ToInt32(localstate.LZB_ZielWeg)).ToString();
 				int pos = weg.IndexOf("-");
 				if (pos != -1) weg = weg.Remove(pos, 1);
 				if (weg.Length < 2) weg = "000" + weg;
 				else if (weg.Length < 3) weg = "00" + weg;
 				else if (weg.Length < 4) weg = "0" + weg;
 			
-				Font f = new Font("ZusiDigital standard", 11, FontStyle.Bold);
-				Brush b = new SolidBrush(Color.Red);
-				Brush sb = new SolidBrush(Color.Black);
 				//Pen p = new Pen(b, 1);
 			
 				// Digital Anzeige: WEG
@@ -2004,26 +2106,26 @@ namespace MMI.MMIBR185
 
 				pg.FillRectangle(sb, 40, 87, 10, 140);
 
-				if (localstate.LZB_ZielWeg > 4000)
+				if (localstate.LZB_ZielWeg > 4000f)
 				{
-					localstate.LZB_ZielWeg = 4000;
+					localstate.LZB_ZielWeg = 4000f;
 				}
 
-				if (localstate.LZB_ZielWeg >= 1000)
+				if (localstate.LZB_ZielWeg >= 1000f)
 				{
 					position = 87 + Convert.ToInt32(((double)(4000 - localstate.LZB_ZielWeg) / 50d));
 				}
-				else if (localstate.LZB_ZielWeg >= 250)
+				else if (localstate.LZB_ZielWeg >= 250f)
 				{
 					position = 147 + Convert.ToInt32(((double)(1000 - localstate.LZB_ZielWeg) / 12.5d));
 				}
-				else if (localstate.LZB_ZielWeg >= 100)
+				else if (localstate.LZB_ZielWeg >= 100f)
 				{
 					position = 207 + Convert.ToInt32(((double)(250 - localstate.LZB_ZielWeg) / 15d));
 				}
-				else if (localstate.LZB_ZielWeg > 0)
+				else if (localstate.LZB_ZielWeg > 0f)
 				{
-					position = 227 - localstate.LZB_ZielWeg / 10;
+					position = Convert.ToInt32(227f - localstate.LZB_ZielWeg / 10f);
 				}
 
 				pg.FillRectangle(b, 40, position, 10, 140-(position-87));
@@ -2047,7 +2149,15 @@ namespace MMI.MMIBR185
 				//else h = "";
 				pg.DrawString(h, f, b, 200f, 221f);
 
+
 				DrawLines(ref pg);
+			}
+			if (localstate.LM_GNT_Ü)
+			{
+				f = new Font("ZusiDigital standard", 14, FontStyle.Bold);
+				pg.DrawString("G", f, b, 160f, 218f);
+				pg.DrawString("N", f, b, 180f, 218f);
+				pg.DrawString("T", f, b, 202f, 218f);
 			}
 		}
 		public void DrawGeschwindigkeit(ref Graphics pg)
@@ -2092,23 +2202,32 @@ namespace MMI.MMIBR185
 		public void DrawUhr(ref Graphics pg)
 		{
 			if (!localstate.SHOW_CLOCK) return;
-			string s = "";
+			string s = "", min = "", sec = "";
 			if (vtime.Hour < 10)
-				s += "0"+vtime.Hour+":";
+				s += "0"+vtime.Hour;
 			else
-				s += vtime.Hour+":";
+				s += vtime.Hour;
+
 			if (vtime.Minute < 10)
-				s += "0"+vtime.Minute+":";
+				min += "0"+vtime.Minute;
 			else
-				s += vtime.Minute+":";
+				min += vtime.Minute;
+
 			if (vtime.Second < 10)
-				s+= "0"+vtime.Second;
+				sec += "0"+vtime.Second;
 			else
-				s+= vtime.Second;
+				sec += vtime.Second;
+
+			if (DrawDots)
+			{
+				s += ":"; min += ":";
+			}
 
 			Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
 			pg.DrawString(s, f, Brushes.WhiteSmoke, 260, 4);
+			pg.DrawString(min, f, Brushes.WhiteSmoke, 280, 4);
+			pg.DrawString(sec, f, Brushes.WhiteSmoke, 300, 4);
 
 		}
 		public void SetButtons()
@@ -2156,39 +2275,11 @@ namespace MMI.MMIBR185
 		}
 		public void UpdatePZB(ref Graphics graph_main)
 		{
-			// --- 1000Hz LM --------------------------------
-			if (localstate.LM_1000Hz && !localstate.LM_LZB_S)
-			{
-				PZB_1000_TEXT.Draw(ref graph_main);
-			}
-
-			// --- 500Hz LM --------------------------------
-			if (localstate.LM_500Hz && !localstate.LM_LZB_S)
-			{
-				PZB_500_TEXT.Draw(ref graph_main);
-
-			}
-
-			// --- LZB S LM ------------------------------------
-			if (localstate.LM_LZB_S) 
-			{
-				LZB_S_TEXT.Draw(ref graph_main);
-			}
 		}
 		
 		public void UpdateLZB(ref Graphics graph_main)
 		{
-			// --- LZB S LM ------------------------------------
-			if (localstate.LM_LZB_S) 
-			{
-				LZB_S_TEXT.Draw(ref graph_main);
-			}
-
-			// --- LZB G LM ------------------------------------
-			if (localstate.LM_LZB_G) 
-			{
-				LZB_G_TEXT.Draw(ref graph_main);
-			}
+			
 		}
 
 		public void UpdateMaschLM(ref Graphics graph_main)
@@ -2240,13 +2331,17 @@ namespace MMI.MMIBR185
 				TÜR.Clear(ref graph_main);*/
 
 			// NBÜ EP
+			if (localstate.Geschwindigkeit < 19f && localstate.NBÜ_Aktiv && IsCONNECTED)
+				localstate.LM_NBÜ_EP = true;
+			else
+				localstate.LM_NBÜ_EP = false;
+
 			if (localstate.LM_NBÜ_EP)
 			{
 				if (localstate.TrainType == TRAIN_TYPE.BR146_1 || localstate.TrainType == TRAIN_TYPE.DBpzfa766_1) 
 					NBÜ_EP.Draw(ref graph_main);
-				if (localstate.Geschwindigkeit > 19f)
-					localstate.LM_NBÜ_EP = false;
 			}
+
 			/*else
 				NBÜ_EP.Clear(ref graph_main);*/
 		}
@@ -2265,8 +2360,9 @@ namespace MMI.MMIBR185
 
 		private void BR185Control_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
+			if (PREVENT_DRAW) return;
 
-			if (m_backBuffer == null)
+			if (m_backBuffer == null && m_conf.DoubleBuffer)
 			{
 				m_backBuffer= new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
 			}
@@ -2279,6 +2375,15 @@ namespace MMI.MMIBR185
 
 			//Paint your graphics on g here
 
+			if (ZUSI_AT_TCP_SERVER)
+			{
+				M_Status1.Text = "Zusi mit TCP Server verbunden";
+			}
+			else
+			{
+				M_Status1.Text = "Keine Verbindung zu TCP Server";
+			}
+            
 			g.SmoothingMode = SMOOTHING_MODE;
 			g.TextRenderingHint = TEXT_MODE;
 
@@ -2286,7 +2391,14 @@ namespace MMI.MMIBR185
 
 			MoveLM();
 
+			MoveTextZeile();
+
 			foreach(Square s in LMs)
+			{
+				if (s != null) s.Draw(ref g);
+			}
+
+			foreach(Line s in LINEs)
 			{
 				if (s != null) s.Draw(ref g);
 			}
@@ -2300,13 +2412,14 @@ namespace MMI.MMIBR185
 				UpdateINTEGRA(ref g);
 
 			UpdateMaschLM(ref g);  
+			SetMaschinenTeil(ref g);
 
 			DrawLines(ref g);
 
 			DrawLZBAnzeige(ref g);
 
 			DrawGeschwindigkeit(ref g);
-			SetMaschinenTeil(ref g);
+			
 
 			DrawUhr(ref g);
 
@@ -2327,13 +2440,70 @@ namespace MMI.MMIBR185
 
 			//graph_main.Render(this.CreateGraphics());
 		}
+
+		private void InitTrainControl()
+		{
+			LMs = new Square[7];
+			LMs.Initialize();
+		}
 		private void MoveLM()
+		{
+			if (localstate.PZB_System == ZUGBEEINFLUSSUNG.SIGNUM)
+				MoveLM_INTEGRA();
+			else if (localstate.PZB_System != ZUGBEEINFLUSSUNG.NONE)
+				MoveLM_PZB_LZB();
+		}
+		
+		private void MoveLM_INTEGRA()
+		{
+			int pos = 0;
+			if (localstate.LM_INTEGRA_GELB != localstate.LM_INTEGRA_GELB2)
+			{
+				if (localstate.LM_INTEGRA_GELB)
+				{
+					FreeLM(INTEGRA_GELB);
+					pos = 0;
+					INTEGRA_GELB.Point1 = new Point(57+GetLocation(pos),263);
+					INTEGRA_GELB.Point2 = new Point(57+GetLocation(pos)+GetWidth(pos),263+47);
+					LMs[pos] = INTEGRA_GELB;
+				}
+				else
+				{
+					FreeLM(INTEGRA_GELB);
+				}
+				localstate.LM_INTEGRA_GELB2 = localstate.LM_INTEGRA_GELB;
+			}
+
+			if (localstate.LM_INTEGRA_ROT != localstate.LM_INTEGRA_ROT2)
+			{
+				if (localstate.LM_INTEGRA_ROT)
+				{
+					FreeLM(INTEGRA_ROT);
+					pos = 1;
+					INTEGRA_ROT.Point1 = new Point(57+GetLocation(pos),263);
+					INTEGRA_ROT.Point2 = new Point(57+GetLocation(pos)+GetWidth(pos),263+47);
+					LMs[pos] = INTEGRA_ROT;
+				}
+				else
+				{
+					FreeLM(INTEGRA_ROT);
+				}
+				localstate.LM_INTEGRA_ROT2 = localstate.LM_INTEGRA_ROT;
+			}
+
+			FreeLM(ZUB_BLAU);
+			pos = 5;
+			ZUB_BLAU.Point1 = new Point(57+GetLocation(pos),263);
+			ZUB_BLAU.Point2 = new Point(57+GetLocation(pos)+GetWidth(pos),263+47);
+			LMs[pos] = ZUB_BLAU;
+		}
+		private void MoveLM_PZB_LZB()
 		{
 			//localstate.Zugart = "85";
 
 			if (localstate.TrainType != TRAIN_TYPE.DBpzfa766_1)
 			{
-				if (localstate.LM_LZB_B)
+				if (localstate.LM_LZB_B || localstate.LM_GNT_B)
 					LMs[0] = LZB_B;
 				else
 					LMs[0] = null;
@@ -2597,20 +2767,153 @@ namespace MMI.MMIBR185
 				}
 				localstate.LM_LZB_ENDE2 = localstate.LM_LZB_ENDE;
 			}
+
+			if (localstate.LM_GNT_Ü != localstate.LM_GNT_Ü2)
+			{
+				if (localstate.LM_GNT_Ü)
+				{
+					PZB_AKTIV.Text1 = "GNT";
+					PZB_AKTIV.Text2 = "PZB";
+					PZB_AKTIV.TwoLines = true;
+				}
+				else
+				{
+					PZB_AKTIV.Text1 = "PZB";
+					PZB_AKTIV.TwoLines = false;
+				}
+				localstate.LM_GNT_Ü2 = localstate.LM_GNT_Ü;
+			}
+
+			if (localstate.LM_GNT_S != localstate.LM_GNT_S2)
+			{
+				if (localstate.LM_GNT_S)
+				{
+					FreeLM(LZB_S);
+					pos = GetNextFree();
+					LZB_S = new Square(this, new Point(57+GetLocation(pos),263), new Point(57+GetLocation(pos)+GetWidth(pos),263+47), "S", Color.Red, false, 0, false, "");
+					LMs[pos] = LZB_S;
+				}
+				else
+				{
+					FreeLM(LZB_S);
+				}
+				localstate.LM_GNT_S2 = localstate.LM_GNT_S;
+			}
+
+			if (localstate.LM_GNT_G != localstate.LM_GNT_G2)
+			{
+				if (localstate.LM_GNT_G)
+				{
+					FreeLM(LZB_G);
+					pos = GetNextFree();
+					LZB_G = new Square(this, new Point(57+GetLocation(pos), 263), new Point(57+GetLocation(pos)+GetWidth(pos),263+47), "G", Color.Red, false, 0, false, "");
+					LMs[pos] = LZB_G;
+				}
+				else
+				{
+					FreeLM(LZB_G);
+				}
+				localstate.LM_GNT_G2 = localstate.LM_GNT_G;
+			}
 		}
+
+		private void MoveTextZeile()
+		{
+			int pos = 0;
+			if (!localstate.LM_GNT_Ü)
+			{
+				if (localstate.LM_LZB_S)
+				{
+					FreeTextZeile(LZB_S_TEXT);
+					pos = GetNextFreeTextZeile();
+					LZB_S_TEXT = new Line(this, new Point(57,311+GetLocationTextZeile(pos)), new Point(57+268,311+26+GetLocationTextZeile(pos)), "LZB/PZB-Zwangsbremsung", Color.Red, false, 0);
+					LINEs[pos] = LZB_S_TEXT;
+					return;
+				}
+				else
+				{
+					FreeTextZeile(LZB_S_TEXT);
+				}
+
+				if (localstate.LM_LZB_G)
+				{
+					FreeTextZeile(LZB_G_TEXT);
+					pos = GetNextFreeTextZeile();
+					LZB_G_TEXT = new Line(this, new Point(57,311+GetLocationTextZeile(pos)), new Point(57+268,311+26+GetLocationTextZeile(pos)), "Geschwindigkeit reduzieren", Color.WhiteSmoke, false, 0);					
+					LINEs[pos] = LZB_G_TEXT;
+				}
+				else
+				{
+					FreeTextZeile(LZB_G_TEXT);
+				}
+			}
+			else
+			{
+				if (localstate.LM_GNT_S)
+				{
+					FreeTextZeile(LZB_S_TEXT);
+					pos = GetNextFreeTextZeile();
+					LZB_S_TEXT = new Line(this, new Point(57,311+GetLocationTextZeile(pos)), new Point(57+268,311+26+GetLocationTextZeile(pos)), "GNT/PZB-Zwangsbremsung", Color.Red, false, 0);
+					LINEs[pos] = LZB_S_TEXT;
+				}
+				else
+				{
+					FreeTextZeile(LZB_S_TEXT);
+				}
+
+				if (localstate.LM_GNT_G)
+				{
+					FreeTextZeile(LZB_G_TEXT);
+					pos = GetNextFreeTextZeile();
+					LZB_G_TEXT = new Line(this, new Point(57,311+GetLocationTextZeile(pos)), new Point(57+268,311+26+GetLocationTextZeile(pos)), "Geschwindigkeit reduzieren", Color.WhiteSmoke, false, 0);					
+					LINEs[pos] = LZB_G_TEXT;
+				}
+				else
+				{
+					FreeTextZeile(LZB_G_TEXT);
+				}
+			}
+
+			if (localstate.LM_1000Hz)
+			{
+				FreeTextZeile(PZB_1000_TEXT);
+				pos = GetNextFreeTextZeile();
+				PZB_1000_TEXT = new Line(this, new Point(57,311+GetLocationTextZeile(pos)), new Point(57+268,311+26+GetLocationTextZeile(pos)), "Überwachungsgeschwindigkeit: "+localstate.Zugart+"km/h", Color.Yellow, false, 0);
+				LINEs[pos] = PZB_1000_TEXT;
+			}
+			else
+			{
+				FreeTextZeile(PZB_1000_TEXT);
+			}
+
+			if (localstate.LM_500Hz)
+			{
+				FreeTextZeile(PZB_500_TEXT);
+				pos = GetNextFreeTextZeile();
+				PZB_500_TEXT = new Line(this, new Point(57,311+GetLocationTextZeile(pos)), new Point(57+268,311+26+GetLocationTextZeile(pos)), "Überwachungsgeschwindigkeit: 45km/h", Color.Red, false, 0);
+				LINEs[pos] = PZB_500_TEXT;
+			}
+			else
+			{
+				FreeTextZeile(PZB_500_TEXT);
+			}
+
+			
+		}
+
 		private void MoveZugkraft()
 		{
 			while (Math.Abs(localstate.Zugkraft_Thread - localstate.Zugkraft) > 15f)
 			{
 				if ((localstate.Zugkraft_Thread - localstate.Zugkraft) > 0) // pos
 				{
-					Monitor.Exit(localstate);
+					Monitor.Enter(localstate);
 					localstate.Zugkraft_Thread -= 15f;
 					Monitor.Exit(localstate);
 				}
 				else // neg
 				{
-					Monitor.Exit(localstate);
+					Monitor.Enter(localstate);
 					localstate.Zugkraft_Thread += 15f;
 					Monitor.Exit(localstate);
 				}
@@ -2641,11 +2944,34 @@ namespace MMI.MMIBR185
 
 			search = null;
 		}
+		private void FreeTextZeile(Line search)
+		{
+			if (search == null) return;
+
+			for (int i = 0; i < 3; i++)
+			{
+				try
+				{
+					if (LINEs[i] == null) continue;
+
+					Line line = (Line)LINEs[i];
+
+					if (line.Text == search.Text)
+					{
+						LINEs[i] = null;
+					}
+				}
+				catch (Exception) {continue;}
+			}
+
+			search = null;
+		}
 		private int GetNextFree()
 		{
 			int pos = 2;
 			if (localstate.LM_LZB_Ü) pos = 1;
 			if (localstate.TrainType == TRAIN_TYPE.DBpzfa766_1) pos = 1;
+			if (localstate.PZB_System == ZUGBEEINFLUSSUNG.SIGNUM) pos = 0;
 			for (int i = pos; i < 6; i++)
 			{
 				if (i==5 && localstate.TrainType != TRAIN_TYPE.DBpzfa766_1) continue;
@@ -2653,6 +2979,15 @@ namespace MMI.MMIBR185
 				if (LMs[i] == null) return i;
 			}
 			return 6;
+		}
+		private int GetNextFreeTextZeile()
+		{
+			int pos = 0;
+			for (int i = pos; i < 3; i++)
+			{
+				if (LINEs[i] == null) return i;
+			}
+			return 2;
 		}
 		private int GetWidth(int pos)
 		{
@@ -2673,6 +3008,15 @@ namespace MMI.MMIBR185
 			}
 			return loc;
 		}
+		private int GetLocationTextZeile(int pos)
+		{
+			int loc = 0;
+			for(int i = 0; i < pos; i++)
+			{
+				loc += 27;
+			}
+			return loc;
+		}
 		public void SetTrainType(string type)
 		{
 			switch(type)
@@ -2687,6 +3031,25 @@ namespace MMI.MMIBR185
 					localstate.TrainType = TRAIN_TYPE.BR189;
 					break;
 			}
+		}
+
+		private void timer_Doppelpunkt_Tick(object sender, System.EventArgs e)
+		{
+			if (!IsCONNECTED)
+			{
+				SetUhrDatum(DateTime.Now /*vtime.AddSeconds(1)*/);
+			}
+			InternalDrawDots = !InternalDrawDots;
+			DrawDots = InternalDrawDots;
+			
+			something_changed = true;
+		}
+
+		private void timerDisableDots_Tick(object sender, System.EventArgs e)
+		{
+			timerDisableDots.Enabled = false;
+
+			DrawDots = false;
 		}
 	}
 }

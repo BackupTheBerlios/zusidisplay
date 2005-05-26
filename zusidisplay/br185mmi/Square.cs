@@ -44,6 +44,11 @@ namespace MMI.MMIBR185
 			}
 		}
 
+		public bool TwoLines
+		{
+			set{m_two_lines = value;}
+		}
+
 		public string Text1
 		{
 			set{m_text_line = value;}
@@ -106,7 +111,12 @@ namespace MMI.MMIBR185
 					f = new Font("Arial", 10f, FontStyle.Bold, GraphicsUnit.Millimeter);
 					if (m_text_line == "T")
 					{
-						pg.DrawString(m_text_line, f, textColor, m_upper_left.X+2, m_upper_left.Y+1);					}
+						pg.DrawString(m_text_line, f, textColor, m_upper_left.X+2, m_upper_left.Y+1);					
+					}
+					else if (m_text_line == "G")
+					{
+						pg.DrawString(m_text_line, f, textColor, m_upper_left.X-1, m_upper_left.Y+1);
+					}
 					else
 					{
 						pg.DrawString(m_text_line, f, textColor, m_upper_left.X, m_upper_left.Y+1);
@@ -128,6 +138,14 @@ namespace MMI.MMIBR185
 				{	
 					if (m_text_line == "PZB")
 						pg.DrawString(m_text_line, f, textColor, m_upper_left.X-2, m_upper_left.Y+10);
+					else if (m_text_line == "ZUB" || m_text_line == "INT")
+					{
+						f = new Font("Tahoma", 5.0f, FontStyle.Regular, GraphicsUnit.Millimeter);
+						if (m_text_line == "INT")
+                            pg.DrawString(m_text_line, f, textColor, m_upper_left.X+2, m_upper_left.Y+11);
+						else
+							pg.DrawString(m_text_line, f, textColor, m_upper_left.X-1, m_upper_left.Y+11);
+					}
 					else if (m_text_line == "Befehl")
 					{
 						f = new Font("Tahoma", 8f);
@@ -148,13 +166,15 @@ namespace MMI.MMIBR185
 					pg.DrawString(m_text_line, f , textColor, m_upper_left.X+1, m_upper_left.Y+6);
 				else
 				{
-					if (m_text_line == "NBÜ")
+					if (m_text_line == "NBÜ" || m_text_line == "GNT")
 						pg.DrawString(m_text_line, f , textColor, m_upper_left.X+3, m_upper_left.Y+6);
 					else 
 						pg.DrawString(m_text_line, f , textColor, m_upper_left.X+6, m_upper_left.Y+6);
 				}
 
-						if (m_text_line_2.Length > 2)
+				if (m_text_line_2 == "PZB")
+					pg.DrawString(m_text_line_2, f , textColor, m_upper_left.X+5, m_upper_left.Y+24);				
+				else if (m_text_line_2.Length > 2)
                     pg.DrawString(m_text_line_2, f , textColor, m_upper_left.X+2, m_upper_left.Y+24);
 				else
 					pg.DrawString(m_text_line_2, f , textColor, m_upper_left.X+9, m_upper_left.Y+24);

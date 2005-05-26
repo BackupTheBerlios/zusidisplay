@@ -47,7 +47,6 @@ namespace MMI.EBuLa.Tools
         private System.Windows.Forms.ListBox lb_Keys;
         private System.Windows.Forms.Button b_clear;
         private System.Windows.Forms.Timer key_timer;
-		private System.Windows.Forms.CheckBox cb_useDB;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox tb_Port;
 		private System.Windows.Forms.CheckBox cb_topmost;
@@ -55,6 +54,15 @@ namespace MMI.EBuLa.Tools
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox tb_Host;
 		private System.Windows.Forms.ListBox lb_Windows;
+		private System.Windows.Forms.CheckBox cb_deepSearch;
+		private System.Windows.Forms.CheckBox l_doubleBuffer;
+		private System.Windows.Forms.GroupBox groupBox4;
+		private System.Windows.Forms.Label l_Energie;
+		private System.Windows.Forms.Button b_Energie;
+		private System.Windows.Forms.CheckBox l_lowFPS;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.TrackBar tB_FPS;
+		private System.Windows.Forms.Label l_FPS;
 
         string[] keyarray;
 
@@ -91,6 +99,7 @@ namespace MMI.EBuLa.Tools
 			this.rb_apisound = new System.Windows.Forms.RadioButton();
 			this.rb_nosound = new System.Windows.Forms.RadioButton();
 			this.gb_multiwindow = new System.Windows.Forms.GroupBox();
+			this.lb_Windows = new System.Windows.Forms.ListBox();
 			this.cb_focustozusi = new System.Windows.Forms.CheckBox();
 			this.cb_topmost = new System.Windows.Forms.CheckBox();
 			this.cb_border = new System.Windows.Forms.CheckBox();
@@ -106,7 +115,6 @@ namespace MMI.EBuLa.Tools
 			this.tb_Host = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.tb_Port = new System.Windows.Forms.TextBox();
-			this.cb_useDB = new System.Windows.Forms.CheckBox();
 			this.b_browse_file = new System.Windows.Forms.Button();
 			this.b_browse_path = new System.Windows.Forms.Button();
 			this.label3 = new System.Windows.Forms.Label();
@@ -120,11 +128,22 @@ namespace MMI.EBuLa.Tools
 			this.b_clear = new System.Windows.Forms.Button();
 			this.lb_Keys = new System.Windows.Forms.ListBox();
 			this.key_timer = new System.Windows.Forms.Timer(this.components);
-			this.lb_Windows = new System.Windows.Forms.ListBox();
+			this.cb_deepSearch = new System.Windows.Forms.CheckBox();
+			this.l_doubleBuffer = new System.Windows.Forms.CheckBox();
+			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.l_Energie = new System.Windows.Forms.Label();
+			this.b_Energie = new System.Windows.Forms.Button();
+			this.l_lowFPS = new System.Windows.Forms.CheckBox();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.l_FPS = new System.Windows.Forms.Label();
+			this.tB_FPS = new System.Windows.Forms.TrackBar();
 			this.gB_sound.SuspendLayout();
 			this.gb_multiwindow.SuspendLayout();
 			this.gb_Filesystem.SuspendLayout();
 			this.gb_Keys.SuspendLayout();
+			this.groupBox4.SuspendLayout();
+			this.groupBox1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.tB_FPS)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// gB_sound
@@ -136,7 +155,7 @@ namespace MMI.EBuLa.Tools
 			this.gB_sound.Location = new System.Drawing.Point(16, 24);
 			this.gB_sound.Name = "gB_sound";
 			this.gB_sound.Size = new System.Drawing.Size(232, 120);
-			this.gB_sound.TabIndex = 2;
+			this.gB_sound.TabIndex = 0;
 			this.gB_sound.TabStop = false;
 			this.gB_sound.Text = "Soundsystem:";
 			// 
@@ -184,9 +203,17 @@ namespace MMI.EBuLa.Tools
 			this.gb_multiwindow.Location = new System.Drawing.Point(536, 24);
 			this.gb_multiwindow.Name = "gb_multiwindow";
 			this.gb_multiwindow.Size = new System.Drawing.Size(240, 440);
-			this.gb_multiwindow.TabIndex = 5;
+			this.gb_multiwindow.TabIndex = 4;
 			this.gb_multiwindow.TabStop = false;
 			this.gb_multiwindow.Text = "Mehrschirmbetrieb:";
+			// 
+			// lb_Windows
+			// 
+			this.lb_Windows.Location = new System.Drawing.Point(16, 32);
+			this.lb_Windows.Name = "lb_Windows";
+			this.lb_Windows.Size = new System.Drawing.Size(208, 147);
+			this.lb_Windows.TabIndex = 0;
+			this.lb_Windows.SelectedIndexChanged += new System.EventHandler(this.lb_Windows_SelectedIndexChanged);
 			// 
 			// cb_focustozusi
 			// 
@@ -194,7 +221,7 @@ namespace MMI.EBuLa.Tools
 			this.cb_focustozusi.Location = new System.Drawing.Point(24, 392);
 			this.cb_focustozusi.Name = "cb_focustozusi";
 			this.cb_focustozusi.Size = new System.Drawing.Size(200, 24);
-			this.cb_focustozusi.TabIndex = 13;
+			this.cb_focustozusi.TabIndex = 8;
 			this.cb_focustozusi.Text = "Gib Fokus nach Klick zurück an Zusi";
 			this.cb_focustozusi.CheckedChanged += new System.EventHandler(this.cb_focustozusi_CheckedChanged);
 			// 
@@ -204,7 +231,7 @@ namespace MMI.EBuLa.Tools
 			this.cb_topmost.Location = new System.Drawing.Point(24, 368);
 			this.cb_topmost.Name = "cb_topmost";
 			this.cb_topmost.Size = new System.Drawing.Size(184, 24);
-			this.cb_topmost.TabIndex = 12;
+			this.cb_topmost.TabIndex = 7;
 			this.cb_topmost.Text = "Immer im Vordergrund";
 			this.cb_topmost.CheckedChanged += new System.EventHandler(this.cb_topmost_CheckedChanged);
 			// 
@@ -213,7 +240,7 @@ namespace MMI.EBuLa.Tools
 			this.cb_border.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.cb_border.Location = new System.Drawing.Point(24, 304);
 			this.cb_border.Name = "cb_border";
-			this.cb_border.TabIndex = 11;
+			this.cb_border.TabIndex = 6;
 			this.cb_border.Text = "Fensterrahmen";
 			this.cb_border.CheckedChanged += new System.EventHandler(this.cb_border_CheckedChanged);
 			// 
@@ -222,7 +249,7 @@ namespace MMI.EBuLa.Tools
 			this.label2.Location = new System.Drawing.Point(24, 272);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(64, 23);
-			this.label2.TabIndex = 10;
+			this.label2.TabIndex = 4;
 			this.label2.Text = "vertikal:";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -231,7 +258,7 @@ namespace MMI.EBuLa.Tools
 			this.label1.Location = new System.Drawing.Point(24, 232);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(64, 23);
-			this.label1.TabIndex = 9;
+			this.label1.TabIndex = 2;
 			this.label1.Text = "horizontal:";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -239,7 +266,7 @@ namespace MMI.EBuLa.Tools
 			// 
 			this.tb_height.Location = new System.Drawing.Point(96, 272);
 			this.tb_height.Name = "tb_height";
-			this.tb_height.TabIndex = 8;
+			this.tb_height.TabIndex = 5;
 			this.tb_height.Text = "0";
 			this.tb_height.TextChanged += new System.EventHandler(this.tb_height_TextChanged);
 			// 
@@ -247,7 +274,7 @@ namespace MMI.EBuLa.Tools
 			// 
 			this.tb_width.Location = new System.Drawing.Point(96, 232);
 			this.tb_width.Name = "tb_width";
-			this.tb_width.TabIndex = 7;
+			this.tb_width.TabIndex = 3;
 			this.tb_width.Text = "0";
 			this.tb_width.TextChanged += new System.EventHandler(this.tb_width_TextChanged);
 			// 
@@ -257,7 +284,7 @@ namespace MMI.EBuLa.Tools
 			this.cb_movewindow.Location = new System.Drawing.Point(24, 200);
 			this.cb_movewindow.Name = "cb_movewindow";
 			this.cb_movewindow.Size = new System.Drawing.Size(176, 24);
-			this.cb_movewindow.TabIndex = 6;
+			this.cb_movewindow.TabIndex = 1;
 			this.cb_movewindow.Text = "Selektiertes Fenster verschieben";
 			this.cb_movewindow.CheckedChanged += new System.EventHandler(this.cb_movewindow_CheckedChanged);
 			// 
@@ -266,7 +293,7 @@ namespace MMI.EBuLa.Tools
 			this.cb_Inverse.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.cb_Inverse.Location = new System.Drawing.Point(40, 168);
 			this.cb_Inverse.Name = "cb_Inverse";
-			this.cb_Inverse.TabIndex = 6;
+			this.cb_Inverse.TabIndex = 1;
 			this.cb_Inverse.Text = "Nachtmodus";
 			this.cb_Inverse.CheckedChanged += new System.EventHandler(this.cb_Inverse_CheckedChanged);
 			// 
@@ -274,9 +301,9 @@ namespace MMI.EBuLa.Tools
 			// 
 			this.b_save.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.b_save.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.b_save.Location = new System.Drawing.Point(40, 472);
+			this.b_save.Location = new System.Drawing.Point(40, 560);
 			this.b_save.Name = "b_save";
-			this.b_save.TabIndex = 8;
+			this.b_save.TabIndex = 5;
 			this.b_save.Text = "Speichern";
 			this.b_save.Click += new System.EventHandler(this.b_save_Click);
 			// 
@@ -286,7 +313,6 @@ namespace MMI.EBuLa.Tools
 			this.gb_Filesystem.Controls.Add(this.tb_Host);
 			this.gb_Filesystem.Controls.Add(this.label5);
 			this.gb_Filesystem.Controls.Add(this.tb_Port);
-			this.gb_Filesystem.Controls.Add(this.cb_useDB);
 			this.gb_Filesystem.Controls.Add(this.b_browse_file);
 			this.gb_Filesystem.Controls.Add(this.b_browse_path);
 			this.gb_Filesystem.Controls.Add(this.label3);
@@ -296,8 +322,8 @@ namespace MMI.EBuLa.Tools
 			this.gb_Filesystem.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.gb_Filesystem.Location = new System.Drawing.Point(16, 216);
 			this.gb_Filesystem.Name = "gb_Filesystem";
-			this.gb_Filesystem.Size = new System.Drawing.Size(232, 224);
-			this.gb_Filesystem.TabIndex = 9;
+			this.gb_Filesystem.Size = new System.Drawing.Size(232, 184);
+			this.gb_Filesystem.TabIndex = 2;
 			this.gb_Filesystem.TabStop = false;
 			this.gb_Filesystem.Text = "IOSystem:";
 			// 
@@ -306,7 +332,7 @@ namespace MMI.EBuLa.Tools
 			this.label6.Location = new System.Drawing.Point(8, 112);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(32, 23);
-			this.label6.TabIndex = 21;
+			this.label6.TabIndex = 6;
 			this.label6.Text = "Host:";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -315,7 +341,7 @@ namespace MMI.EBuLa.Tools
 			this.tb_Host.Location = new System.Drawing.Point(48, 112);
 			this.tb_Host.Name = "tb_Host";
 			this.tb_Host.Size = new System.Drawing.Size(136, 20);
-			this.tb_Host.TabIndex = 20;
+			this.tb_Host.TabIndex = 7;
 			this.tb_Host.Text = "";
 			this.tb_Host.TextChanged += new System.EventHandler(this.tb_Host_TextChanged);
 			// 
@@ -324,7 +350,7 @@ namespace MMI.EBuLa.Tools
 			this.label5.Location = new System.Drawing.Point(8, 144);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(32, 23);
-			this.label5.TabIndex = 19;
+			this.label5.TabIndex = 8;
 			this.label5.Text = "Port:";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -333,28 +359,20 @@ namespace MMI.EBuLa.Tools
 			this.tb_Port.Location = new System.Drawing.Point(48, 144);
 			this.tb_Port.Name = "tb_Port";
 			this.tb_Port.Size = new System.Drawing.Size(136, 20);
-			this.tb_Port.TabIndex = 18;
+			this.tb_Port.TabIndex = 9;
 			this.tb_Port.Text = "";
 			this.tb_Port.TextChanged += new System.EventHandler(this.tb_Port_TextChanged);
 			// 
-			// cb_useDB
-			// 
-			this.cb_useDB.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cb_useDB.Location = new System.Drawing.Point(8, 184);
-			this.cb_useDB.Name = "cb_useDB";
-			this.cb_useDB.Size = new System.Drawing.Size(200, 24);
-			this.cb_useDB.TabIndex = 17;
-			this.cb_useDB.Text = "Zugdatenbank benutzen";
-			this.cb_useDB.CheckedChanged += new System.EventHandler(this.cb_useDB_CheckedChanged);
-			// 
 			// b_browse_file
 			// 
+			this.b_browse_file.Enabled = false;
 			this.b_browse_file.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.b_browse_file.Location = new System.Drawing.Point(192, 72);
 			this.b_browse_file.Name = "b_browse_file";
 			this.b_browse_file.Size = new System.Drawing.Size(24, 23);
-			this.b_browse_file.TabIndex = 16;
+			this.b_browse_file.TabIndex = 5;
 			this.b_browse_file.Text = "...";
+			this.b_browse_file.Visible = false;
 			this.b_browse_file.Click += new System.EventHandler(this.b_browse_file_Click);
 			// 
 			// b_browse_path
@@ -363,19 +381,21 @@ namespace MMI.EBuLa.Tools
 			this.b_browse_path.Location = new System.Drawing.Point(192, 32);
 			this.b_browse_path.Name = "b_browse_path";
 			this.b_browse_path.Size = new System.Drawing.Size(24, 23);
-			this.b_browse_path.TabIndex = 15;
+			this.b_browse_path.TabIndex = 2;
 			this.b_browse_path.Text = "...";
 			this.b_browse_path.Click += new System.EventHandler(this.b_browse_Click);
 			// 
 			// label3
 			// 
 			this.label3.AutoSize = true;
+			this.label3.Enabled = false;
 			this.label3.Location = new System.Drawing.Point(4, 72);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(34, 16);
-			this.label3.TabIndex = 14;
+			this.label3.TabIndex = 3;
 			this.label3.Text = "Datei:";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.label3.Visible = false;
 			// 
 			// label4
 			// 
@@ -383,17 +403,19 @@ namespace MMI.EBuLa.Tools
 			this.label4.Location = new System.Drawing.Point(8, 32);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(31, 16);
-			this.label4.TabIndex = 13;
+			this.label4.TabIndex = 0;
 			this.label4.Text = "Pfad:";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// tb_file
 			// 
+			this.tb_file.Enabled = false;
 			this.tb_file.Location = new System.Drawing.Point(48, 72);
 			this.tb_file.Name = "tb_file";
 			this.tb_file.Size = new System.Drawing.Size(136, 20);
-			this.tb_file.TabIndex = 12;
+			this.tb_file.TabIndex = 4;
 			this.tb_file.Text = "";
+			this.tb_file.Visible = false;
 			this.tb_file.TextChanged += new System.EventHandler(this.tb_file_TextChanged);
 			// 
 			// tb_path
@@ -401,7 +423,7 @@ namespace MMI.EBuLa.Tools
 			this.tb_path.Location = new System.Drawing.Point(48, 32);
 			this.tb_path.Name = "tb_path";
 			this.tb_path.Size = new System.Drawing.Size(136, 20);
-			this.tb_path.TabIndex = 11;
+			this.tb_path.TabIndex = 1;
 			this.tb_path.Text = "";
 			this.tb_path.TextChanged += new System.EventHandler(this.tb_path_TextChanged);
 			// 
@@ -414,9 +436,9 @@ namespace MMI.EBuLa.Tools
 			// 
 			this.b_cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.b_cancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.b_cancel.Location = new System.Drawing.Point(136, 472);
+			this.b_cancel.Location = new System.Drawing.Point(136, 560);
 			this.b_cancel.Name = "b_cancel";
-			this.b_cancel.TabIndex = 10;
+			this.b_cancel.TabIndex = 6;
 			this.b_cancel.Text = "Abbrechen";
 			this.b_cancel.Click += new System.EventHandler(this.b_cancel_Click);
 			// 
@@ -428,7 +450,7 @@ namespace MMI.EBuLa.Tools
 			this.gb_Keys.Location = new System.Drawing.Point(264, 24);
 			this.gb_Keys.Name = "gb_Keys";
 			this.gb_Keys.Size = new System.Drawing.Size(256, 344);
-			this.gb_Keys.TabIndex = 11;
+			this.gb_Keys.TabIndex = 3;
 			this.gb_Keys.TabStop = false;
 			this.gb_Keys.Text = "Tastenbelegung:";
 			// 
@@ -454,16 +476,107 @@ namespace MMI.EBuLa.Tools
 			this.key_timer.Interval = 10;
 			this.key_timer.Tick += new System.EventHandler(this.key_timer_Tick);
 			// 
-			// lb_Windows
+			// cb_deepSearch
 			// 
-			this.lb_Windows.Location = new System.Drawing.Point(16, 32);
-			this.lb_Windows.Name = "lb_Windows";
-			this.lb_Windows.Size = new System.Drawing.Size(208, 134);
-			this.lb_Windows.TabIndex = 14;
-			this.lb_Windows.SelectedIndexChanged += new System.EventHandler(this.lb_Windows_SelectedIndexChanged);
+			this.cb_deepSearch.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.cb_deepSearch.Location = new System.Drawing.Point(40, 416);
+			this.cb_deepSearch.Name = "cb_deepSearch";
+			this.cb_deepSearch.Size = new System.Drawing.Size(464, 32);
+			this.cb_deepSearch.TabIndex = 12;
+			this.cb_deepSearch.Text = "Im EBuLa Zugauswahldialog auch den Abfahrt- und Zielbahnhof suchen";
+			this.cb_deepSearch.Click += new System.EventHandler(this.cb_useDB_CheckedChanged);
+			// 
+			// l_doubleBuffer
+			// 
+			this.l_doubleBuffer.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.l_doubleBuffer.Location = new System.Drawing.Point(40, 448);
+			this.l_doubleBuffer.Name = "l_doubleBuffer";
+			this.l_doubleBuffer.Size = new System.Drawing.Size(472, 32);
+			this.l_doubleBuffer.TabIndex = 13;
+			this.l_doubleBuffer.Text = "Manuelles Doublebuffering verwenden (vor 1.6.2)";
+			this.l_doubleBuffer.CheckedChanged += new System.EventHandler(this.l_doubleBuffer_CheckedChanged);
+			// 
+			// groupBox4
+			// 
+			this.groupBox4.Controls.Add(this.l_Energie);
+			this.groupBox4.Controls.Add(this.b_Energie);
+			this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox4.Location = new System.Drawing.Point(672, 480);
+			this.groupBox4.Name = "groupBox4";
+			this.groupBox4.Size = new System.Drawing.Size(104, 100);
+			this.groupBox4.TabIndex = 14;
+			this.groupBox4.TabStop = false;
+			this.groupBox4.Text = "Energiezähler:";
+			// 
+			// l_Energie
+			// 
+			this.l_Energie.Location = new System.Drawing.Point(8, 32);
+			this.l_Energie.Name = "l_Energie";
+			this.l_Energie.Size = new System.Drawing.Size(80, 23);
+			this.l_Energie.TabIndex = 7;
+			this.l_Energie.Text = "0 kWh";
+			this.l_Energie.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// b_Energie
+			// 
+			this.b_Energie.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.b_Energie.Location = new System.Drawing.Point(16, 64);
+			this.b_Energie.Name = "b_Energie";
+			this.b_Energie.TabIndex = 6;
+			this.b_Energie.Text = "Löschen";
+			this.b_Energie.Click += new System.EventHandler(this.b_Energie_Click);
+			// 
+			// l_lowFPS
+			// 
+			this.l_lowFPS.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.l_lowFPS.Location = new System.Drawing.Point(40, 480);
+			this.l_lowFPS.Name = "l_lowFPS";
+			this.l_lowFPS.Size = new System.Drawing.Size(304, 32);
+			this.l_lowFPS.TabIndex = 15;
+			this.l_lowFPS.Text = "Niedrige Framerate in Diagnosedisplays (2 FPS)";
+			this.l_lowFPS.CheckedChanged += new System.EventHandler(this.l_lowFPS_CheckedChanged);
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.l_FPS);
+			this.groupBox1.Controls.Add(this.tB_FPS);
+			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox1.Location = new System.Drawing.Point(360, 480);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(304, 100);
+			this.groupBox1.TabIndex = 16;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Framerate:";
+			// 
+			// l_FPS
+			// 
+			this.l_FPS.Location = new System.Drawing.Point(16, 24);
+			this.l_FPS.Name = "l_FPS";
+			this.l_FPS.Size = new System.Drawing.Size(184, 23);
+			this.l_FPS.TabIndex = 1;
+			this.l_FPS.Text = "Aktuelle Framerate: 25 FPS";
+			// 
+			// tB_FPS
+			// 
+			this.tB_FPS.LargeChange = 10;
+			this.tB_FPS.Location = new System.Drawing.Point(8, 48);
+			this.tB_FPS.Maximum = 30;
+			this.tB_FPS.Minimum = 2;
+			this.tB_FPS.Name = "tB_FPS";
+			this.tB_FPS.Size = new System.Drawing.Size(288, 45);
+			this.tB_FPS.SmallChange = 2;
+			this.tB_FPS.TabIndex = 0;
+			this.tB_FPS.TickFrequency = 2;
+			this.tB_FPS.Value = 25;
+			this.tB_FPS.Scroll += new System.EventHandler(this.tB_FPS_Scroll);
 			// 
 			// EBuLaTools
 			// 
+			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.l_lowFPS);
+			this.Controls.Add(this.groupBox4);
+			this.Controls.Add(this.l_doubleBuffer);
+			this.Controls.Add(this.cb_deepSearch);
 			this.Controls.Add(this.gb_Keys);
 			this.Controls.Add(this.b_cancel);
 			this.Controls.Add(this.gb_Filesystem);
@@ -478,6 +591,9 @@ namespace MMI.EBuLa.Tools
 			this.gb_multiwindow.ResumeLayout(false);
 			this.gb_Filesystem.ResumeLayout(false);
 			this.gb_Keys.ResumeLayout(false);
+			this.groupBox4.ResumeLayout(false);
+			this.groupBox1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.tB_FPS)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -492,11 +608,23 @@ namespace MMI.EBuLa.Tools
         private void LoadConfiguration()
         {
             cb_Inverse.Checked = m_conf.Inverse;
-			cb_useDB.Checked = m_conf.UseDB;
+			cb_deepSearch.Checked = m_conf.SearchForDepAndArr;
 			cb_topmost.Checked = m_conf.TopMost;
 			cb_focustozusi.Checked = m_conf.FocusToZusi;
 			tb_Port.Text = m_conf.Port.ToString();
 			tb_Host.Text = m_conf.Host;
+			l_doubleBuffer.Checked = m_conf.DoubleBuffer;
+			l_Energie.Text = Convert.ToInt32(m_conf.Energie / 1000d).ToString() + " kWh";
+			l_lowFPS.Checked = m_conf.LowFPS;
+
+			if (m_conf.FramesPerSecond > tB_FPS.Maximum)
+				tB_FPS.Value = tB_FPS.Maximum;
+			else if (m_conf.FramesPerSecond < tB_FPS.Minimum)
+				tB_FPS.Value = tB_FPS.Minimum;
+			else
+				tB_FPS.Value = m_conf.FramesPerSecond;
+
+			l_FPS.Text = "Aktuelle Framerate: "+tB_FPS.Value+" FPS";
 
 			FillWindowList();
 
@@ -563,6 +691,11 @@ namespace MMI.EBuLa.Tools
 
         private void b_save_Click(object sender, System.EventArgs e)
         {
+			if (lb_Windows.SelectedIndex < lb_Windows.Items.Count-1)
+                lb_Windows.SelectedIndex++;
+			else lb_Windows.SelectedIndex = 0;
+
+			lb_Keys_SelectedIndexChanged(sender, e);
             m_conf.SaveFile();
             this.Dispose();
         }
@@ -772,6 +905,7 @@ namespace MMI.EBuLa.Tools
 			lb_Windows.Items.Add(GetWindowListString(enumDisplay.ICE3_1));
 			lb_Windows.Items.Add(GetWindowListString(enumDisplay.ET42X));
 			lb_Windows.Items.Add(GetWindowListString(enumDisplay.VT612));
+			lb_Windows.Items.Add(GetWindowListString(enumDisplay.Menu));
 			if (oldSelectedIndex > -1) lb_Windows.SelectedIndex = oldSelectedIndex;
 		}
 
@@ -780,6 +914,9 @@ namespace MMI.EBuLa.Tools
 			string retval = "";
 			switch (disp)
 			{
+				case enumDisplay.Menu:
+					retval = "Menü ( R="+m_conf.GetBorder(enumDisplay.Menu).ToString()+" / H="+m_conf.GetWidth(enumDisplay.Menu).ToString()+" / V="+m_conf.GetHeight(enumDisplay.Menu).ToString()+" )";
+					break;
 				case enumDisplay.EBuLa:
 					retval = "EBuLa ( R="+m_conf.GetBorder(enumDisplay.EBuLa).ToString()+" / H="+m_conf.GetWidth(enumDisplay.EBuLa).ToString()+" / V="+m_conf.GetHeight(enumDisplay.EBuLa).ToString()+" )";
 					break;
@@ -886,7 +1023,7 @@ namespace MMI.EBuLa.Tools
 
 		private void cb_useDB_CheckedChanged(object sender, System.EventArgs e)
 		{
-			m_conf.UseDB = cb_useDB.Checked;
+			m_conf.SearchForDepAndArr = cb_deepSearch.Checked;
 		}
 
 		private void tb_Port_TextChanged(object sender, System.EventArgs e)
@@ -995,9 +1132,33 @@ namespace MMI.EBuLa.Tools
 					return enumDisplay.ET42X;
 				case 8:
 					return enumDisplay.VT612;
+				case 9:
+					return enumDisplay.Menu;
 				default:
 					return enumDisplay.EBuLa;
 			}
+		}
+
+		private void l_doubleBuffer_CheckedChanged(object sender, System.EventArgs e)
+		{
+			m_conf.DoubleBuffer = l_doubleBuffer.Checked;
+		}
+
+		private void b_Energie_Click(object sender, System.EventArgs e)
+		{
+			m_conf.Energie = 0d;
+			l_Energie.Text = Convert.ToInt32(m_conf.Energie / 1000d).ToString() + " kWh";
+		}
+
+		private void l_lowFPS_CheckedChanged(object sender, System.EventArgs e)
+		{
+			m_conf.LowFPS = l_lowFPS.Checked;
+		}
+
+		private void tB_FPS_Scroll(object sender, System.EventArgs e)
+		{
+			m_conf.FramesPerSecond = tB_FPS.Value;
+			l_FPS.Text = "Aktuelle Framerate: "+tB_FPS.Value+" FPS";
 		}
     }
 }

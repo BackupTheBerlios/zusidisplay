@@ -11,7 +11,7 @@ namespace MMI.ET42X
 	public class ControlContainer : System.Windows.Forms.UserControl
 	{
 		// TODO: need another background
-		const string BACKGROUND_IMAGE = @".\Pictures\bombardier.jpg";
+		const string BACKGROUND_IMAGE = @".\Pictures\et42x.jpg";
 
         private ET42XControl m_widget = null;
         private System.ComponentModel.IContainer components;
@@ -67,7 +67,7 @@ namespace MMI.ET42X
 			{
 				t = new Thread(new ThreadStart(net.Connect));
 				t.IsBackground = true;
-				t.Priority = ThreadPriority.Lowest;
+				t.Priority = m_XMLConf.thread_prio;
 				t.Start();
 				Thread.Sleep(1);
 			}
@@ -113,7 +113,7 @@ namespace MMI.ET42X
 			// 
 			// P_Display
 			// 
-			this.P_Display.Location = new System.Drawing.Point(94, 72);
+			this.P_Display.Location = new System.Drawing.Point(91, 72);
 			this.P_Display.Name = "P_Display";
 			this.P_Display.Size = new System.Drawing.Size(630, 460);
 			this.P_Display.TabIndex = 8;
@@ -184,6 +184,7 @@ namespace MMI.ET42X
         private void B_Off_Click(object sender, System.EventArgs e)
         {
 			m_widget.GLOBAL_SOUND = false;
+			m_widget.Dispose();
             this.Dispose();
         }
 
@@ -368,8 +369,7 @@ namespace MMI.ET42X
 			{
 				if (e.X > 88 && e.X < 138) // aus
 				{
-					m_widget.GLOBAL_SOUND = false;
-					this.Dispose();
+					B_Off_Click(this, new EventArgs());
 				}
 				else if (e.X > 150 && e.X < 205) // nix
 				{
@@ -427,6 +427,11 @@ namespace MMI.ET42X
 				{
 					if (m_widget.Visible)
 						m_widget.Button_E_Pressed(sender, e);
+				}
+				else if (e.Y > 111 && e.Y < 163)
+				{
+					if (m_widget.Visible)
+						m_widget.Button_C_Pressed(sender, e);
 				}
 			}
 

@@ -32,6 +32,7 @@ namespace MMI
 		private System.Windows.Forms.LinkLabel linkLabel2;
 		private System.Windows.Forms.LinkLabel linkLabel3;
 		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.Label label7;
 		/// <summary>
 		/// Erforderliche Designervariable.
 		/// </summary>
@@ -108,6 +109,7 @@ namespace MMI
 			this.linkLabel2 = new System.Windows.Forms.LinkLabel();
 			this.linkLabel3 = new System.Windows.Forms.LinkLabel();
 			this.label14 = new System.Windows.Forms.Label();
+			this.label7 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -130,6 +132,7 @@ namespace MMI
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.label7);
 			this.groupBox1.Controls.Add(this.label13);
 			this.groupBox1.Controls.Add(this.label12);
 			this.groupBox1.Controls.Add(this.label11);
@@ -141,7 +144,7 @@ namespace MMI
 			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox1.Location = new System.Drawing.Point(24, 264);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(400, 128);
+			this.groupBox1.Size = new System.Drawing.Size(400, 144);
 			this.groupBox1.TabIndex = 3;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Folgende Module sind installiert:";
@@ -213,7 +216,7 @@ namespace MMI
 			// button1
 			// 
 			this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.button1.Location = new System.Drawing.Point(184, 424);
+			this.button1.Location = new System.Drawing.Point(184, 440);
 			this.button1.Name = "button1";
 			this.button1.TabIndex = 4;
 			this.button1.Text = "OK";
@@ -303,10 +306,18 @@ namespace MMI
 			this.label14.Text = "und darf beliebig oft kopiert werden,";
 			this.label14.Click += new System.EventHandler(this.label14_Click);
 			// 
+			// label7
+			// 
+			this.label7.Location = new System.Drawing.Point(16, 120);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(184, 16);
+			this.label7.TabIndex = 11;
+			this.label7.Text = "FT95 FIS Terminal (alpha)";
+			// 
 			// AboutBox
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 14);
-			this.ClientSize = new System.Drawing.Size(450, 464);
+			this.ClientSize = new System.Drawing.Size(450, 480);
 			this.Controls.Add(this.linkLabel3);
 			this.Controls.Add(this.linkLabel2);
 			this.Controls.Add(this.linkLabel1);

@@ -25,11 +25,10 @@ namespace MMI.MMIBR185
 		private System.Windows.Forms.RadioButton rb_185;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.RadioButton rb_kein;
-		private System.Windows.Forms.RadioButton rb_ICE;
-		private System.Windows.Forms.RadioButton rb_TB0;
 		private System.Windows.Forms.RadioButton rb_SAT;
 		private System.Windows.Forms.CheckBox cb_12std;
 		private System.Windows.Forms.CheckBox cb_Showclock;
+		private System.Windows.Forms.Label l_trainControl;
 
 		MMI.EBuLa.Tools.State m_state;
 
@@ -50,15 +49,19 @@ namespace MMI.MMIBR185
 			else if (s.TrainType == TRAIN_TYPE.BR189)
 				rb_189.Checked = true;
 
-			if (s.Türschliesung == TÜRSCHlIESSUNG.TB0)
-				rb_TB0.Checked = true;
-			else if (s.Türschliesung == TÜRSCHlIESSUNG.ICE)
-				rb_ICE.Checked = true;
-			else if (s.Türschliesung == TÜRSCHlIESSUNG.SAT)
+			//if (s.Türschliesung == TÜRSCHlIESSUNG.TB0)
+			//	rb_TB0.Checked = true;
+			//else if (s.Türschliesung == TÜRSCHlIESSUNG.ICE)
+			//	rb_ICE.Checked = true;
+			if (s.Türschliesung == TÜRSCHlIESSUNG.SAT)
 				rb_SAT.Checked = true;
 
 			cb_12std.Checked = m_state.addtionalhours;
 			cb_Showclock.Checked = m_state.SHOW_CLOCK;
+
+			string zbf = Zugbeinflussung(s.PZB_System);
+			if (s.LM_GNT_B || s.LM_GNT_Ü) zbf += " und ZUB 122";
+			l_trainControl.Text = "Aktive Zugbeinflussung: "+zbf;
 
 			this.TopMost = topMost;
 		}
@@ -94,11 +97,10 @@ namespace MMI.MMIBR185
 			this.b_cancel = new System.Windows.Forms.Button();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.rb_SAT = new System.Windows.Forms.RadioButton();
-			this.rb_TB0 = new System.Windows.Forms.RadioButton();
-			this.rb_ICE = new System.Windows.Forms.RadioButton();
 			this.rb_kein = new System.Windows.Forms.RadioButton();
 			this.cb_12std = new System.Windows.Forms.CheckBox();
 			this.cb_Showclock = new System.Windows.Forms.CheckBox();
+			this.l_trainControl = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -160,7 +162,7 @@ namespace MMI.MMIBR185
 			// 
 			this.b_ok.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.b_ok.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.b_ok.Location = new System.Drawing.Point(48, 352);
+			this.b_ok.Location = new System.Drawing.Point(240, 248);
 			this.b_ok.Name = "b_ok";
 			this.b_ok.TabIndex = 2;
 			this.b_ok.Text = "OK";
@@ -169,22 +171,22 @@ namespace MMI.MMIBR185
 			// b_cancel
 			// 
 			this.b_cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.b_cancel.Enabled = false;
 			this.b_cancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.b_cancel.Location = new System.Drawing.Point(152, 352);
+			this.b_cancel.Location = new System.Drawing.Point(240, 32);
 			this.b_cancel.Name = "b_cancel";
 			this.b_cancel.TabIndex = 3;
 			this.b_cancel.Text = "Abbrechen";
+			this.b_cancel.Visible = false;
 			// 
 			// groupBox2
 			// 
 			this.groupBox2.Controls.Add(this.rb_SAT);
-			this.groupBox2.Controls.Add(this.rb_TB0);
-			this.groupBox2.Controls.Add(this.rb_ICE);
 			this.groupBox2.Controls.Add(this.rb_kein);
 			this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox2.Location = new System.Drawing.Point(16, 240);
+			this.groupBox2.Location = new System.Drawing.Point(296, 16);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(256, 96);
+			this.groupBox2.Size = new System.Drawing.Size(256, 72);
 			this.groupBox2.TabIndex = 4;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Bitte wählen Sie die Türschließeinrichtung aus:";
@@ -192,31 +194,11 @@ namespace MMI.MMIBR185
 			// rb_SAT
 			// 
 			this.rb_SAT.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.rb_SAT.Location = new System.Drawing.Point(144, 56);
+			this.rb_SAT.Location = new System.Drawing.Point(144, 32);
 			this.rb_SAT.Name = "rb_SAT";
 			this.rb_SAT.Size = new System.Drawing.Size(80, 24);
 			this.rb_SAT.TabIndex = 5;
 			this.rb_SAT.Text = "SAT/TAV";
-			// 
-			// rb_TB0
-			// 
-			this.rb_TB0.Enabled = false;
-			this.rb_TB0.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.rb_TB0.Location = new System.Drawing.Point(32, 56);
-			this.rb_TB0.Name = "rb_TB0";
-			this.rb_TB0.Size = new System.Drawing.Size(80, 24);
-			this.rb_TB0.TabIndex = 4;
-			this.rb_TB0.Text = "TB0";
-			// 
-			// rb_ICE
-			// 
-			this.rb_ICE.Enabled = false;
-			this.rb_ICE.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.rb_ICE.Location = new System.Drawing.Point(144, 32);
-			this.rb_ICE.Name = "rb_ICE";
-			this.rb_ICE.Size = new System.Drawing.Size(80, 24);
-			this.rb_ICE.TabIndex = 3;
-			this.rb_ICE.Text = "ICE";
 			// 
 			// rb_kein
 			// 
@@ -227,12 +209,12 @@ namespace MMI.MMIBR185
 			this.rb_kein.Size = new System.Drawing.Size(80, 24);
 			this.rb_kein.TabIndex = 2;
 			this.rb_kein.TabStop = true;
-			this.rb_kein.Text = "Keine";
+			this.rb_kein.Text = "Keine / TB0";
 			// 
 			// cb_12std
 			// 
 			this.cb_12std.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cb_12std.Location = new System.Drawing.Point(32, 184);
+			this.cb_12std.Location = new System.Drawing.Point(296, 96);
 			this.cb_12std.Name = "cb_12std";
 			this.cb_12std.Size = new System.Drawing.Size(232, 24);
 			this.cb_12std.TabIndex = 6;
@@ -243,17 +225,26 @@ namespace MMI.MMIBR185
 			this.cb_Showclock.Checked = true;
 			this.cb_Showclock.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.cb_Showclock.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cb_Showclock.Location = new System.Drawing.Point(32, 208);
+			this.cb_Showclock.Location = new System.Drawing.Point(296, 120);
 			this.cb_Showclock.Name = "cb_Showclock";
 			this.cb_Showclock.Size = new System.Drawing.Size(232, 24);
 			this.cb_Showclock.TabIndex = 7;
 			this.cb_Showclock.Text = "Digitaluhr anzeigen";
 			this.cb_Showclock.CheckedChanged += new System.EventHandler(this.cb_Showclock_CheckedChanged);
 			// 
+			// l_trainControl
+			// 
+			this.l_trainControl.Location = new System.Drawing.Point(16, 200);
+			this.l_trainControl.Name = "l_trainControl";
+			this.l_trainControl.Size = new System.Drawing.Size(520, 23);
+			this.l_trainControl.TabIndex = 8;
+			this.l_trainControl.Text = "Aktive Zugbeinflussung: (keine)";
+			// 
 			// Switcher
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(292, 392);
+			this.ClientSize = new System.Drawing.Size(562, 280);
+			this.Controls.Add(this.l_trainControl);
 			this.Controls.Add(this.cb_Showclock);
 			this.Controls.Add(this.cb_12std);
 			this.Controls.Add(this.groupBox2);
@@ -297,14 +288,14 @@ namespace MMI.MMIBR185
 			{
 				m_state.Türschliesung = TÜRSCHlIESSUNG.KEINE;
 			}
-			else if (rb_TB0.Checked)
-			{
-				m_state.Türschliesung = TÜRSCHlIESSUNG.TB0;
-			}
-			else if (rb_ICE.Checked)
-			{
-				m_state.Türschliesung = TÜRSCHlIESSUNG.ICE;
-			}
+			//else if (rb_TB0.Checked)
+			//{
+			//	m_state.Türschliesung = TÜRSCHlIESSUNG.TB0;
+			//}
+			//else if (rb_ICE.Checked)
+			//{
+			//	m_state.Türschliesung = TÜRSCHlIESSUNG.ICE;
+			//}
 			else if (rb_SAT.Checked)
 			{
 				m_state.Türschliesung = TÜRSCHlIESSUNG.SAT;
@@ -321,6 +312,35 @@ namespace MMI.MMIBR185
 		private void cb_Showclock_CheckedChanged(object sender, System.EventArgs e)
 		{
 			cb_12std.Enabled = cb_Showclock.Checked;
+		}
+
+		private string Zugbeinflussung(ZUGBEEINFLUSSUNG zbf)
+		{
+			switch (zbf)
+			{
+				case ZUGBEEINFLUSSUNG.I54:
+					return "Indusi 54";
+				case ZUGBEEINFLUSSUNG.I60:
+					return "Indusi 60";
+				case ZUGBEEINFLUSSUNG.I60R:
+					return "Indusi 60R";
+				case ZUGBEEINFLUSSUNG.LZB80_I80:
+					return "LZB 80 / I80";
+				case ZUGBEEINFLUSSUNG.PZ80:
+					return "PZ 80";
+				case ZUGBEEINFLUSSUNG.PZ80R:
+					return "PZ 80R";
+				case ZUGBEEINFLUSSUNG.PZB90_15:
+					return "PZB 90 Version 1.5";
+				case ZUGBEEINFLUSSUNG.PZB90_16:
+					return "PZB 90 Version 1.6";
+				case ZUGBEEINFLUSSUNG.SIGNUM:
+					return "SBB-SIGNUM INTEGRA";
+				case ZUGBEEINFLUSSUNG.NONE:
+					return "(keine)";
+				default:
+					return "(unbekannt)";
+			}
 		}
 	}
 }

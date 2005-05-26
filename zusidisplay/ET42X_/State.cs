@@ -5,7 +5,7 @@ namespace MMI.ET42X
 {
 	public enum CURRENT_DISPLAY
 	{
-		G=1, Mängel, ZUG, Zugbesy, B, VA, Spg, FIS, FIS_HK, FIS_ROUTE, S, V_GREATER_0, V_EQUAL_0, ST, NONE, OBERSTROM, Info, Besetz, Vist, DSK, Zug_Tf_Nr
+		G=1, Mängel, ZUG, Zugbesy, B, VA, Spg, FIS, FIS_HK, FIS_ROUTE, S, V_GREATER_0, V_EQUAL_0, ST, NONE, OBERSTROM, Info, Besetz, Vist, DSK, Zug_Tf_Nr, INIT, FIS_UPDATE, FIS_UPDATE2
 	}
 
 	public enum ET42XTYPE
@@ -20,7 +20,7 @@ namespace MMI.ET42X
 
 	public class ET42XState : MMI.EBuLa.Tools.State
 	{
-		public CURRENT_DISPLAY DISPLAY = CURRENT_DISPLAY.G;
+		public CURRENT_DISPLAY DISPLAY = CURRENT_DISPLAY.INIT;
 		public CURRENT_DISPLAY OLD_DISPLAY = CURRENT_DISPLAY.NONE;
 		public ET42XTYPE ET42Xtype1 = ET42XTYPE.ET425;
 		public ET42XTYPE ET42Xtype2 = ET42XTYPE.ET425;
@@ -34,7 +34,7 @@ namespace MMI.ET42X
 		public float OberstromToRender = 0f;
 		public float Drehzahl = 0f;
 
-		public new float Fahrstufe = 0f;
+		public new float Fahrstufe = 10f;
 		public int FahrstufenSchalter = 10;
 		public float E_Bremse = 0f;
 
@@ -51,6 +51,8 @@ namespace MMI.ET42X
 
 		public ET42XState()
 		{	
+			HBL_Druck = 5f;
+			HL_Druck = 5f;
 			//störungmgr.Add(new Störung(ENUMStörung.S02_Trennschütz));
 			störungmgr.Add(new Störung(ENUMStörung.S01_ZUSIKomm));			
 		}

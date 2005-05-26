@@ -156,7 +156,7 @@ namespace MMI.DAVID
 			// 
 			this.b_ok.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.b_ok.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.b_ok.Location = new System.Drawing.Point(48, 344);
+			this.b_ok.Location = new System.Drawing.Point(104, 344);
 			this.b_ok.Name = "b_ok";
 			this.b_ok.TabIndex = 2;
 			this.b_ok.Text = "OK";
@@ -165,11 +165,13 @@ namespace MMI.DAVID
 			// b_cancel
 			// 
 			this.b_cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.b_cancel.Enabled = false;
 			this.b_cancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.b_cancel.Location = new System.Drawing.Point(152, 344);
+			this.b_cancel.Location = new System.Drawing.Point(208, 328);
 			this.b_cancel.Name = "b_cancel";
 			this.b_cancel.TabIndex = 3;
 			this.b_cancel.Text = "Abbrechen";
+			this.b_cancel.Visible = false;
 			// 
 			// groupBox2
 			// 

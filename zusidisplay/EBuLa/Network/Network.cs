@@ -14,7 +14,7 @@ namespace MMI.EBuLa
 
 	public class Network
 	{
-		const string VERSION = "1.5.2";
+		const string VERSION = MMI.EBuLa.Tools.SuperNetwork.VERSION;
 		const int BUFFER_SIZE = 4096*128;
 		const int REQUEST = 10;
 		Socket s;
@@ -668,14 +668,12 @@ namespace MMI.EBuLa
 			
 			int year, month, day, hour, min, sec;
 
-			DateTime vtime = c.vtime;
-
-			hour = vtime.Hour;
-			min = vtime.Minute;
-			sec = vtime.Second;
-			day = vtime.Day;
-			month = vtime.Month;
-			year = vtime.Year;
+			hour = c.vtime.Hour;
+			min = c.vtime.Minute;
+			sec = c.vtime.Second;
+			day = c.vtime.Day;
+			month = c.vtime.Month;
+			year = c.vtime.Year;
 
 			if (type == REQUEST) // Stunde
 			{

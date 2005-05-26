@@ -56,6 +56,29 @@ namespace MMI.DIAGNOSE
 			c.IsCONNECTED = con;
 		}
 
+		public bool GetConnectedStatus()
+		{
+			return c.IsCONNECTED;
+		}
+
+		public void SetStatus(MMI.EBuLa.Tools.ENUMStörung Stoerung)
+		{
+			SetStatus(Stoerung, false);
+		}
+
+		public void SetStatus(MMI.EBuLa.Tools.ENUMStörung Stoerung, bool delete)
+		{
+			if (delete)
+			{
+				c.localstate.störungmgr.DeleteStörung(Stoerung);
+			}
+			else
+			{
+				MMI.EBuLa.Tools.Störung st = new MMI.EBuLa.Tools.Störung(MMI.EBuLa.Tools.ENUMStörung.S11_ZUSIKomm);
+				c.localstate.störungmgr.Add(st);
+			}
+		}
+
 		/*public void Listen()
 		{
 			SocketPermission permission = new SocketPermission(System.Security.Permissions.PermissionState.Unrestricted);
@@ -105,6 +128,9 @@ namespace MMI.DIAGNOSE
 				case 2: // HLL
 					c.SetHL_Druck(valu);
 					break;
+				case 3: // C-Druck
+					c.SetCDruck(valu);
+					break;
 				case 4: // HBL
 					c.SetHBL_Druck(valu);
 					break;
@@ -119,6 +145,9 @@ namespace MMI.DIAGNOSE
 					break;
 				case 8: // Spannung
 					c.SetSpannung(valu);
+					break;
+				case 9: // Motordrehzahl
+					c.SetDrehzahl(valu);
 					break;
 				case 10:
 					AddClockToZusi(valu);

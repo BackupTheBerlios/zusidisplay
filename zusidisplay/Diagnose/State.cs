@@ -22,7 +22,9 @@ namespace MMI.DIAGNOSE
 	{
 		public CURRENT_DISPLAY DISPLAY = CURRENT_DISPLAY.G;
 		public CURRENT_DISPLAY OLD_DISPLAY = CURRENT_DISPLAY.NONE;
-		public TRAIN_TYPE type = TRAIN_TYPE.BR145;
+		public TRAIN_TYPE type = TRAIN_TYPE.BR145; 
+
+		public bool IsOEBB = false;
 		public int traction = 1;
 
 		public float Zusatzbremse = 0f;
@@ -39,6 +41,7 @@ namespace MMI.DIAGNOSE
 
 		public bool DSK_Gesperrt = false;
 		public string DSK_BUFFER = "    ";
+		public float C_Druck = 0f;
 
 
 		public StörungsManager störungmgr = new StörungsManager();

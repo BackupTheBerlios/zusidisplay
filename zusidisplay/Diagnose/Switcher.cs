@@ -37,6 +37,10 @@ namespace MMI.DIAGNOSE
 		private System.Windows.Forms.RadioButton rb_er20;
 		private System.Windows.Forms.RadioButton rb_146_1;
 		private System.Windows.Forms.RadioButton rb_101MET;
+		private System.Windows.Forms.RadioButton rb_1016_1116;
+		private System.Windows.Forms.GroupBox groupBox4;
+		private System.Windows.Forms.Button b_Energie;
+		private System.Windows.Forms.Label l_Energie;
 
 		MMI.DIAGNOSE.DIAGNOSEState m_state;
 
@@ -69,7 +73,10 @@ namespace MMI.DIAGNOSE
 					rb_152.Checked = true;
 					break;
 				case TRAIN_TYPE.BR182:
-					rb_182.Checked = true;
+					if (m_state.IsOEBB)
+						rb_1016_1116.Checked = true;
+					else
+						rb_182.Checked = true;
 					break;
 				case TRAIN_TYPE.BR185:
 					rb_185.Checked = true;
@@ -101,6 +108,8 @@ namespace MMI.DIAGNOSE
 			if (m_state.addtionalhours)
 				cb_12std.Checked = true;
 
+			l_Energie.Text = Math.Round(m_state.Energie / 1000d,0).ToString() + " kWh";
+
 			this.TopMost = topMost;
 		}
 
@@ -130,6 +139,7 @@ namespace MMI.DIAGNOSE
 			this.b_cancel = new System.Windows.Forms.Button();
 			this.cb_12std = new System.Windows.Forms.CheckBox();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
+			this.rb_1016_1116 = new System.Windows.Forms.RadioButton();
 			this.rb_101MET = new System.Windows.Forms.RadioButton();
 			this.rb_182 = new System.Windows.Forms.RadioButton();
 			this.rb_152 = new System.Windows.Forms.RadioButton();
@@ -147,15 +157,19 @@ namespace MMI.DIAGNOSE
 			this.rb_4times = new System.Windows.Forms.RadioButton();
 			this.rb_single = new System.Windows.Forms.RadioButton();
 			this.rb_3times = new System.Windows.Forms.RadioButton();
+			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.l_Energie = new System.Windows.Forms.Label();
+			this.b_Energie = new System.Windows.Forms.Button();
 			this.groupBox5.SuspendLayout();
 			this.groupBox1.SuspendLayout();
+			this.groupBox4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// b_ok
 			// 
 			this.b_ok.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.b_ok.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.b_ok.Location = new System.Drawing.Point(104, 448);
+			this.b_ok.Location = new System.Drawing.Point(160, 464);
 			this.b_ok.Name = "b_ok";
 			this.b_ok.TabIndex = 3;
 			this.b_ok.Text = "OK";
@@ -164,16 +178,18 @@ namespace MMI.DIAGNOSE
 			// b_cancel
 			// 
 			this.b_cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.b_cancel.Enabled = false;
 			this.b_cancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.b_cancel.Location = new System.Drawing.Point(216, 448);
+			this.b_cancel.Location = new System.Drawing.Point(320, 464);
 			this.b_cancel.Name = "b_cancel";
 			this.b_cancel.TabIndex = 4;
 			this.b_cancel.Text = "Abbrechen";
+			this.b_cancel.Visible = false;
 			// 
 			// cb_12std
 			// 
 			this.cb_12std.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.cb_12std.Location = new System.Drawing.Point(16, 408);
+			this.cb_12std.Location = new System.Drawing.Point(16, 424);
 			this.cb_12std.Name = "cb_12std";
 			this.cb_12std.Size = new System.Drawing.Size(192, 24);
 			this.cb_12std.TabIndex = 2;
@@ -181,6 +197,7 @@ namespace MMI.DIAGNOSE
 			// 
 			// groupBox5
 			// 
+			this.groupBox5.Controls.Add(this.rb_1016_1116);
 			this.groupBox5.Controls.Add(this.rb_101MET);
 			this.groupBox5.Controls.Add(this.rb_182);
 			this.groupBox5.Controls.Add(this.rb_152);
@@ -196,10 +213,19 @@ namespace MMI.DIAGNOSE
 			this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox5.Location = new System.Drawing.Point(16, 16);
 			this.groupBox5.Name = "groupBox5";
-			this.groupBox5.Size = new System.Drawing.Size(248, 376);
+			this.groupBox5.Size = new System.Drawing.Size(248, 400);
 			this.groupBox5.TabIndex = 0;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Bitte wählen Sie den gewünschten Loktyp aus:";
+			// 
+			// rb_1016_1116
+			// 
+			this.rb_1016_1116.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.rb_1016_1116.Location = new System.Drawing.Point(40, 320);
+			this.rb_1016_1116.Name = "rb_1016_1116";
+			this.rb_1016_1116.Size = new System.Drawing.Size(176, 24);
+			this.rb_1016_1116.TabIndex = 16;
+			this.rb_1016_1116.Text = "Rh 1016 / Rh 1116";
 			// 
 			// rb_101MET
 			// 
@@ -213,7 +239,6 @@ namespace MMI.DIAGNOSE
 			// 
 			// rb_182
 			// 
-			this.rb_182.Enabled = false;
 			this.rb_182.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.rb_182.Location = new System.Drawing.Point(40, 256);
 			this.rb_182.Name = "rb_182";
@@ -241,13 +266,12 @@ namespace MMI.DIAGNOSE
 			// 
 			// rb_er20
 			// 
-			this.rb_er20.Enabled = false;
 			this.rb_er20.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.rb_er20.Location = new System.Drawing.Point(40, 320);
+			this.rb_er20.Location = new System.Drawing.Point(40, 352);
 			this.rb_er20.Name = "rb_er20";
 			this.rb_er20.Size = new System.Drawing.Size(176, 24);
 			this.rb_er20.TabIndex = 9;
-			this.rb_er20.Text = "ER 20";
+			this.rb_er20.Text = "Rh 2016 / ER 20";
 			// 
 			// rb_101
 			// 
@@ -302,7 +326,7 @@ namespace MMI.DIAGNOSE
 			this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.groupBox3.Location = new System.Drawing.Point(24, 200);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(196, 160);
+			this.groupBox3.Size = new System.Drawing.Size(196, 184);
 			this.groupBox3.TabIndex = 5;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Siemens:";
@@ -369,10 +393,41 @@ namespace MMI.DIAGNOSE
 			this.rb_3times.TabIndex = 2;
 			this.rb_3times.Text = "3-fach";
 			// 
+			// groupBox4
+			// 
+			this.groupBox4.Controls.Add(this.l_Energie);
+			this.groupBox4.Controls.Add(this.b_Energie);
+			this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox4.Location = new System.Drawing.Point(280, 192);
+			this.groupBox4.Name = "groupBox4";
+			this.groupBox4.Size = new System.Drawing.Size(104, 100);
+			this.groupBox4.TabIndex = 6;
+			this.groupBox4.TabStop = false;
+			this.groupBox4.Text = "Energiezähler:";
+			// 
+			// l_Energie
+			// 
+			this.l_Energie.Location = new System.Drawing.Point(8, 32);
+			this.l_Energie.Name = "l_Energie";
+			this.l_Energie.Size = new System.Drawing.Size(80, 23);
+			this.l_Energie.TabIndex = 7;
+			this.l_Energie.Text = "0 kWh";
+			this.l_Energie.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// b_Energie
+			// 
+			this.b_Energie.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.b_Energie.Location = new System.Drawing.Point(16, 64);
+			this.b_Energie.Name = "b_Energie";
+			this.b_Energie.TabIndex = 6;
+			this.b_Energie.Text = "Löschen";
+			this.b_Energie.Click += new System.EventHandler(this.button1_Click);
+			// 
 			// Switcher
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(402, 487);
+			this.ClientSize = new System.Drawing.Size(402, 496);
+			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.groupBox5);
 			this.Controls.Add(this.cb_12std);
@@ -386,6 +441,7 @@ namespace MMI.DIAGNOSE
 			this.Text = "Triebfahrzeug Wahl";
 			this.groupBox5.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
+			this.groupBox4.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -393,6 +449,7 @@ namespace MMI.DIAGNOSE
 
 		private void b_ok_Click(object sender, System.EventArgs e)
 		{
+			m_state.DISPLAY = CURRENT_DISPLAY.G;
 			if (rb_101.Checked)
 			{
 				m_state.type = TRAIN_TYPE.BR101;
@@ -420,6 +477,14 @@ namespace MMI.DIAGNOSE
 			else if (rb_182.Checked)
 			{
 				m_state.type = TRAIN_TYPE.BR182;
+				m_state.DISPLAY = CURRENT_DISPLAY.Z_BR;
+				m_state.IsOEBB = false;
+			}
+			else if (rb_1016_1116.Checked)
+			{
+				m_state.type = TRAIN_TYPE.BR182;
+				m_state.DISPLAY = CURRENT_DISPLAY.Z_BR;
+				m_state.IsOEBB = true;
 			}
 			else if (rb_185.Checked)
 			{
@@ -432,6 +497,7 @@ namespace MMI.DIAGNOSE
 			else if (rb_er20.Checked)
 			{
 				m_state.type = TRAIN_TYPE.ER20;
+				m_state.FahrstufenSchalter = 6;
 			}
 
 			if (rb_single.Checked)
@@ -444,6 +510,12 @@ namespace MMI.DIAGNOSE
 				m_state.traction = 4;
             
 			m_state.addtionalhours = cb_12std.Checked;
+		}
+
+		private void button1_Click(object sender, System.EventArgs e)
+		{
+			m_state.Energie = 0d;
+			l_Energie.Text = Convert.ToInt32(m_state.Energie / 1000d).ToString() + " kWh";
 		}
 	}
 }

@@ -4,7 +4,7 @@ namespace MMI
 {
     public enum Loadwhat
     {
-        EBuLa=1, EBuLaTools, MMI, DAVID, DAVID2, ICE3_1, ICE3_2, ET42X, VT612, DIAGNOSE, Menu
+        EBuLa=1, EBuLaTools, MMI, DAVID, DAVID2, ICE3_1, ICE3_2, ET42X, VT612, DIAGNOSE, Menu, FIS_TERM
     }
 
 	public class Handler

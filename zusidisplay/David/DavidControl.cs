@@ -17,7 +17,7 @@ namespace MMI.DAVID
 {	   
 	public class DavidControl : System.Windows.Forms.UserControl
 	{
-		const bool USE_DOUBLE_BUFFER = true;
+		bool USE_DOUBLE_BUFFER = false;
 		const float FramesPerSecond = 20f;
 		const string fixed_font = "FixedSysTTF";
 		const string other_font = "Tahoma";
@@ -75,6 +75,19 @@ namespace MMI.DAVID
 		#endregion
 		public DavidControl(MMI.EBuLa.Tools.XMLLoader conf, ControlContainer cc)
 		{
+			if (!conf.DoubleBuffer)
+			{
+				//This turns off internal double buffering of all custom GDI+ drawing
+				this.SetStyle(ControlStyles.DoubleBuffer, true);
+				this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+				this.SetStyle(ControlStyles.UserPaint, true);
+				USE_DOUBLE_BUFFER = false;
+			}
+			else
+			{
+				USE_DOUBLE_BUFFER = true;
+			}
+
 			InitializeComponent();
 
 			m_conf = conf;
@@ -699,8 +712,10 @@ namespace MMI.DAVID
 
 			something_changed = false;
 
-			DavidControl_Paint(this, new PaintEventArgs(this.CreateGraphics(), new Rectangle(0,0,this.Width, this.Height)));
-
+			if (m_conf.DoubleBuffer)
+				DavidControl_Paint(this, new PaintEventArgs(this.CreateGraphics(), new Rectangle(0,0,this.Width, this.Height)));
+			else
+				this.Refresh();
 		}
 
 
@@ -775,6 +790,9 @@ namespace MMI.DAVID
 					case ENUMStörung.S01_ZUSIKomm:
 						DrawS01(ref pg, false);
 						break;
+					case ENUMStörung.S11_ZUSIKomm:
+						DrawS11(ref pg, true);
+						break;
 					case ENUMStörung.S02_Trennschütz:
 						DrawS02(ref pg, false);
 						break;
@@ -792,6 +810,9 @@ namespace MMI.DAVID
 				{
 					case ENUMStörung.S01_ZUSIKomm:
 						DrawS01(ref pg, true);
+						break;
+					case ENUMStörung.S11_ZUSIKomm:
+						DrawS11(ref pg, true);
 						break;
 					case ENUMStörung.S02_Trennschütz:
 						DrawS02(ref pg, true);
@@ -1634,7 +1655,10 @@ namespace MMI.DAVID
 
 				Störung st = localstate.störungmgr.Current;
 
-				s = "St. in "+st.Name;
+				/*if (st.Type == ENUMStörung.S01_ZUSIKomm)
+                    s = "St in ZSG/ZUSI-K";
+				else*/
+					s = "St in "+st.Name;
 
 			
 			}
@@ -1756,6 +1780,30 @@ namespace MMI.DAVID
 				//pg.DrawString("- Auf Verbinden klicken", f, Brushes.Black, 10, 140+20*counter+y);
 				//pg.DrawString("- Feld 'Angeforderte Größen' beobachten", f, Brushes.Black, 10, 160+20*counter+y);
 			}
+		}
+
+		private void DrawS11(ref Graphics pg, bool greater)
+		{
+			Font f = new Font(fixed_font, 11, FontStyle.Regular, GraphicsUnit.Point);
+			string s = "", ip = "";
+
+			Störung st = localstate.störungmgr.LastStörung;
+			s += st.Priority.ToString()+"  ";
+			s += st.Name+"  ";
+
+			int y = 40;
+
+			pg.DrawString(s, f, Brushes.Black, 20, 23);
+			pg.DrawString(st.Description, f, Brushes.Black, 190, 23);
+
+			//f = new Font(fixed_font, 12, FontStyle.Regular, GraphicsUnit.Point);
+
+			pg.DrawString("Die Kommunikation mit ZUSI ist im Augenblick gestört!", f, Brushes.Black, 10, 40+y);
+			pg.DrawString("ZUSI ist bereits mit dem TCP Server verbunden!", f, Brushes.Black, 10, 60+y);
+			pg.DrawString("- Verbindung zwischen ZUSI und TCP Server trennen", f, Brushes.Black, 10, 80+y);
+			pg.DrawString("- Display meldet sich automatisch an Server an", f, Brushes.Black, 10, 100+y);
+			pg.DrawString("- ZUSI wieder verbinden", f, Brushes.Black, 10, 120+y);
+
 		}
 
 		private void DrawS02(ref Graphics pg, bool greater)
@@ -1893,7 +1941,7 @@ namespace MMI.DAVID
 		}
 		public void DavidControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
-			if (m_backBuffer == null)
+			if (m_backBuffer == null && USE_DOUBLE_BUFFER)
 			{
 				m_backBuffer= new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
 			}

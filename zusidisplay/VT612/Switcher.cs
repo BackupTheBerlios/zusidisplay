@@ -133,7 +133,7 @@ namespace MMI.VT612
 			// 
 			this.b_ok.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.b_ok.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.b_ok.Location = new System.Drawing.Point(160, 200);
+			this.b_ok.Location = new System.Drawing.Point(224, 200);
 			this.b_ok.Name = "b_ok";
 			this.b_ok.TabIndex = 2;
 			this.b_ok.Text = "OK";
@@ -142,11 +142,13 @@ namespace MMI.VT612
 			// b_cancel
 			// 
 			this.b_cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.b_cancel.Enabled = false;
 			this.b_cancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.b_cancel.Location = new System.Drawing.Point(272, 200);
+			this.b_cancel.Location = new System.Drawing.Point(416, 200);
 			this.b_cancel.Name = "b_cancel";
 			this.b_cancel.TabIndex = 3;
 			this.b_cancel.Text = "Abbrechen";
+			this.b_cancel.Visible = false;
 			// 
 			// cb_12std
 			// 
