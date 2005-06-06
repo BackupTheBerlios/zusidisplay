@@ -584,6 +584,10 @@ namespace MMI.DIAGNOSE
 			if (!Visible) return;
 			switch(localstate.DISPLAY)
 			{
+				case CURRENT_DISPLAY.Z_BR:
+					if (localstate.type == TRAIN_TYPE.BR182)
+						localstate.SPUS = !localstate.SPUS;
+					break;
 				case CURRENT_DISPLAY.Zugbesy:
 					localstate.DISPLAY = CURRENT_DISPLAY.DSK;
 					break;
@@ -1207,7 +1211,7 @@ namespace MMI.DIAGNOSE
 
 			TimeSpan span = new TimeSpan(DateTime.Now.Ticks - lastTime.Ticks);
 
-			if (span.TotalMilliseconds < 100)
+			if (span.TotalMilliseconds < 400)
 			{
 				lastTime = DateTime.Now;
 				return;
@@ -3722,7 +3726,7 @@ namespace MMI.DIAGNOSE
 						buttons[5,0] = ""; buttons[5,1] = "";
 						buttons[6,0] = ""; buttons[6,1] = "";
 						buttons[7,0] = ""; buttons[7,1] = "";
-						buttons[8,0] = "Ein-"; buttons[8,1] = "gabe";
+						buttons[8,0] = " Ein-"; buttons[8,1] = "gabe";
 						buttons[9,0] = ""; buttons[9,1] = "";
 						buttons[10,0] = "   G"; buttons[10,1] = "";
 						break;
@@ -3733,8 +3737,12 @@ namespace MMI.DIAGNOSE
 						buttons[4,0] = "Status"; buttons[4,1] = "";
 						buttons[5,0] = ""; buttons[5,1] = "";
 						buttons[6,0] = ""; buttons[6,1] = "";
-						buttons[7,0] = ""; buttons[7,1] = "";
-						buttons[8,0] = "Ein-"; buttons[8,1] = "gabe";
+						buttons[7,0] = "SPUS"; 
+						if (localstate.SPUS)
+							buttons[7,1] = "  aus";
+						else
+							buttons[7,1] = "  ein";
+						buttons[8,0] = " Ein-"; buttons[8,1] = "gabe";
 						buttons[9,0] = ""; buttons[9,1] = "";
 						buttons[10,0] = ""; buttons[10,1] = "";
 						break;
@@ -4029,6 +4037,8 @@ namespace MMI.DIAGNOSE
 			*/
 
 			// Feld 4: Zugsammelschiene
+			f = new Font("Arial", 5f, FontStyle.Bold, GraphicsUnit.Millimeter);
+			pg.DrawString("1000 V", f, Brushes.WhiteSmoke, 290, 388);
 
 			// Feld 5: Bremse
 			if (localstate.C_Druck > 0.1f)
@@ -4045,6 +4055,20 @@ namespace MMI.DIAGNOSE
 				Point[] p2 = {new Point(370+69,375-8), new Point(370+69,375+9), new Point(370-9+69,375)};
 				pg.FillPolygon(Brushes.WhiteSmoke, p1);
 				pg.FillPolygon(Brushes.WhiteSmoke, p2);
+			}
+
+			f = new Font("Arial", 5.7f, FontStyle.Bold, GraphicsUnit.Millimeter);
+			if (localstate.Bremsstellung == BREMSSTELLUNG.R_Mg || localstate.Bremsstellung == BREMSSTELLUNG.R)
+			{
+				pg.DrawString("R", f, Brushes.WhiteSmoke, 393, 363);
+			}
+			else if (localstate.Bremsstellung == BREMSSTELLUNG.P_Mg || localstate.Bremsstellung == BREMSSTELLUNG.P)
+			{
+				pg.DrawString("P", f, Brushes.Gold, 394, 363);
+			}
+			else if (localstate.Bremsstellung == BREMSSTELLUNG.G)
+			{
+				pg.DrawString("G", f, Brushes.Red, 393, 363);
 			}
 
 			// Feld 6: (leer)

@@ -33,6 +33,7 @@ namespace MMI
 		private System.Windows.Forms.LinkLabel linkLabel3;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.Label l_NET_version;
 		/// <summary>
 		/// Erforderliche Designervariable.
 		/// </summary>
@@ -49,6 +50,8 @@ namespace MMI
 			// TODO: Fügen Sie den Konstruktorcode nach dem Aufruf von InitializeComponent hinzu
 			//
 			l_version.Text = "Version: "+version;
+			l_NET_version.Text = ".NET Version: "+Environment.Version.Major+"."+Environment.Version.Minor+"."+Environment.Version.Build;
+			if (Environment.Version.Revision > 2031) l_NET_version.Text += " SP1";
 			this.TopMost = topmost;
 
 			this.linkLabel1.Text = "http://zusidisplay.berlios.de";
@@ -91,6 +94,7 @@ namespace MMI
 			this.label1 = new System.Windows.Forms.Label();
 			this.l_version = new System.Windows.Forms.Label();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.label7 = new System.Windows.Forms.Label();
 			this.label13 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
@@ -109,7 +113,7 @@ namespace MMI
 			this.linkLabel2 = new System.Windows.Forms.LinkLabel();
 			this.linkLabel3 = new System.Windows.Forms.LinkLabel();
 			this.label14 = new System.Windows.Forms.Label();
-			this.label7 = new System.Windows.Forms.Label();
+			this.l_NET_version = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -126,7 +130,7 @@ namespace MMI
 			// 
 			this.l_version.Location = new System.Drawing.Point(24, 48);
 			this.l_version.Name = "l_version";
-			this.l_version.Size = new System.Drawing.Size(240, 16);
+			this.l_version.Size = new System.Drawing.Size(152, 16);
 			this.l_version.TabIndex = 1;
 			this.l_version.Text = "Version: xxxx";
 			// 
@@ -148,6 +152,14 @@ namespace MMI
 			this.groupBox1.TabIndex = 3;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Folgende Module sind installiert:";
+			// 
+			// label7
+			// 
+			this.label7.Location = new System.Drawing.Point(16, 120);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(184, 16);
+			this.label7.TabIndex = 11;
+			this.label7.Text = "FT95 FIS Terminal (alpha)";
 			// 
 			// label13
 			// 
@@ -306,18 +318,19 @@ namespace MMI
 			this.label14.Text = "und darf beliebig oft kopiert werden,";
 			this.label14.Click += new System.EventHandler(this.label14_Click);
 			// 
-			// label7
+			// l_NET_version
 			// 
-			this.label7.Location = new System.Drawing.Point(16, 120);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(184, 16);
-			this.label7.TabIndex = 11;
-			this.label7.Text = "FT95 FIS Terminal (alpha)";
+			this.l_NET_version.Location = new System.Drawing.Point(176, 48);
+			this.l_NET_version.Name = "l_NET_version";
+			this.l_NET_version.Size = new System.Drawing.Size(240, 16);
+			this.l_NET_version.TabIndex = 17;
+			this.l_NET_version.Text = ".NET Version: xxxx";
 			// 
 			// AboutBox
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 14);
 			this.ClientSize = new System.Drawing.Size(450, 480);
+			this.Controls.Add(this.l_NET_version);
 			this.Controls.Add(this.linkLabel3);
 			this.Controls.Add(this.linkLabel2);
 			this.Controls.Add(this.linkLabel1);

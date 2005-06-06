@@ -171,7 +171,6 @@ namespace MMI.EBuLa
         private System.Windows.Forms.PictureBox PB_03;
         private System.Windows.Forms.PictureBox PB_02;
         private System.Windows.Forms.PictureBox PB_01;
-        private System.Windows.Forms.PictureBox PB_13;
         private System.Windows.Forms.PictureBox PL_04;
         private System.Windows.Forms.PictureBox PL_01;
         private System.Windows.Forms.PictureBox PL_02;
@@ -233,6 +232,9 @@ namespace MMI.EBuLa
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label l_ESF_Pos;
 		private System.Windows.Forms.Label l_ESF_Neg;
+		private System.Windows.Forms.Label L_A_13;
+		private System.Windows.Forms.Label L_D_13;
+		private System.Windows.Forms.PictureBox PB_13;
 
         private MMI.EBuLa.Tools.SoundInterface Sound;
 
@@ -542,6 +544,8 @@ namespace MMI.EBuLa
 			this.label1 = new System.Windows.Forms.Label();
 			this.l_ESF_Pos = new System.Windows.Forms.Label();
 			this.l_ESF_Neg = new System.Windows.Forms.Label();
+			this.L_A_13 = new System.Windows.Forms.Label();
+			this.L_D_13 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.timer_Uhr)).BeginInit();
 			this.PanelButton.SuspendLayout();
 			this.PanelDown.SuspendLayout();
@@ -967,7 +971,7 @@ namespace MMI.EBuLa
 			this.L_TOP.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_TOP.Location = new System.Drawing.Point(232, 56);
 			this.L_TOP.Name = "L_TOP";
-			this.L_TOP.Size = new System.Drawing.Size(384, 18);
+			this.L_TOP.Size = new System.Drawing.Size(232, 18);
 			this.L_TOP.TabIndex = 58;
 			this.L_TOP.Text = "L_TOP";
 			// 
@@ -1454,134 +1458,122 @@ namespace MMI.EBuLa
 			// L_OpsS_01
 			// 
 			this.L_OpsS_01.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_01.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_01.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_01.Location = new System.Drawing.Point(416, 344);
 			this.L_OpsS_01.Name = "L_OpsS_01";
 			this.L_OpsS_01.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_01.TabIndex = 107;
 			this.L_OpsS_01.Text = "L_OpsS_01";
-			this.L_OpsS_01.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_02
 			// 
 			this.L_OpsS_02.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_02.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_02.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_02.Location = new System.Drawing.Point(416, 320);
 			this.L_OpsS_02.Name = "L_OpsS_02";
 			this.L_OpsS_02.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_02.TabIndex = 109;
 			this.L_OpsS_02.Text = "L_OpsS_02";
-			this.L_OpsS_02.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_03
 			// 
 			this.L_OpsS_03.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_03.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_03.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_03.Location = new System.Drawing.Point(416, 296);
 			this.L_OpsS_03.Name = "L_OpsS_03";
 			this.L_OpsS_03.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_03.TabIndex = 110;
 			this.L_OpsS_03.Text = "L_OpsS_03";
-			this.L_OpsS_03.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_04
 			// 
 			this.L_OpsS_04.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_04.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_04.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_04.Location = new System.Drawing.Point(416, 272);
 			this.L_OpsS_04.Name = "L_OpsS_04";
 			this.L_OpsS_04.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_04.TabIndex = 111;
 			this.L_OpsS_04.Text = "L_OpsS_04";
-			this.L_OpsS_04.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_05
 			// 
 			this.L_OpsS_05.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_05.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_05.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_05.Location = new System.Drawing.Point(416, 248);
 			this.L_OpsS_05.Name = "L_OpsS_05";
 			this.L_OpsS_05.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_05.TabIndex = 112;
 			this.L_OpsS_05.Text = "L_OpsS_05";
-			this.L_OpsS_05.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_06
 			// 
 			this.L_OpsS_06.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_06.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_06.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_06.Location = new System.Drawing.Point(416, 224);
 			this.L_OpsS_06.Name = "L_OpsS_06";
 			this.L_OpsS_06.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_06.TabIndex = 113;
 			this.L_OpsS_06.Text = "L_OpsS_06";
-			this.L_OpsS_06.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_07
 			// 
 			this.L_OpsS_07.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_07.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_07.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_07.Location = new System.Drawing.Point(416, 200);
 			this.L_OpsS_07.Name = "L_OpsS_07";
 			this.L_OpsS_07.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_07.TabIndex = 114;
 			this.L_OpsS_07.Text = "L_OpsS_07";
-			this.L_OpsS_07.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_08
 			// 
 			this.L_OpsS_08.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_08.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_08.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_08.Location = new System.Drawing.Point(416, 176);
 			this.L_OpsS_08.Name = "L_OpsS_08";
 			this.L_OpsS_08.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_08.TabIndex = 115;
 			this.L_OpsS_08.Text = "L_OpsS_08";
-			this.L_OpsS_08.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_09
 			// 
 			this.L_OpsS_09.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_09.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_09.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_09.Location = new System.Drawing.Point(416, 152);
 			this.L_OpsS_09.Name = "L_OpsS_09";
 			this.L_OpsS_09.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_09.TabIndex = 116;
 			this.L_OpsS_09.Text = "L_OpsS_09";
-			this.L_OpsS_09.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_10
 			// 
 			this.L_OpsS_10.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_10.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_10.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_10.Location = new System.Drawing.Point(416, 128);
 			this.L_OpsS_10.Name = "L_OpsS_10";
 			this.L_OpsS_10.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_10.TabIndex = 117;
 			this.L_OpsS_10.Text = "L_OpsS_10";
-			this.L_OpsS_10.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_11
 			// 
 			this.L_OpsS_11.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_11.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_11.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_11.Location = new System.Drawing.Point(416, 104);
 			this.L_OpsS_11.Name = "L_OpsS_11";
 			this.L_OpsS_11.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_11.TabIndex = 118;
 			this.L_OpsS_11.Text = "L_OpsS_11";
-			this.L_OpsS_11.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// L_OpsS_12
 			// 
 			this.L_OpsS_12.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_12.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_12.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 			this.L_OpsS_12.Location = new System.Drawing.Point(416, 80);
 			this.L_OpsS_12.Name = "L_OpsS_12";
 			this.L_OpsS_12.Size = new System.Drawing.Size(35, 18);
 			this.L_OpsS_12.TabIndex = 108;
 			this.L_OpsS_12.Text = "L_OpsS_12";
-			this.L_OpsS_12.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// Qu
 			// 
@@ -2371,9 +2363,31 @@ namespace MMI.EBuLa
 			this.l_ESF_Neg.Text = "- 0 kWh";
 			this.l_ESF_Neg.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
+			// L_A_13
+			// 
+			this.L_A_13.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_13.Location = new System.Drawing.Point(480, 56);
+			this.L_A_13.Name = "L_A_13";
+			this.L_A_13.Size = new System.Drawing.Size(50, 18);
+			this.L_A_13.TabIndex = 182;
+			this.L_A_13.Text = "L_A_13";
+			this.L_A_13.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
+			// L_D_13
+			// 
+			this.L_D_13.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_13.Location = new System.Drawing.Point(560, 56);
+			this.L_D_13.Name = "L_D_13";
+			this.L_D_13.Size = new System.Drawing.Size(50, 18);
+			this.L_D_13.TabIndex = 183;
+			this.L_D_13.Text = "L_D_13";
+			this.L_D_13.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			// 
 			// EbulaControl
 			// 
 			this.BackColor = System.Drawing.Color.WhiteSmoke;
+			this.Controls.Add(this.L_D_13);
+			this.Controls.Add(this.L_A_13);
 			this.Controls.Add(this.l_ESF_Neg);
 			this.Controls.Add(this.l_ESF_Pos);
 			this.Controls.Add(this.label1);
@@ -2780,7 +2794,10 @@ namespace MMI.EBuLa
                         double s = speed/2.2;
                         speed = (int)s;
                         pb.Location = new Point( speed , cc.Location.Y-firsttime);
-                        //Console.WriteLine("New Loc: "+cc.Location.X.ToString()+","+cc.Location.Y.ToString());
+						if (s > 0d && cc.Name.IndexOf("13") < 0) 
+							pb.Visible = true;
+						else
+							pb.Visible = false;
                     }
                     if (cc.Name.StartsWith("PL"))
                     {
@@ -2895,12 +2912,12 @@ namespace MMI.EBuLa
                         Entry e = (Entry)control.Route.Entrys[pos-1+(int)control.Route.Offset];
                         if (e == control.Marker || e.m_type == EntryType.RADIO_MARKER)
                         { 
-                            l.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+                            l.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
                             //l.Font.Bold = true;
                         }
                         else 
                         { 
-                            l.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+                            l.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
                             //l.Font.Bold = false; 
                         }
                         l.Text = e.m_ops_speed;
@@ -2962,13 +2979,18 @@ namespace MMI.EBuLa
                         // ETA
                         int pos = System.Convert.ToInt32(cc.Name.Substring(4));
                         Label l = (Label)cc;
+						l.Text = "";
                         if (pos > control.Route.Entrys.Count)
                         {
-                            l.Text = "";
+                            //l.Text = "";
                             continue;
                         }
-                        Entry e = (Entry)control.Route.Entrys[pos-1+(int)control.Route.Offset];
-                        l.Text = e.m_eta;
+						try
+						{
+							Entry e = (Entry)control.Route.Entrys[pos-1+(int)control.Route.Offset];
+							l.Text = e.m_eta;
+						}
+						catch(Exception){}                        
                     }
                     if (cc.Name.StartsWith("L_AK_"))
                     {
@@ -2995,13 +3017,18 @@ namespace MMI.EBuLa
                         // ETD
                         int pos = System.Convert.ToInt32(cc.Name.Substring(4));
                         Label l = (Label)cc;
+						l.Text = "";
                         if (pos > control.Route.Entrys.Count)
                         {
-                            l.Text = "";
+                            //l.Text = "";
                             continue;
                         }
-                        Entry e = (Entry)control.Route.Entrys[pos-1+(int)control.Route.Offset];
-                        l.Text = e.m_etd;
+						try
+						{
+							Entry e = (Entry)control.Route.Entrys[pos-1+(int)control.Route.Offset];
+							l.Text = e.m_etd;
+						}
+						catch(Exception){}
                     }
                     if (cc.Name.StartsWith("L_DK_"))
                     {
@@ -3691,7 +3718,7 @@ namespace MMI.EBuLa
 				if (control.timer_disabled && !control.move_via_time)
 				{
 					// Timer deaktiviert
-					if (L_TOP.Text == "Kein Zusi gefunden! Stelle um auf stand-alone Betrieb!")
+					if (L_TOP.Text == "Kein Zusi gefunden! stand-alone!")
 						L_TOP.Text = "";
 					//timer_Sync.Enabled = false;
 					return;
@@ -3700,7 +3727,7 @@ namespace MMI.EBuLa
 			catch(Exception)
 			{
 				//timer_Sync.Enabled = false;
-				if (L_TOP.Text == "Kein Zusi gefunden! Stelle um auf stand-alone Betrieb!")
+				if (L_TOP.Text == "Kein Zusi gefunden! stand-alone!")
 					L_TOP.Text = "";
 				System.Windows.Forms.MessageBox.Show("Control nicht da!");
 				return;
@@ -3728,7 +3755,7 @@ namespace MMI.EBuLa
 						control.timer_on = false;
 						control.timer_disabled = true;
 					}
-					L_TOP.Text = "Kein Zusi gefunden! Stelle um auf stand-alone Betrieb!";
+					L_TOP.Text = "Kein Zusi gefunden! stand-alone!";
 					return;
 				}
             }

@@ -637,11 +637,21 @@ namespace MMI.EBuLa
 			// Create a reference to the current directory.
 			DirectoryInfo di = new DirectoryInfo(path);
 			// Create an array representing the files in the current directory.
-			FileInfo[] fi = di.GetFiles();
+			FileInfo[] fi = null;
+			try
+			{
+				fi = di.GetFiles();
+			}
+			catch(Exception){}
 			
+			if (fi == null)
+			{
+				MessageBox.Show("Keine Züge gefunden!", "Keine Züge", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
 			train_list = new Hashtable();
-			int counter = 0;
-			
+			int counter = 0;			
 
 			foreach (FileInfo fiTemp in fi)
 			{
@@ -663,7 +673,7 @@ namespace MMI.EBuLa
 				if (fiTemp.Name.ToLower().IndexOf("aktuellerzug") > -1) continue;
 
 				Application.DoEvents();
-				l_top.Text = "Daten werden gelesen!".ToUpper() + " ("+ counter.ToString()+" von " + fi.Length.ToString()+ ")";
+				l_top.Text = "Laden ("+ counter.ToString()+" von " + fi.Length.ToString()+ ")";
 				TrainInfo ti = new TrainInfo(fiTemp.Name, fiTemp.DirectoryName, XMLConf.SearchForDepAndArr);
 				Application.DoEvents();
 				if (ti.Number == "") continue;

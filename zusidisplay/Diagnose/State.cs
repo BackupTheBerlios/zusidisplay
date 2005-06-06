@@ -43,6 +43,7 @@ namespace MMI.DIAGNOSE
 		public string DSK_BUFFER = "    ";
 		public float C_Druck = 0f;
 
+		public bool SPUS = true;
 
 		public StörungsManager störungmgr = new StörungsManager();
 
