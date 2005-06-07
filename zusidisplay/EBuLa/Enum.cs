@@ -5,7 +5,8 @@ using System;namespace MMI.EBuLa{
         GNT_BEGINNING, GNT_ENDING, 
         LZB_BEGINNING, LZB, LZB_ENDING,
         TUNNEL_BEGINNING, TUNNEL_ENDING,
-        POSITION_JUMP, VERKUERTZT
+        POSITION_JUMP, VERKUERTZT,
+		NE2, NE4, EL1, EL2, EL4, EL5
     }
     public enum EntryPos
     {

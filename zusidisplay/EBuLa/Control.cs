@@ -365,6 +365,90 @@ namespace MMI.EBuLa
 					this_e.m_ops_name = "";
 				}
 
+				pos = this_e.m_ops_name.ToLower().IndexOf("ne2");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.NE2;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("ne 2");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.NE2;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 4);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("ne4");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.NE4;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("ne 4");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.NE4;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 4);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("el1");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.EL1;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("el 1");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.EL1;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 4);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("el2");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.EL2;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("el 2");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.EL2;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 4);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("el4");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.EL4;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("ne 4");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.EL4;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 4);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("el5");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.EL5;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 3);
+				}
+
+				pos = this_e.m_ops_name.ToLower().IndexOf("el 5");
+				if (pos >= 0)
+				{
+					this_e.m_type = EntryType.EL5;
+					this_e.m_ops_name = this_e.m_ops_name.Remove(pos, 4);
+				}
+
 				// Zugfunk
 				pos = this_e.m_ops_name.IndexOf("ZF");
 				int pos2 = this_e.m_ops_name.IndexOf("ZF-Ende");

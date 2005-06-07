@@ -2871,9 +2871,29 @@ namespace MMI.EBuLa
 						l.Location = new Point(260, l.Location.Y);
 
                         Entry e = (Entry)control.Route.Entrys[pos-1+(int)control.Route.Offset];
-                        if (e.m_type == EntryType.RADIO_MARKER || e.m_type == EntryType.RADIO_MARKER_ENDING || e.m_type == EntryType.GNT_BEGINNING || e.m_type == EntryType.GNT_ENDING || e.m_type == EntryType.LZB_BEGINNING || e.m_type == EntryType.LZB || e.m_type == EntryType.LZB_ENDING || e.m_type == EntryType.VERKUERTZT)
+                        if (e.m_type == EntryType.RADIO_MARKER || 
+							e.m_type == EntryType.RADIO_MARKER_ENDING || 
+							e.m_type == EntryType.GNT_BEGINNING || 
+							e.m_type == EntryType.GNT_ENDING || 
+							e.m_type == EntryType.LZB_BEGINNING || 
+							e.m_type == EntryType.LZB || 
+							e.m_type == EntryType.LZB_ENDING || 
+							e.m_type == EntryType.NE2 ||
+							e.m_type == EntryType.NE4 ||
+							e.m_type == EntryType.EL1 ||
+							e.m_type == EntryType.EL2 ||
+							e.m_type == EntryType.EL4 ||
+							e.m_type == EntryType.EL5)
                         { 
-							if (e.m_type != EntryType.RADIO_MARKER && e.m_type != EntryType.RADIO_MARKER_ENDING && e.m_type != EntryType.VERKUERTZT)
+							if (e.m_type != EntryType.RADIO_MARKER && 
+								e.m_type != EntryType.RADIO_MARKER_ENDING && 
+								e.m_type != EntryType.VERKUERTZT &&
+								e.m_type != EntryType.NE2 &&
+								e.m_type != EntryType.NE4 &&
+								e.m_type != EntryType.EL1 &&
+								e.m_type != EntryType.EL2 &&
+								e.m_type != EntryType.EL4 &&
+								e.m_type != EntryType.EL5)
 							{
 								l.Text = "";
 								l.Size = new Size(0, l.Height);
@@ -4046,6 +4066,8 @@ namespace MMI.EBuLa
 					case EntryType.VERKUERTZT:
 						s = "";
 						break;
+					default:
+						break;
 				}
 
 				if (s != "")
@@ -4074,7 +4096,62 @@ namespace MMI.EBuLa
 						g.DrawLine(p, 232-2, 80+(12-pos)*24+6+7, 232+5+7, 80+(12-pos)*24-1);
 					}
 				}
+				else if (type == EntryType.NE2)
+				{
+					//S8090.txt
+					//230, 78+(12-pos)*24 
+					g.DrawRectangle(new Pen(BLACK), 230+2, 77+(12-pos)*24, 16, 20);
 
+					Pen pen = new Pen(BLACK, 1f);
+					g.DrawLine(pen, new Point(230+2, 77+(12-pos)*24), new Point(230+2+8, 77+(12-pos)*24+9));
+					g.DrawLine(pen, new Point(230+2+8, 77+(12-pos)*24+9), new Point(230+2+16, 77+(12-pos)*24));
+
+					g.DrawLine(pen, new Point(230+2, 77+(12-pos)*24+20), new Point(230+2+8, 77+(12-pos)*24+11));
+					g.DrawLine(pen, new Point(230+2+16, 77+(12-pos)*24+20), new Point(230+2+8, 77+(12-pos)*24+11));
+
+				}
+				else if (type == EntryType.NE4)
+				{
+					g.DrawRectangle(new Pen(BLACK), 230+2, 77+(12-pos)*24, 16, 20);
+					if (control.inverse)
+					{
+						g.FillRectangle(new SolidBrush(BLACK), 230+2+8, 77+(12-pos)*24, 8, 10);
+						g.FillRectangle(new SolidBrush(BLACK), 230+2, 77+(12-pos)*24+10, 8, 10);
+					}
+					else
+					{
+						g.FillRectangle(new SolidBrush(BLACK), 230+2, 77+(12-pos)*24, 8, 10);
+						g.FillRectangle(new SolidBrush(BLACK), 230+2+8, 77+(12-pos)*24+10, 8, 10);
+					}
+				}
+				else if (type == EntryType.EL1)
+				{
+					DrawElSignalBackground_Part1(ref g, pos);
+					DrawElSignalBackground_Part2(ref g, pos);
+				}
+				else if (type == EntryType.EL2)
+				{
+					DrawElSignalBackground_Part1(ref g, pos);
+					DrawElSignalBackground_Part2(ref g, pos);
+				}
+				else if (type == EntryType.EL4)
+				{
+					DrawElSignalBackground_Part1(ref g, pos);
+					Pen el_pen = new Pen(Color.WhiteSmoke, 3f);
+					el_pen.EndCap = LineCap.Triangle;
+					el_pen.StartCap = LineCap.Triangle;
+					g.DrawLine(el_pen, 232, 77+(12-pos)*24+10, 231+18, 77+(12-pos)*24+10);
+					DrawElSignalBackground_Part2(ref g, pos);
+				}
+				else if (type == EntryType.EL5)
+				{
+					DrawElSignalBackground_Part1(ref g, pos);
+					Pen el_pen = new Pen(Color.WhiteSmoke, 3f);
+					el_pen.EndCap = LineCap.Triangle;
+					el_pen.StartCap = LineCap.Triangle;
+					g.DrawLine(el_pen, 231+9, 77+(12-pos)*24+1, 231+9, 77+(12-pos)*24+18);
+					DrawElSignalBackground_Part2(ref g, pos);
+				}
 			}
 
 			if (control.Route.Entrys.Count > 0)
@@ -4129,6 +4206,37 @@ namespace MMI.EBuLa
 		{
 			m_conf.FastReadFile();
 			SomethingChanged = true;
+		}
+		private void DrawElSignalBackground_Part1(ref Graphics g, int pos)
+		{
+			Point[] points = {
+								 new Point(230+10, 77+(12-pos)*24),
+								 new Point(230+20, 77+(12-pos)*24+10),
+								 new Point(230+10, 77+(12-pos)*24+20),
+								 new Point(230, 77+(12-pos)*24+10)};
+			Point[] points2 = {
+								 new Point(230+10, 77+(12-pos)*24+1),
+								 new Point(230+19, 77+(12-pos)*24+10),
+								 new Point(230+10, 77+(12-pos)*24+19),
+								 new Point(230+1, 77+(12-pos)*24+10)};
+
+			g.FillPolygon(new SolidBrush(Color.Blue), points, FillMode.Alternate);
+		}
+		private void DrawElSignalBackground_Part2(ref Graphics g, int pos)
+		{
+			Point[] points = {
+								 new Point(230+10, 77+(12-pos)*24),
+								 new Point(230+20, 77+(12-pos)*24+10),
+								 new Point(230+10, 77+(12-pos)*24+20),
+								 new Point(230, 77+(12-pos)*24+10)};
+			Point[] points2 = {
+								  new Point(230+10, 77+(12-pos)*24+1),
+								  new Point(230+19, 77+(12-pos)*24+10),
+								  new Point(230+10, 77+(12-pos)*24+19),
+								  new Point(230+1, 77+(12-pos)*24+10)};
+
+			g.DrawPolygon(new Pen(Color.WhiteSmoke), points);
+			g.DrawPolygon(new Pen(Color.Black), points2);
 		}
     }
 }
