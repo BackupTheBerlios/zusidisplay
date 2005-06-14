@@ -39,6 +39,7 @@ namespace MMI.ET42X
 		SoundInterface Sound;
 		int StörPos = 0;
 		private string[,] buttons = new string[11,2];
+		private bool[] buttons_highlighted = new bool[11];
 
 		Color STÖRUNG_BG = Color.Gold, STÖRUNG_FG = Color.Black;
 		Color BRIGHT = Color.WhiteSmoke; 
@@ -74,6 +75,8 @@ namespace MMI.ET42X
 		private System.Windows.Forms.Timer timer2;
 		private System.Windows.Forms.Timer timer_eingabe;
 		private System.Windows.Forms.Timer timer_verbrauch;
+		private System.Windows.Forms.Timer timerNaechsterHaltDealy;
+		private System.Windows.Forms.Timer timerButtonsHighlight;
 
 		bool on = true;
 
@@ -101,19 +104,14 @@ namespace MMI.ET42X
 			uhrInnenkl = new ISphere(508+60, 41+60, 52);			
 			uhrsec = new ISphere(508+60, 41+60, 43);
 			uhrmin = new ISphere(508+60, 41+60, 43);
-			uhrstd = new ISphere(508+60, 41+60, 30);
+			uhrstd = new ISphere(508+60, 41+60, 28);
 			uhrrest = new ISphere(508+60, 41+60, 7);
 			center = new Point(508+60, 41+60);
 
 			m_conf = conf;
 
-			localstate = new MMI.ET42X.ET42XState();
-
-			localstate.Energie = conf.Energie;
 
 			// NOTBREMSE und E-BREMSE fehlen
-
-			SetButtons();
 
 			switch (m_conf.Sound)
 			{
@@ -127,6 +125,12 @@ namespace MMI.ET42X
 					Sound = new NullSound();
 					break;
 			}
+
+			localstate = new MMI.ET42X.ET42XState(ref conf, ref Sound);
+
+			SetButtons();
+
+			localstate.Energie = conf.Energie;
 
 			vtime = DateTime.Now;
 
@@ -184,6 +188,8 @@ namespace MMI.ET42X
 			this.timer2 = new System.Windows.Forms.Timer(this.components);
 			this.timer_eingabe = new System.Windows.Forms.Timer(this.components);
 			this.timer_verbrauch = new System.Windows.Forms.Timer(this.components);
+			this.timerNaechsterHaltDealy = new System.Windows.Forms.Timer(this.components);
+			this.timerButtonsHighlight = new System.Windows.Forms.Timer(this.components);
 			// 
 			// timer1
 			// 
@@ -212,6 +218,16 @@ namespace MMI.ET42X
 			this.timer_verbrauch.Enabled = true;
 			this.timer_verbrauch.Interval = 2000;
 			this.timer_verbrauch.Tick += new System.EventHandler(this.timer_verbrauch_Tick);
+			// 
+			// timerNaechsterHaltDealy
+			// 
+			this.timerNaechsterHaltDealy.Interval = 500;
+			this.timerNaechsterHaltDealy.Tick += new System.EventHandler(this.timerNaechsterHaltDealy_Tick);
+			// 
+			// timerButtonsHighlight
+			// 
+			this.timerButtonsHighlight.Interval = 750;
+			this.timerButtonsHighlight.Tick += new System.EventHandler(this.timerButtonsHighlight_Tick);
 			// 
 			// ET42XControl
 			// 
@@ -253,7 +269,9 @@ namespace MMI.ET42X
 					localstate.fis.NextEntry();
 					break;
 				case CURRENT_DISPLAY.FIS_HK:
-					Send(FIS_DATA.Next_Entry);
+					//Send(FIS_DATA.Next_Entry);
+					// FIS-TODO
+					localstate.fis.SwitchNaechsterHalt();
 					break;
 			}
 			something_changed = true;
@@ -280,7 +298,9 @@ namespace MMI.ET42X
 					localstate.fis.PrevEntry();
 					break;
 				case CURRENT_DISPLAY.FIS_HK:
-					Send(FIS_DATA.Prev_Entry);
+					//Send(FIS_DATA.Prev_Entry);
+					// FIS-TODO
+					localstate.fis.SwitchVorherigerHalt();
 					break;
 			}
 			something_changed = true;
@@ -296,8 +316,16 @@ namespace MMI.ET42X
 					{
 						localstate.DISPLAY = CURRENT_DISPLAY.FIS_UPDATE;
 						timer2.Enabled = true;
+						localstate.fis.Status = true;
+						localstate.fis.UserEnabled = false;
 					}
 					localstate.fis.NextFISPos((IFISNetwork)m_net, IsCONNECTED);
+					break;
+				case CURRENT_DISPLAY.FIS_HK:
+					localstate.DISPLAY = CURRENT_DISPLAY.FIS;
+					if ((localstate.Geschwindigkeit > 0f && localstate.FISType == FIS_TYPE.FIS) ||
+						localstate.FISType != FIS_TYPE.FIS && localstate.FISType != FIS_TYPE.NONE)
+						timerNaechsterHaltDealy.Enabled = true;
 					break;
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
 					if (localstate.marker >= 0 && localstate.marker < 6)
@@ -425,6 +453,14 @@ namespace MMI.ET42X
 		{
 			switch(localstate.DISPLAY)
 			{
+				case CURRENT_DISPLAY.G:
+					if (FISAn())
+					{
+						localstate.fis.PlayAusstiegLinks();
+						buttons_highlighted[1] = true;
+						timerButtonsHighlight.Enabled = true;
+					}
+					break;
 				case CURRENT_DISPLAY.OBERSTROM:
 					localstate.OberstromGrenze = 1000f;
 					break;
@@ -690,7 +726,8 @@ namespace MMI.ET42X
 					if (buttons[7,0].IndexOf("FIS") > -1)
 					{
 						if (IsCONNECTED)
-							Send(FIS_DATA.FIS_Aus);
+							// FIS TODO Send(FIS_DATA.FIS_Aus);
+							localstate.fis.FISAus();
 						else
 							localstate.fis.FISAus();
 					}
@@ -742,10 +779,18 @@ namespace MMI.ET42X
 					Send(FIS_DATA.Route_Data);
 					break;
 				case CURRENT_DISPLAY.FIS:
-					Send(FIS_DATA.FIS_Start);
+					//Send(FIS_DATA.FIS_Start);
+					// FIS TODO
+					buttons_highlighted[8] = true;
+					timerButtonsHighlight.Enabled = true;
+					localstate.fis.UserEnabled = true;
 					break;
 				case CURRENT_DISPLAY.FIS_ROUTE:
-					Send(FIS_DATA.FIS_Start);
+					//Send(FIS_DATA.FIS_Start);
+					// FIS TODO
+					buttons_highlighted[8] = true;
+					timerButtonsHighlight.Enabled = true;
+					localstate.fis.UserEnabled = true;
 					break;
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
 					if (localstate.marker >= 0 && localstate.marker < 6)
@@ -787,7 +832,15 @@ namespace MMI.ET42X
 					break;
 				case CURRENT_DISPLAY.FIS:
 					if (buttons[9,0].IndexOf("FIS") > -1)
-						Send(FIS_DATA.FIS_Ausloesen);
+					{
+						//Send(FIS_DATA.FIS_Ausloesen);
+						//TODO FIS
+						buttons_highlighted[9] = true;
+						something_changed = true;
+						Application.DoEvents();
+						timerButtonsHighlight.Enabled = true;
+						localstate.fis.PlayNaechsterHalt();
+					}
 					break;
 				case CURRENT_DISPLAY.Zug_Tf_Nr:
 					if (localstate.marker >= 0 && localstate.marker < 6)
@@ -820,11 +873,19 @@ namespace MMI.ET42X
 		{
 			switch(localstate.DISPLAY)
 			{
+				case CURRENT_DISPLAY.G:
+					if (FISAn())
+					{
+						localstate.fis.PlayAusstiegRechts();
+						buttons_highlighted[10] = true;
+						timerButtonsHighlight.Enabled = true;
+					}
+					break;
 				case CURRENT_DISPLAY.FIS:
 					localstate.DISPLAY = CURRENT_DISPLAY.G;
 					break;
 				case CURRENT_DISPLAY.FIS_HK:
-					localstate.DISPLAY = CURRENT_DISPLAY.G;
+					//localstate.DISPLAY = CURRENT_DISPLAY.G;
 					break;
 				case CURRENT_DISPLAY.FIS_ROUTE:
 					localstate.DISPLAY = CURRENT_DISPLAY.G;
@@ -1038,6 +1099,92 @@ namespace MMI.ET42X
 			//timer1.Start();
 		}
 
+		public void SetTüren(float valu)
+		{
+			if ((valu * Math.Pow(10, 45) > 7.3) && (valu * Math.Pow(10, 45) < 8.7))
+			{
+				localstate.Türen = TÜREN.ZU_ABFAHRT;
+			}
+			else if ((valu * Math.Pow(10, 45) > 6.3) && (valu * Math.Pow(10, 45) < 7.7))
+			{
+				localstate.Türen = TÜREN.ZU;
+			}
+			else if ((valu * Math.Pow(10, 45) > 4.3) && (valu * Math.Pow(10, 45) < 5.7))
+			{
+				localstate.Türen = TÜREN.SCHLIESSEN;
+			}
+			else if ((valu * Math.Pow(10, 45) > 1.5) && (valu * Math.Pow(10, 45) < 2.9))
+			{
+				localstate.Türen = TÜREN.FAHRGÄSTE_I_O;
+			}
+			else if ((valu * Math.Pow(10, 45) < 1.5) && (valu * Math.Pow(10, 45) > 1.3))
+			{
+				localstate.Türen = TÜREN.AUF;
+				localstate.TuerenWarenOffen = true;
+				localstate.TuerenWarenOffenSound = true;
+				localstate.TuerenWarenOffenKM = localstate.StreckenKM;
+			}
+			else if (valu * Math.Pow(10, 45) < 1.0)
+			{
+				localstate.Türen = TÜREN.FREIGEGEBEN;
+			}
+		}
+		public void SetKm(float valu)
+		{
+			localstate.fis.GPSStatus = IsCONNECTED;
+			if (localstate.StreckenKM == float.MinValue)
+			{
+				if (valu != 0f)
+				{
+					localstate.StreckenKM = valu;
+					localstate.TuerenWarenOffenKM = localstate.StreckenKM;
+				}
+				return;
+			}
+
+			localstate.StreckenKM = valu;
+
+			if (!localstate.fis.UserEnabled) return;
+
+			if ((Math.Abs(localstate.StreckenKM - localstate.TuerenWarenOffenKM) > 2f) && localstate.TuerenWarenOffen)
+			{
+				localstate.TuerenWarenOffen = false;
+				localstate.fis.SwitchNaechsterHalt();
+			}
+			
+			if (localstate.FISType == FIS_TYPE.GPS_FIS || localstate.FISType == FIS_TYPE.GPS_ZN_FIS)
+			{
+				Struct_Netz netz = (Struct_Netz)localstate.fis.Netze[localstate.fis.Netze_ID];
+				Struct_Start start = (Struct_Start)netz.Start[netz.Start_ID];
+				string pos = "INIT";
+				float Fpos = float.MinValue;
+				try
+				{
+					pos = (string)start.Position[localstate.fis.NaechsterHalt];
+					pos = pos.Replace(".",",");
+					Fpos = Convert.ToSingle(pos) * 1000f;
+				}
+				catch(Exception){}
+                
+				if (Fpos == float.MinValue) return;
+
+				if ((Math.Abs(localstate.StreckenKM - Fpos) < 70f) && localstate.TuerenWarenOffenSound)
+				{
+					localstate.TuerenWarenOffenSound = false;
+					localstate.fis.PlayNaechsterHalt();
+				}
+			}
+			else
+			{
+				if ((Math.Abs(localstate.StreckenKM - localstate.TuerenWarenOffenKM) > 30f) && localstate.TuerenWarenOffenSound)
+				{
+					localstate.TuerenWarenOffenSound = false;
+					localstate.fis.PlayNaechsterHalt();
+				}
+			}
+			
+			something_changed = true;
+		}
 		public void SetLMZugart(bool state, string text)
 		{
 			if (this == null) return;
@@ -1790,8 +1937,15 @@ namespace MMI.ET42X
 			pg.DrawString(s, f, new SolidBrush(BLACK), 8, 12);
 
 		}
-		public void SetButtons()
+
+		// <<<<<<<<<<<<<<<<<<< BUTTONS <<<<<<<<<<<<<<<<<<<<<
+		public void SetButtons() 
 		{
+			/*for(int i = 0; i < 10; i++)
+			{
+				buttons_highlighted[i] = false;
+			}*/
+
 			switch(localstate.DISPLAY)
 			{
 				case CURRENT_DISPLAY.INIT:
@@ -1932,7 +2086,14 @@ namespace MMI.ET42X
 					buttons[10,0] = "   G"; buttons[10,1] = "";
 					break;
 				case CURRENT_DISPLAY.G:
-					buttons[1,0] = ""; buttons[1,1] = "";
+					if (FISAn())
+					{
+						buttons[1,0] = "Ausst."; buttons[1,1] = "links";
+					}
+					else
+					{
+						buttons[1,0] = ""; buttons[1,1] = "";
+					}
 					buttons[2,0] = ""; buttons[2,1] = "";//"W";
 					buttons[3,0] = ""; buttons[3,1] = "";
 					if (localstate.ET42Xtype1 == ET42XTYPE.ET425 || localstate.ET42Xtype1 == ET42XTYPE.ET426)
@@ -1948,7 +2109,14 @@ namespace MMI.ET42X
 					buttons[7,0] = " Spg"; buttons[7,1] = "";
 					buttons[8,0] = "  FIS"; buttons[8,1] = "";
 					buttons[9,0] = "   S"; buttons[9,1] = "";
-					buttons[10,0] = ""; buttons[10,1] = "";
+					if (FISAn())
+					{
+						buttons[10,0] = buttons[1,0]; buttons[10,1] = "rechts";
+					}
+					else
+					{
+						buttons[10,0] = ""; buttons[10,1] = "";
+					}
 					break;
 				case CURRENT_DISPLAY.Zugbesy:
 					buttons[1,0] = ""; buttons[1,1] = "";//"ZDE";
@@ -2011,6 +2179,18 @@ namespace MMI.ET42X
 					buttons[9,0] = ""; buttons[9,1] = "";
 					buttons[10,0] = "   G"; buttons[10,1] = "";
 					break;
+				case CURRENT_DISPLAY.FIS_HK:
+					buttons[1,0] = ""; buttons[1,1] = "";
+					buttons[2,0] = ""; buttons[2,1] = "";
+					buttons[3,0] = ""; buttons[3,1] = "";
+					buttons[4,0] = ""; buttons[4,1] = "";
+					buttons[5,0] = ""; buttons[5,1] = ""; 
+					buttons[6,0] = ""; buttons[6,1] = "";
+					buttons[7,0] = ""; buttons[7,1] = "";
+					buttons[8,0] = ""; buttons[8,1] = "";
+					buttons[9,0] = ""; buttons[9,1] = "";
+					buttons[10,0] = ""; buttons[10,1] = "";
+					break;
 				default:
 					buttons[1,0] = ""; buttons[1,1] = "";
 					buttons[2,0] = ""; buttons[2,1] = "";
@@ -2025,11 +2205,18 @@ namespace MMI.ET42X
 					break;
 			}
 		}	
-
+ 
 		public void DrawButtons(ref Graphics pg)
 		{
 			for(int i = 0; i < 10; i++)
-			{
+			{	
+				Color col = BLACK;
+				if (buttons_highlighted[i+1])
+				{
+					pg.FillRectangle(new SolidBrush(Color.Gold), i*63+2, 410+2, 62-4, 49-4);
+					col = Color.Black;
+				}
+
 				// Kasten
 				DrawFrame(ref pg, i*63, 410, 62, 49);
 
@@ -2039,8 +2226,8 @@ namespace MMI.ET42X
 
 				Font f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 
-				pg.DrawString(s1, f, new SolidBrush(BLACK), i*63+8, 415);
-				pg.DrawString(s2, f, new SolidBrush(BLACK), i*63+8, 435);
+				pg.DrawString(s1, f, new SolidBrush(col), i*63+8, 415);
+				pg.DrawString(s2, f, new SolidBrush(col), i*63+8, 435);
 			}
 		}
 
@@ -2433,7 +2620,7 @@ namespace MMI.ET42X
 			DrawFrameSunkenSmall(ref pg, 330, 90, 190, 30);
 			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 			if (localstate.fis.NaechsterHalt == "")
-				pg.DrawString("             ---", f, new SolidBrush(BLACK), 350, 98);
+				pg.DrawString("               ---", f, new SolidBrush(BLACK), 350, 98);
 			else
 				pg.DrawString(localstate.fis.NaechsterHalt, f, new SolidBrush(BLACK), 350, 98);
 
@@ -2540,10 +2727,16 @@ namespace MMI.ET42X
 		public void DrawSeitlicheSoftkeys(ref Graphics pg)
 		{
 			// Seitliche Soft-Keys
-			if (localstate.DISPLAY != CURRENT_DISPLAY.FIS_HK && localstate.DISPLAY != CURRENT_DISPLAY.FIS_ROUTE)
+			if (localstate.DISPLAY != CURRENT_DISPLAY.FIS_HK &&
+				localstate.DISPLAY != CURRENT_DISPLAY.FIS_UPDATE &&
+				localstate.DISPLAY != CURRENT_DISPLAY.FIS_UPDATE2 &&
+				localstate.DISPLAY != CURRENT_DISPLAY.FIS_ROUTE)
 				DrawFrame(ref pg, 518, 43, 110, 48);
 			
-			if (localstate.fis.position != FIS_POS.NONE)
+			if ((localstate.DISPLAY != CURRENT_DISPLAY.FIS_ROUTE &&
+				localstate.DISPLAY != CURRENT_DISPLAY.FIS_UPDATE &&
+				localstate.DISPLAY != CURRENT_DISPLAY.FIS_UPDATE2) ||
+				localstate.fis.position != FIS_POS.NONE)
 			{
 				DrawFrame(ref pg, 518, 105, 110, 50);
 				DrawFrame(ref pg, 518, 170, 110, 50);
@@ -2613,16 +2806,28 @@ namespace MMI.ET42X
 			Font f = new Font("Arial", 5, FontStyle.Bold, GraphicsUnit.Millimeter);
 			pg.DrawString("Aktuelle Routen:", f, new SolidBrush(BLACK), 5, 65-19);
 
+			bool backgroundDrawn = false;
+
 			f = new Font("Arial", 4, FontStyle.Bold, GraphicsUnit.Millimeter);
 			for (int i = 1; i <= GetTrainCount(); i++)
 			{
+				backgroundDrawn = false;
 				if (localstate.fis.position != FIS_POS.NONE || localstate.DISPLAY == CURRENT_DISPLAY.FIS_UPDATE)
+				{
 					pg.FillRectangle(new SolidBrush(Color.Gold), 72, 57-24+i*42, 230, 25);
+					backgroundDrawn = true;
+				}
 				pg.DrawString("Zug "+i.ToString(), f, new SolidBrush(BLACK), 10, 70-32+i*42);
 				if (!(localstate.fis.Linie == "" || localstate.fis.Ziel == "" || localstate.fis.NaechsterHalt == ""))
-                    pg.DrawString(localstate.fis.Linie + " / " + localstate.fis.Ziel, f, new SolidBrush(Color.Black), 100, 70-32+i*42);
+				{
+					SolidBrush brush = new SolidBrush(BLACK);
+					if (backgroundDrawn) brush = new SolidBrush(Color.Black);
+					pg.DrawString(localstate.fis.Linie + " / " + localstate.fis.Ziel, f, brush, 100, 70-32+i*42);
+				}
 				else
+				{
 					pg.DrawString("", f, new SolidBrush(Color.Black), 100, 70-32+i*42);
+				}
 				DrawFrameSunkenSmall(ref pg, 72, 57-24+i*42, 230, 25);
 			}
 
@@ -4010,7 +4215,7 @@ namespace MMI.ET42X
 					something_changed = true;
 					break;
 				case CURRENT_DISPLAY.FIS_UPDATE2:
-					localstate.DISPLAY = CURRENT_DISPLAY.FIS_ROUTE;
+					localstate.DISPLAY = CURRENT_DISPLAY.FIS;
 					something_changed = true;
 					timer2.Enabled = false;
 					break;
@@ -4090,5 +4295,30 @@ namespace MMI.ET42X
 				m_conf.SaveFile();
 			}
 		}
+
+		private bool FISAn()
+		{
+			return (localstate.fis.Status);
+		}
+
+		private void timerNaechsterHaltDealy_Tick(object sender, System.EventArgs e)
+		{
+			timerNaechsterHaltDealy.Enabled = false;
+			try
+			{
+				localstate.fis.PlayNaechsterHalt();
+			}
+			catch(Exception){}
+		}
+
+		private void timerButtonsHighlight_Tick(object sender, System.EventArgs e)
+		{
+			timerButtonsHighlight.Enabled = false;
+			for(int i = 0; i < 11; i++)
+			{
+				buttons_highlighted[i] = false;
+			}
+			something_changed = true;
+		}                            
 	}
 }

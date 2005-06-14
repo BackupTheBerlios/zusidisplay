@@ -34,5 +34,10 @@ namespace MMI.EBuLa.Tools
 		/// Play "WB Freigabe"
 		/// </summary>
 		void PlayWBFreigabe();
+
+		/// <summary>
+		/// Play given file 
+		/// </summary>
+		void PlaySoundFromFile(string filename);
 	}
 }

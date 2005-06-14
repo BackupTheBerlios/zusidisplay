@@ -22,9 +22,9 @@ namespace MMI.ET42X
 	{
 		public CURRENT_DISPLAY DISPLAY = CURRENT_DISPLAY.INIT;
 		public CURRENT_DISPLAY OLD_DISPLAY = CURRENT_DISPLAY.NONE;
-		public ET42XTYPE ET42Xtype1 = ET42XTYPE.ET425;
-		public ET42XTYPE ET42Xtype2 = ET42XTYPE.ET425;
-		public ET42XTYPE ET42Xtype3 = ET42XTYPE.ET425;
+		public ET42XTYPE ET42Xtype1 = ET42XTYPE.ET423;
+		public ET42XTYPE ET42Xtype2 = ET42XTYPE.ET423;
+		public ET42XTYPE ET42Xtype3 = ET42XTYPE.NONE;
 
 		public FIS_TYPE FISType = FIS_TYPE.GPS_FIS;
 
@@ -38,26 +38,36 @@ namespace MMI.ET42X
 		public int FahrstufenSchalter = 10;
 		public float E_Bremse = 0f;
 
-		public TÜREN Türen = TÜREN.ZU;
+		public TÜREN Türen = TÜREN.AUF;
 
 		public bool DSK_Gesperrt = false;
 		public string DSK_BUFFER = "    ";
 
 		public bool Kuehlung = true;
 
+		public float StreckenKM = float.MinValue;
+
+		public TÜREN TuerenStatus = TÜREN.AUF;
+
+		public bool TuerenWarenOffen = true;
+		public bool TuerenWarenOffenSound = true;
+		public float TuerenWarenOffenKM = 0f;
 
 		public StörungsManager störungmgr = new StörungsManager();
 
+		MMI.EBuLa.Tools.XMLLoader localconf;
 
-		public ET42XState()
+		public ET42XState(ref MMI.EBuLa.Tools.XMLLoader conf, ref SoundInterface sound)
 		{	
 			HBL_Druck = 5f;
 			HL_Druck = 5f;
 			//störungmgr.Add(new Störung(ENUMStörung.S02_Trennschütz));
 			störungmgr.Add(new Störung(ENUMStörung.S01_ZUSIKomm));			
+			localconf = conf;
+			fis = new FIS(ref conf, ref sound);
 		}
 
-		public FIS fis = new FIS();
+		public FIS fis;
 		
 		public string Zugnummer = "<INIT>";
 		public string ZugnummerTemp = "";

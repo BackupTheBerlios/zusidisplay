@@ -417,6 +417,7 @@ namespace MMI.ET42X
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(522, 328);
+			this.ControlBox = false;
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox3);

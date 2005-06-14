@@ -70,6 +70,17 @@ namespace MMI.EBuLa.Tools
 			catch(Exception){}
 		}
 
+		public void PlaySoundFromFile(string filename)
+		{
+			try
+			{	
+				Audio a = Audio.FromFile(filename);
+				a.Play();
+				System.Threading.Thread.Sleep(200);
+			}
+			catch(Exception){}
+		}
+
 		/*
 		 * CODE BELOW FOR DIRECT-SOUND 9
 		 * 

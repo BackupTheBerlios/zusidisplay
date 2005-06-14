@@ -458,7 +458,6 @@ namespace MMI.EBuLa
 						this_e.m_type = EntryType.RADIO_MARKER_ENDING;
 					else
 						this_e.m_type = EntryType.RADIO_MARKER;
-					this_e.m_ops_name = "";
 				}
 
 				// verkürtzte Vorsignale, Teil 1
@@ -1113,118 +1112,135 @@ namespace MMI.EBuLa
 
 		public void NextEntry(bool only_timed_entries)
 		{
-			if (route.Entrys.Count < 1) return;
-			Entry e = null;
-			do
+			try
 			{
-				if ((int)route.Position >= route.Entrys.Count-1)
+				if (route.Entrys.Count < 1) return;
+				Entry e = null;
+				do
 				{
-					if ((int)route.Position == route.Entrys.Count-1)
+					if ((int)route.Position >= route.Entrys.Count-1)
 					{
-						marker = (Entry)route.Entrys[(int)route.Position];
-					}
-					break;
-				}
-				e = (Entry)route.Entrys[(int)route.Position+1];
-				if (e.m_type == EntryType.OPS_MARKER && e.m_ops_name != "" && ((e.m_etd != "" || !only_timed_entries) || e.m_eta != "" ))
-				{
-					route.Position++;
-					marker = e;
-
-					int counter = 0;
-
-					// now 11 instead of 12
-					while(route.Position - (long)route.Offset >= 03 )
-					{
-						if (counter > 10)
+						if ((int)route.Position == route.Entrys.Count-1)
 						{
-							//MessageBox.Show("Next Page lief mehr als 10 mal?");
-							break;
+							marker = (Entry)route.Entrys[(int)route.Position];
 						}
-						counter++;
-						NextPage_Buttom();
+						break;
 					}
-					return;
-				}
-				else
-				{
-					route.Position++;
-				}
+					e = (Entry)route.Entrys[(int)route.Position+1];
+					if (/*e.m_type == EntryType.OPS_MARKER && e.m_ops_name != "" &&*/ ((e.m_etd != "" || !only_timed_entries) || e.m_eta != "" ))
+					{
+						route.Position++;
+						marker = e;
 
+						int counter = 0;
+
+						// now 11 instead of 12
+						while(route.Position - (long)route.Offset >= 03 )
+						{
+							if (counter > 10)
+							{
+								//MessageBox.Show("Next Page lief mehr als 10 mal?");
+								break;
+							}
+							counter++;
+							NextPage_Buttom();
+						}
+						return;
+					}
+					else
+					{
+						route.Position++;
+					}
+
+				}
+				while((int)route.Position <= route.Entrys.Count);
 			}
-			while((int)route.Position <= route.Entrys.Count);
+			catch(Exception e){MessageBox.Show(e.Message);}
 		}
 
 		public void PrevEntry()
 		{
-			Entry e = null;
-			int help = (int)route.Position;
-			do
+			try
 			{
-				if ((help == 0) || (route.Entrys.Count <= 0) || route.Position < 0)
+				Entry e = null;
+				int help = (int)route.Position;
+				do
 				{
-					return;
-				}
-				e = (Entry)route.Entrys[help-1];
-				if (e.m_type == EntryType.OPS_MARKER && e.m_ops_name != "")
-				{
-					marker = e;
-					route.Position = (long)help - 1;
-					// TODO
-					while(route.Position - (long)route.Offset < 0 )
+					if ((help == 0) || (route.Entrys.Count <= 0) || route.Position < 0)
 					{
-						PrevPage();
+						return;
 					}
-					return;
-				}
-				else
-				{
-					help--;
-				}
+					e = (Entry)route.Entrys[help-1];
+					if (e.m_type == EntryType.OPS_MARKER && e.m_ops_name != "")
+					{
+						marker = e;
+						route.Position = (long)help - 1;
+						// TODO
+						while(route.Position - (long)route.Offset < 0 )
+						{
+							PrevPage();
+						}
+						return;
+					}
+					else
+					{
+						help--;
+					}
 
+				}
+				while((int)route.Position >= 0);
 			}
-			while((int)route.Position >= 0);
+			catch(Exception e){MessageBox.Show(e.Message);}
 		}
 
 		public void NextPage()
 		{
-			NextPage(11);
+			NextPage(9);
 		}
 
 		public void NextPage(int shiftvalue)
 		{
-			// now shiftvalue instead of 12
-			if ((int)route.Offset < (route.Entrys.Count-shiftvalue-13))
+			try
 			{
-				route.Offset += (ulong)shiftvalue;
+				// now shiftvalue instead of 10
+				if ((int)route.Offset < (route.Entrys.Count-shiftvalue-10-1))
+				{
+					route.Offset += (ulong)shiftvalue;
+				}
+				else if ((int)route.Offset < (route.Entrys.Count-shiftvalue))
+				{
+					route.Offset += (ulong)( Math.Max( ((int)route.Entrys.Count - (int)route.Offset - 10) , 0));
+				}
 			}
-			else if ((int)route.Offset < (route.Entrys.Count-shiftvalue))
-			{
-				route.Offset += (ulong)( Math.Max( ((int)route.Entrys.Count - (int)route.Offset - 12) , 0));
-			}
+			catch(Exception e){MessageBox.Show(e.Message);}
 		}
 
 		public void NextPage_Buttom()
 		{
-			NextPage(Convert.ToInt32(route.Position) - Convert.ToInt32(route.Offset) - 3);
+			NextPage(Convert.ToInt32(route.Position) - Convert.ToInt32(route.Offset) - 1);
 		}
 
 		public void PrevPage()
 		{
-			// now 11 instead of 12
-			if (route.Offset > 11)
+			try
 			{
-				route.Offset -= 11;
+				// now 9 instead of 10
+				if (route.Offset > 9)
+				{
+					route.Offset -= 9;
+				}
+				else
+				{
+					route.Offset = 0;
+				}
 			}
-			else
-			{
-				route.Offset = 0;
-			}
+			catch(Exception e){MessageBox.Show(e.Message);}
 		}
 
-		public void MoveViaTime(System.DateTime vtime, int verspaetung)
+		public bool MoveViaTime(System.DateTime vtime, int verspaetung)
 		{
-			if (route.Position < 0) return;
+			bool retval = false;
+			if (route.Position < 0) return retval;
 			
 			System.DateTime mtime = vtime.AddMinutes(-verspaetung);
 
@@ -1236,7 +1252,17 @@ namespace MMI.EBuLa
 				if (i < (int)route.Position) continue;
 				Entry e = (Entry)route.Entrys[i];
 				
-				if (e.m_eta == "" && e.m_etd == "") continue;
+				if (e.m_eta == "" && e.m_etd == "")
+				{
+					// move backwards to find the last entry with time
+                    
+					for (int j = i; j > -1; j--)
+					{
+						e = (Entry)route.Entrys[j];
+						if (e.m_eta != "" || e.m_etd != "")
+							break;
+					}
+				}
 
 				// prefer the Depature Time
 				if (e.m_etd != "")
@@ -1248,31 +1274,81 @@ namespace MMI.EBuLa
 					date = DateTime.Parse(vtime.Date.ToShortDateString() +" "+ e.m_eta);
 				}
 
-				long add = int.MaxValue;
+				long add = long.MaxValue, time_diff = long.MaxValue;
+
+				Entry e_next = null;
 
 				for (int k = i+1; k < route.Entrys.Count - 2; k++)
 				{
 					// fetch the next value with time
 					DateTime date_next = new DateTime(0);
-					Entry e_next = (Entry)route.Entrys[k];
+					e_next = (Entry)route.Entrys[k];
 				
-					// prefer the Arrival Time
-					if (e_next.m_eta == "" && e_next.m_etd == "") continue;
-
-					if (e_next.m_eta != "")
+					
+					if (e_next.m_eta != "" || e_next.m_etd != "")
 					{
-						date_next = DateTime.Parse(vtime.Date.ToShortDateString() +" "+ e_next.m_eta);
+						// Time is given
+						// prefer the Arrival Time
+						if (e_next.m_eta != "")
+						{
+							date_next = DateTime.Parse(vtime.Date.ToShortDateString() +" "+ e_next.m_eta);
+						}
+						else
+						{
+							date_next = DateTime.Parse(vtime.Date.ToShortDateString() +" "+ e_next.m_etd);
+						
+						}
 					}
 					else
-					{
-						date_next = DateTime.Parse(vtime.Date.ToShortDateString() +" "+ e_next.m_etd);
-						
-					}
+						continue;
 
 					// calculate half of the distance between
 					// this time and the next one
 					add = (date_next.Ticks - date.Ticks) / 2;
 					//Console.WriteLine("ADD:"+add.ToString());
+					break;					
+				}
+
+
+				for (int k = i+1; k < route.Entrys.Count - 2; k++)
+				{
+					if (e_next == null) break;
+					// fetch the next value with time
+					DateTime date_next = new DateTime(0);
+					Entry e_next_pos = (Entry)route.Entrys[k];
+
+					if ((e_next_pos.m_eta != "" || e_next_pos.m_etd != "") &&
+						(e_next.m_eta != "" || e_next.m_etd != "")
+						)
+						break;
+
+					double frac;
+			
+					if (e_next_pos.m_eta == "" && e_next_pos.m_etd == "" && e_next_pos.m_position != "" && e_next_pos.m_position != "")
+					{
+						//continue;
+						// Only position is given
+						float pos_here = Convert.ToSingle(e.m_position.Replace(",","."));
+						float pos_next = Convert.ToSingle(e_next_pos.m_position.Replace(",","."));
+						float pos_diff = Math.Abs(pos_here - pos_next);
+					
+						float pos_next_time = Convert.ToSingle(e_next.m_position.Replace(",","."));
+						float pos_diff_time = Math.Abs(pos_here - pos_next_time);
+
+						frac = pos_diff / pos_diff_time;
+					}
+					else 
+						continue;
+
+				
+					try
+					{
+						time_diff = Convert.ToInt64((double)add * 2 * frac);					
+					}
+					catch(Exception)
+					{
+						time_diff = long.MaxValue;
+					}
 					break;					
 				}
 				
@@ -1281,15 +1357,33 @@ namespace MMI.EBuLa
 				// and the current time and
 				// move to the next entry when half of
 				// the difference between them is over
-				long diff = date.Ticks - mtime.Ticks + add;
-				//Console.WriteLine("DIFF (ticks) :"+diff.ToString()+"   ENTRY TIME:"+date.TimeOfDay.ToString()+"  CURRENT TME:"+mtime.TimeOfDay.ToString());
-
-				if (diff < 0) 
+				long diff;
+				try
 				{
-					NextEntry();					
+					if (time_diff == long.MaxValue)
+					{
+						diff = date.Ticks - mtime.Ticks + add;
+						if (diff < 0) 
+						{
+							NextEntry();
+							retval = true;
+						}
+					}
+					else
+					{
+						diff = date.Ticks - mtime.Ticks + time_diff;
+						if (diff < 0) 
+						{
+							NextEntry(false);
+							retval = true;
+						}
+					}
 				}
+				catch(Exception){}
+				//Console.WriteLine("DIFF (ticks) :"+diff.ToString()+"   ENTRY TIME:"+date.TimeOfDay.ToString()+"  CURRENT TME:"+mtime.TimeOfDay.ToString());
 				break;
 			}
+			return retval;
 		}
 
 		public void LoadProps()
@@ -1329,32 +1423,6 @@ namespace MMI.EBuLa
 			return output;
 		}
 
-
-		public DateTime ConvertToDateTime(double input)
-		{
-			long days = (long)input;
-			double time = input - (double)days;
-
-			DateTime dt = new DateTime(0);
-			dt = DateTime.Parse("30.12.1899 0:00");
-
-			// date
-			while (days > 0)
-			{
-				dt = dt.AddDays(1);
-				days--;
-			}
-                  
-			// time
-			long hours = (long)(time * 24);
-			long minutes = (long)((time - (double)hours / 24d) * 24d * 60d);
-			long seconds = (long)((time - ((double)hours / 24d) - ((double)minutes / 60d / 24d)) * 24d * 60d * 60d);
-			dt = dt.AddHours(hours);
-			dt = dt.AddMinutes(minutes);
-			dt = dt.AddSeconds(seconds);
-
-			return dt;
-		}
 
 		public DateTime ConvertSingleToDateTime(float val, int year, int month, int day)
 		{

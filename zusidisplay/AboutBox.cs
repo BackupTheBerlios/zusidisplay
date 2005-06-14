@@ -159,7 +159,7 @@ namespace MMI
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(184, 16);
 			this.label7.TabIndex = 11;
-			this.label7.Text = "FT95 FIS Terminal (alpha)";
+			this.label7.Text = "FT95 FIS Terminal";
 			// 
 			// label13
 			// 

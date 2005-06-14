@@ -360,6 +360,10 @@ namespace MMI.ET42X
 					break;
 				case 85:
 					// nur EBuLa
+					c.SetKm(valu);
+					break;
+				case 86:
+					c.SetTüren(valu);
 					break;
 				case 88:
 					c.SetReisezug(state);

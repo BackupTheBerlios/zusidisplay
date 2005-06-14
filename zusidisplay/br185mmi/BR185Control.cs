@@ -110,16 +110,14 @@ namespace MMI.MMIBR185
 
 		public BR185Control(MMI.EBuLa.Tools.XMLLoader conf)
 		{
-			if (!conf.DoubleBuffer)
+			USE_DOUBLE_BUFFER = conf.DoubleBuffer;
+			if (!USE_DOUBLE_BUFFER)
 			{
 				//This turns off internal double buffering of all custom GDI+ drawing
 				this.SetStyle(ControlStyles.DoubleBuffer, true);
 				this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 				this.SetStyle(ControlStyles.UserPaint, true);
-				USE_DOUBLE_BUFFER = false;
 			}
-			else
-				USE_DOUBLE_BUFFER = true;
 
 			InitializeComponent();
 
@@ -1235,6 +1233,16 @@ namespace MMI.MMIBR185
 
 			if (localstate.SHOW_CLOCK) something_changed = true;
 		}
+
+		public void SetUhrDatumDigital(double valu)
+		{
+			try
+			{
+				SetUhrDatum(MMI.EBuLa.Tools.State.ConvertToDateTime(valu));
+			}
+			catch(Exception){}
+		}
+
 		public void DrawZugkraft_Fahrstufen(ref Graphics pg)
 		{
 			int fahrstufe = localstate.Fahrstufe;
@@ -1701,7 +1709,7 @@ namespace MMI.MMIBR185
 
 		public void UpdateScreen()
 		{
-			if (!something_changed)
+			if (!something_changed /*&& !m_conf.DoubleBuffer*/)
 				return;
 
 			something_changed = false;
@@ -2362,7 +2370,7 @@ namespace MMI.MMIBR185
 		{
 			if (PREVENT_DRAW) return;
 
-			if (m_backBuffer == null && m_conf.DoubleBuffer)
+			if (m_backBuffer == null && USE_DOUBLE_BUFFER)
 			{
 				m_backBuffer= new Bitmap(this.ClientSize.Width, this.ClientSize.Height);
 			}

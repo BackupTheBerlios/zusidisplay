@@ -117,6 +117,7 @@ namespace MMI.MMIBR185
 		{
 			BinaryReader reader = new BinaryReader(new MemoryStream(buffer));
 			float valu = reader.ReadSingle();
+			//double Dvalu = reader.ReadDouble();
 
 			bool state = false;
 
@@ -201,6 +202,9 @@ namespace MMI.MMIBR185
 					break;
 				case 47: // Türen offen
 					c.SetLM_Tür(state);
+					break;
+				case 50:  // Uhrzeit digital
+					//c.SetUhrDatumDigital(valu);
 					break;
 				case 56: // AFB
 					break;

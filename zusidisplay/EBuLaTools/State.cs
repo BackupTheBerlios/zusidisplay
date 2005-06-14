@@ -162,5 +162,31 @@ namespace MMI.EBuLa.Tools
 			LM_500Hz2 = false;
 			LM_Befehl2 = false;
 		}
+
+		static public DateTime ConvertToDateTime(double input)
+		{
+			long days = (long)input;
+			double time = input - (double)days;
+
+			DateTime dt = new DateTime(0);
+			dt = DateTime.Parse("30.12.1899 0:00");
+
+			// date
+			while (days > 0)
+			{
+				dt = dt.AddDays(1);
+				days--;
+			}
+                  
+			// time
+			long hours = (long)(time * 24);
+			long minutes = (long)((time - (double)hours / 24d) * 24d * 60d);
+			long seconds = (long)((time - ((double)hours / 24d) - ((double)minutes / 60d / 24d)) * 24d * 60d * 60d);
+			dt = dt.AddHours(hours);
+			dt = dt.AddMinutes(minutes);
+			dt = dt.AddSeconds(seconds);
+
+			return dt;
+		}
 	}
 }

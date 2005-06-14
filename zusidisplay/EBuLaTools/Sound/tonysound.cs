@@ -71,6 +71,16 @@ namespace MMI.EBuLa.Tools
 			catch(Exception) {}
 		}
 
+		public void PlaySoundFromFile(string filename)
+		{
+			try
+			{
+				if (System.IO.Path.GetExtension(filename).ToLower() == "wav")
+					PlaySound(filename, IntPtr.Zero, PlaySoundFlags.SND_ASYNC & PlaySoundFlags.SND_NOSTOP);
+			}
+			catch(Exception) {}
+		}
+
 		[DllImport("winmm.dll")] //inports the winmm.dll used for sound
 		private static extern bool PlaySound( string szSound, IntPtr hMod, PlaySoundFlags flags );
 	}
@@ -97,6 +107,7 @@ namespace MMI.EBuLa.Tools
 		public void PlayMalfunctionBombardierSound() {}
 		public void PlayWBFreigabe() {}
 		public void PlayWBGesperrt() {}
+		public void PlaySoundFromFile(string filename) {}
     }
 }
 

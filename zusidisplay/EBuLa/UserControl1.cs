@@ -59,8 +59,6 @@ namespace MMI.EBuLa
         private System.Windows.Forms.Label L_Zeit;
         private System.Windows.Forms.Label L_Zug;
         private System.Windows.Forms.Label L_Valid;
-        private System.Windows.Forms.Label L_Speed_12;
-        private System.Windows.Forms.Label L_Speed_11;
         private System.Windows.Forms.Label L_Speed_10;
         private System.Windows.Forms.Label L_Speed_09;
         private System.Windows.Forms.Label L_Speed_08;
@@ -71,8 +69,6 @@ namespace MMI.EBuLa
         private System.Windows.Forms.Label L_Speed_03;
         private System.Windows.Forms.Label L_Speed_02;
         private System.Windows.Forms.Label L_Speed_01;
-        private System.Windows.Forms.Label L_Pos_12;
-        private System.Windows.Forms.Label L_Pos_11;
         private System.Windows.Forms.Label L_Pos_10;
         private System.Windows.Forms.Label L_Pos_09;
         private System.Windows.Forms.Label L_Pos_08;
@@ -93,8 +89,6 @@ namespace MMI.EBuLa
         private System.Windows.Forms.Label L_Ops_08;
         private System.Windows.Forms.Label L_Ops_09;
         private System.Windows.Forms.Label L_Ops_10;
-        private System.Windows.Forms.Label L_Ops_11;
-        private System.Windows.Forms.Label L_Ops_12;
         private System.Windows.Forms.Label L_TOP;
         private System.Windows.Forms.Label L_DOWN;
         private System.Windows.Forms.Label L_AK_01;
@@ -107,8 +101,6 @@ namespace MMI.EBuLa
         private System.Windows.Forms.Label L_AK_08;
         private System.Windows.Forms.Label L_AK_09;
         private System.Windows.Forms.Label L_AK_10;
-        private System.Windows.Forms.Label L_AK_11;
-        private System.Windows.Forms.Label L_AK_12;
         private System.Windows.Forms.Label L_A_01;
         private System.Windows.Forms.Label L_A_02;
         private System.Windows.Forms.Label L_A_03;
@@ -119,10 +111,6 @@ namespace MMI.EBuLa
         private System.Windows.Forms.Label L_A_08;
         private System.Windows.Forms.Label L_A_09;
         private System.Windows.Forms.Label L_A_10;
-        private System.Windows.Forms.Label L_A_11;
-        private System.Windows.Forms.Label L_A_12;
-        private System.Windows.Forms.Label L_D_12;
-        private System.Windows.Forms.Label L_D_11;
         private System.Windows.Forms.Label L_D_10;
         private System.Windows.Forms.Label L_D_09;
         private System.Windows.Forms.Label L_D_08;
@@ -143,8 +131,6 @@ namespace MMI.EBuLa
         private System.Windows.Forms.Label L_DK_08;
         private System.Windows.Forms.Label L_DK_09;
         private System.Windows.Forms.Label L_DK_10;
-        private System.Windows.Forms.Label L_DK_11;
-        private System.Windows.Forms.Label L_DK_12;
         private System.Windows.Forms.Label L_OpsS_01;
         private System.Windows.Forms.Label L_OpsS_02;
         private System.Windows.Forms.Label L_OpsS_03;
@@ -155,12 +141,8 @@ namespace MMI.EBuLa
         private System.Windows.Forms.Label L_OpsS_08;
         private System.Windows.Forms.Label L_OpsS_09;
         private System.Windows.Forms.Label L_OpsS_10;
-        private System.Windows.Forms.Label L_OpsS_11;
-        private System.Windows.Forms.Label L_OpsS_12;
         private System.Windows.Forms.PictureBox Qu;
         private System.Windows.Forms.Timer timer_Position;
-        private System.Windows.Forms.PictureBox PB_12;
-        private System.Windows.Forms.PictureBox PB_11;
         private System.Windows.Forms.PictureBox PB_10;
         private System.Windows.Forms.PictureBox PB_09;
         private System.Windows.Forms.PictureBox PB_08;
@@ -180,8 +162,6 @@ namespace MMI.EBuLa
         private System.Windows.Forms.PictureBox PL_07;
         private System.Windows.Forms.PictureBox PL_08;
         private System.Windows.Forms.PictureBox PL_09;
-        private System.Windows.Forms.PictureBox PL_10;
-        private System.Windows.Forms.PictureBox PL_11;
         private System.Windows.Forms.PictureBox Deko1;
         private System.Windows.Forms.PictureBox Deko2;
         private System.Windows.Forms.PictureBox DekoL1;
@@ -226,15 +206,13 @@ namespace MMI.EBuLa
 		private System.Windows.Forms.PictureBox J_09;
 		private System.Windows.Forms.PictureBox J_08;
 		private System.Windows.Forms.PictureBox J_07;
-		private System.Windows.Forms.PictureBox J_10;
-		private System.Windows.Forms.PictureBox J_11;
 		private System.Windows.Forms.Timer timer_refresh;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label l_ESF_Pos;
 		private System.Windows.Forms.Label l_ESF_Neg;
-		private System.Windows.Forms.Label L_A_13;
-		private System.Windows.Forms.Label L_D_13;
-		private System.Windows.Forms.PictureBox PB_13;
+		private System.Windows.Forms.PictureBox PB_11;
+		private System.Windows.Forms.Label L_A_11;
+		private System.Windows.Forms.Label L_D_11;
 
         private MMI.EBuLa.Tools.SoundInterface Sound;
 
@@ -371,8 +349,6 @@ namespace MMI.EBuLa
 			this.L_Zeit = new System.Windows.Forms.Label();
 			this.L_Zug = new System.Windows.Forms.Label();
 			this.L_Valid = new System.Windows.Forms.Label();
-			this.L_Pos_12 = new System.Windows.Forms.Label();
-			this.L_Pos_11 = new System.Windows.Forms.Label();
 			this.L_Pos_10 = new System.Windows.Forms.Label();
 			this.L_Pos_09 = new System.Windows.Forms.Label();
 			this.L_Pos_08 = new System.Windows.Forms.Label();
@@ -383,8 +359,6 @@ namespace MMI.EBuLa
 			this.L_Pos_03 = new System.Windows.Forms.Label();
 			this.L_Pos_02 = new System.Windows.Forms.Label();
 			this.L_Pos_01 = new System.Windows.Forms.Label();
-			this.L_Speed_12 = new System.Windows.Forms.Label();
-			this.L_Speed_11 = new System.Windows.Forms.Label();
 			this.L_Speed_10 = new System.Windows.Forms.Label();
 			this.L_Speed_09 = new System.Windows.Forms.Label();
 			this.L_Speed_08 = new System.Windows.Forms.Label();
@@ -405,8 +379,6 @@ namespace MMI.EBuLa
 			this.L_Ops_08 = new System.Windows.Forms.Label();
 			this.L_Ops_09 = new System.Windows.Forms.Label();
 			this.L_Ops_10 = new System.Windows.Forms.Label();
-			this.L_Ops_11 = new System.Windows.Forms.Label();
-			this.L_Ops_12 = new System.Windows.Forms.Label();
 			this.L_DOWN = new System.Windows.Forms.Label();
 			this.L_TOP = new System.Windows.Forms.Label();
 			this.L_A_01 = new System.Windows.Forms.Label();
@@ -419,10 +391,6 @@ namespace MMI.EBuLa
 			this.L_A_08 = new System.Windows.Forms.Label();
 			this.L_A_09 = new System.Windows.Forms.Label();
 			this.L_A_10 = new System.Windows.Forms.Label();
-			this.L_A_11 = new System.Windows.Forms.Label();
-			this.L_A_12 = new System.Windows.Forms.Label();
-			this.L_D_12 = new System.Windows.Forms.Label();
-			this.L_D_11 = new System.Windows.Forms.Label();
 			this.L_D_10 = new System.Windows.Forms.Label();
 			this.L_D_09 = new System.Windows.Forms.Label();
 			this.L_D_08 = new System.Windows.Forms.Label();
@@ -443,8 +411,6 @@ namespace MMI.EBuLa
 			this.L_AK_08 = new System.Windows.Forms.Label();
 			this.L_AK_09 = new System.Windows.Forms.Label();
 			this.L_AK_10 = new System.Windows.Forms.Label();
-			this.L_AK_11 = new System.Windows.Forms.Label();
-			this.L_AK_12 = new System.Windows.Forms.Label();
 			this.L_DK_01 = new System.Windows.Forms.Label();
 			this.L_DK_02 = new System.Windows.Forms.Label();
 			this.L_DK_03 = new System.Windows.Forms.Label();
@@ -455,8 +421,6 @@ namespace MMI.EBuLa
 			this.L_DK_08 = new System.Windows.Forms.Label();
 			this.L_DK_09 = new System.Windows.Forms.Label();
 			this.L_DK_10 = new System.Windows.Forms.Label();
-			this.L_DK_11 = new System.Windows.Forms.Label();
-			this.L_DK_12 = new System.Windows.Forms.Label();
 			this.L_OpsS_01 = new System.Windows.Forms.Label();
 			this.L_OpsS_02 = new System.Windows.Forms.Label();
 			this.L_OpsS_03 = new System.Windows.Forms.Label();
@@ -467,12 +431,8 @@ namespace MMI.EBuLa
 			this.L_OpsS_08 = new System.Windows.Forms.Label();
 			this.L_OpsS_09 = new System.Windows.Forms.Label();
 			this.L_OpsS_10 = new System.Windows.Forms.Label();
-			this.L_OpsS_11 = new System.Windows.Forms.Label();
-			this.L_OpsS_12 = new System.Windows.Forms.Label();
 			this.Qu = new System.Windows.Forms.PictureBox();
 			this.timer_Position = new System.Windows.Forms.Timer(this.components);
-			this.PB_12 = new System.Windows.Forms.PictureBox();
-			this.PB_11 = new System.Windows.Forms.PictureBox();
 			this.PB_10 = new System.Windows.Forms.PictureBox();
 			this.PB_09 = new System.Windows.Forms.PictureBox();
 			this.PB_08 = new System.Windows.Forms.PictureBox();
@@ -483,7 +443,7 @@ namespace MMI.EBuLa
 			this.PB_03 = new System.Windows.Forms.PictureBox();
 			this.PB_02 = new System.Windows.Forms.PictureBox();
 			this.PB_01 = new System.Windows.Forms.PictureBox();
-			this.PB_13 = new System.Windows.Forms.PictureBox();
+			this.PB_11 = new System.Windows.Forms.PictureBox();
 			this.PL_04 = new System.Windows.Forms.PictureBox();
 			this.PL_01 = new System.Windows.Forms.PictureBox();
 			this.PL_02 = new System.Windows.Forms.PictureBox();
@@ -493,8 +453,6 @@ namespace MMI.EBuLa
 			this.PL_07 = new System.Windows.Forms.PictureBox();
 			this.PL_08 = new System.Windows.Forms.PictureBox();
 			this.PL_09 = new System.Windows.Forms.PictureBox();
-			this.PL_10 = new System.Windows.Forms.PictureBox();
-			this.PL_11 = new System.Windows.Forms.PictureBox();
 			this.Deko1 = new System.Windows.Forms.PictureBox();
 			this.Deko2 = new System.Windows.Forms.PictureBox();
 			this.DekoL1 = new System.Windows.Forms.PictureBox();
@@ -535,17 +493,15 @@ namespace MMI.EBuLa
 			this.J_04 = new System.Windows.Forms.PictureBox();
 			this.J_05 = new System.Windows.Forms.PictureBox();
 			this.J_06 = new System.Windows.Forms.PictureBox();
-			this.J_10 = new System.Windows.Forms.PictureBox();
 			this.J_09 = new System.Windows.Forms.PictureBox();
 			this.J_08 = new System.Windows.Forms.PictureBox();
 			this.J_07 = new System.Windows.Forms.PictureBox();
-			this.J_11 = new System.Windows.Forms.PictureBox();
 			this.timer_refresh = new System.Windows.Forms.Timer(this.components);
 			this.label1 = new System.Windows.Forms.Label();
 			this.l_ESF_Pos = new System.Windows.Forms.Label();
 			this.l_ESF_Neg = new System.Windows.Forms.Label();
-			this.L_A_13 = new System.Windows.Forms.Label();
-			this.L_D_13 = new System.Windows.Forms.Label();
+			this.L_A_11 = new System.Windows.Forms.Label();
+			this.L_D_11 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.timer_Uhr)).BeginInit();
 			this.PanelButton.SuspendLayout();
 			this.PanelDown.SuspendLayout();
@@ -597,40 +553,20 @@ namespace MMI.EBuLa
 			this.L_Valid.Text = "EBuLa-Karte gültig bis: 88.88.88";
 			this.L_Valid.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// L_Pos_12
-			// 
-			this.L_Pos_12.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_12.Location = new System.Drawing.Point(128, 80);
-			this.L_Pos_12.Name = "L_Pos_12";
-			this.L_Pos_12.Size = new System.Drawing.Size(70, 18);
-			this.L_Pos_12.TabIndex = 15;
-			this.L_Pos_12.Text = "L_Pos_12";
-			this.L_Pos_12.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
-			// L_Pos_11
-			// 
-			this.L_Pos_11.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_11.Location = new System.Drawing.Point(128, 104);
-			this.L_Pos_11.Name = "L_Pos_11";
-			this.L_Pos_11.Size = new System.Drawing.Size(70, 18);
-			this.L_Pos_11.TabIndex = 16;
-			this.L_Pos_11.Text = "L_Pos_11";
-			this.L_Pos_11.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
 			// L_Pos_10
 			// 
-			this.L_Pos_10.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_10.Location = new System.Drawing.Point(128, 128);
+			this.L_Pos_10.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Pos_10.Location = new System.Drawing.Point(104, 99);
 			this.L_Pos_10.Name = "L_Pos_10";
-			this.L_Pos_10.Size = new System.Drawing.Size(70, 18);
+			this.L_Pos_10.Size = new System.Drawing.Size(72, 18);
 			this.L_Pos_10.TabIndex = 44;
 			this.L_Pos_10.Text = "L_Pos_10";
 			this.L_Pos_10.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// L_Pos_09
 			// 
-			this.L_Pos_09.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_09.Location = new System.Drawing.Point(128, 152);
+			this.L_Pos_09.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Pos_09.Location = new System.Drawing.Point(104, 126);
 			this.L_Pos_09.Name = "L_Pos_09";
 			this.L_Pos_09.Size = new System.Drawing.Size(70, 18);
 			this.L_Pos_09.TabIndex = 43;
@@ -639,8 +575,8 @@ namespace MMI.EBuLa
 			// 
 			// L_Pos_08
 			// 
-			this.L_Pos_08.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_08.Location = new System.Drawing.Point(128, 176);
+			this.L_Pos_08.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Pos_08.Location = new System.Drawing.Point(104, 153);
 			this.L_Pos_08.Name = "L_Pos_08";
 			this.L_Pos_08.Size = new System.Drawing.Size(70, 18);
 			this.L_Pos_08.TabIndex = 42;
@@ -649,8 +585,8 @@ namespace MMI.EBuLa
 			// 
 			// L_Pos_07
 			// 
-			this.L_Pos_07.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_07.Location = new System.Drawing.Point(128, 200);
+			this.L_Pos_07.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Pos_07.Location = new System.Drawing.Point(104, 180);
 			this.L_Pos_07.Name = "L_Pos_07";
 			this.L_Pos_07.Size = new System.Drawing.Size(70, 18);
 			this.L_Pos_07.TabIndex = 41;
@@ -659,8 +595,8 @@ namespace MMI.EBuLa
 			// 
 			// L_Pos_06
 			// 
-			this.L_Pos_06.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_06.Location = new System.Drawing.Point(128, 224);
+			this.L_Pos_06.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Pos_06.Location = new System.Drawing.Point(104, 207);
 			this.L_Pos_06.Name = "L_Pos_06";
 			this.L_Pos_06.Size = new System.Drawing.Size(70, 18);
 			this.L_Pos_06.TabIndex = 40;
@@ -669,8 +605,8 @@ namespace MMI.EBuLa
 			// 
 			// L_Pos_05
 			// 
-			this.L_Pos_05.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_05.Location = new System.Drawing.Point(128, 248);
+			this.L_Pos_05.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Pos_05.Location = new System.Drawing.Point(104, 234);
 			this.L_Pos_05.Name = "L_Pos_05";
 			this.L_Pos_05.Size = new System.Drawing.Size(70, 18);
 			this.L_Pos_05.TabIndex = 39;
@@ -679,8 +615,8 @@ namespace MMI.EBuLa
 			// 
 			// L_Pos_04
 			// 
-			this.L_Pos_04.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_04.Location = new System.Drawing.Point(128, 272);
+			this.L_Pos_04.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Pos_04.Location = new System.Drawing.Point(104, 261);
 			this.L_Pos_04.Name = "L_Pos_04";
 			this.L_Pos_04.Size = new System.Drawing.Size(70, 18);
 			this.L_Pos_04.TabIndex = 38;
@@ -689,8 +625,8 @@ namespace MMI.EBuLa
 			// 
 			// L_Pos_03
 			// 
-			this.L_Pos_03.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_03.Location = new System.Drawing.Point(128, 296);
+			this.L_Pos_03.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Pos_03.Location = new System.Drawing.Point(104, 288);
 			this.L_Pos_03.Name = "L_Pos_03";
 			this.L_Pos_03.Size = new System.Drawing.Size(70, 18);
 			this.L_Pos_03.TabIndex = 24;
@@ -699,8 +635,8 @@ namespace MMI.EBuLa
 			// 
 			// L_Pos_02
 			// 
-			this.L_Pos_02.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_02.Location = new System.Drawing.Point(128, 320);
+			this.L_Pos_02.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Pos_02.Location = new System.Drawing.Point(104, 315);
 			this.L_Pos_02.Name = "L_Pos_02";
 			this.L_Pos_02.Size = new System.Drawing.Size(70, 18);
 			this.L_Pos_02.TabIndex = 25;
@@ -709,130 +645,110 @@ namespace MMI.EBuLa
 			// 
 			// L_Pos_01
 			// 
-			this.L_Pos_01.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Pos_01.Location = new System.Drawing.Point(128, 344);
+			this.L_Pos_01.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Pos_01.Location = new System.Drawing.Point(104, 342);
 			this.L_Pos_01.Name = "L_Pos_01";
 			this.L_Pos_01.Size = new System.Drawing.Size(70, 18);
 			this.L_Pos_01.TabIndex = 26;
 			this.L_Pos_01.Text = "L_Pos_01";
 			this.L_Pos_01.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// L_Speed_12
-			// 
-			this.L_Speed_12.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_12.Location = new System.Drawing.Point(80, 80);
-			this.L_Speed_12.Name = "L_Speed_12";
-			this.L_Speed_12.Size = new System.Drawing.Size(32, 18);
-			this.L_Speed_12.TabIndex = 27;
-			this.L_Speed_12.Text = "L_Speed_12";
-			this.L_Speed_12.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
-			// L_Speed_11
-			// 
-			this.L_Speed_11.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_11.Location = new System.Drawing.Point(80, 104);
-			this.L_Speed_11.Name = "L_Speed_11";
-			this.L_Speed_11.Size = new System.Drawing.Size(32, 18);
-			this.L_Speed_11.TabIndex = 28;
-			this.L_Speed_11.Text = "L_S_11";
-			this.L_Speed_11.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
 			// L_Speed_10
 			// 
-			this.L_Speed_10.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_10.Location = new System.Drawing.Point(80, 128);
+			this.L_Speed_10.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Speed_10.Location = new System.Drawing.Point(60, 99);
 			this.L_Speed_10.Name = "L_Speed_10";
-			this.L_Speed_10.Size = new System.Drawing.Size(32, 18);
+			this.L_Speed_10.Size = new System.Drawing.Size(34, 18);
 			this.L_Speed_10.TabIndex = 29;
 			this.L_Speed_10.Text = "L_S_10";
 			this.L_Speed_10.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// L_Speed_09
 			// 
-			this.L_Speed_09.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_09.Location = new System.Drawing.Point(80, 152);
+			this.L_Speed_09.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Speed_09.Location = new System.Drawing.Point(60, 126);
 			this.L_Speed_09.Name = "L_Speed_09";
-			this.L_Speed_09.Size = new System.Drawing.Size(32, 18);
+			this.L_Speed_09.Size = new System.Drawing.Size(34, 18);
 			this.L_Speed_09.TabIndex = 30;
 			this.L_Speed_09.Text = "L_S_09";
 			this.L_Speed_09.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// L_Speed_08
 			// 
-			this.L_Speed_08.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_08.Location = new System.Drawing.Point(80, 176);
+			this.L_Speed_08.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Speed_08.Location = new System.Drawing.Point(60, 153);
 			this.L_Speed_08.Name = "L_Speed_08";
-			this.L_Speed_08.Size = new System.Drawing.Size(32, 18);
+			this.L_Speed_08.Size = new System.Drawing.Size(34, 18);
 			this.L_Speed_08.TabIndex = 31;
 			this.L_Speed_08.Text = "L_S_08";
 			this.L_Speed_08.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// L_Speed_07
 			// 
-			this.L_Speed_07.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_07.Location = new System.Drawing.Point(80, 200);
+			this.L_Speed_07.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Speed_07.Location = new System.Drawing.Point(60, 180);
 			this.L_Speed_07.Name = "L_Speed_07";
-			this.L_Speed_07.Size = new System.Drawing.Size(32, 18);
+			this.L_Speed_07.Size = new System.Drawing.Size(34, 18);
 			this.L_Speed_07.TabIndex = 32;
 			this.L_Speed_07.Text = "L_S_07";
 			this.L_Speed_07.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// L_Speed_06
 			// 
-			this.L_Speed_06.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_06.Location = new System.Drawing.Point(80, 224);
+			this.L_Speed_06.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Speed_06.Location = new System.Drawing.Point(60, 207);
 			this.L_Speed_06.Name = "L_Speed_06";
-			this.L_Speed_06.Size = new System.Drawing.Size(32, 18);
+			this.L_Speed_06.Size = new System.Drawing.Size(34, 18);
 			this.L_Speed_06.TabIndex = 33;
 			this.L_Speed_06.Text = "L_S_06";
 			this.L_Speed_06.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// L_Speed_05
 			// 
-			this.L_Speed_05.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_05.Location = new System.Drawing.Point(80, 248);
+			this.L_Speed_05.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Speed_05.Location = new System.Drawing.Point(60, 234);
 			this.L_Speed_05.Name = "L_Speed_05";
-			this.L_Speed_05.Size = new System.Drawing.Size(32, 18);
+			this.L_Speed_05.Size = new System.Drawing.Size(34, 18);
 			this.L_Speed_05.TabIndex = 34;
 			this.L_Speed_05.Text = "L_S_05";
 			this.L_Speed_05.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// L_Speed_04
 			// 
-			this.L_Speed_04.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_04.Location = new System.Drawing.Point(80, 272);
+			this.L_Speed_04.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Speed_04.Location = new System.Drawing.Point(60, 261);
 			this.L_Speed_04.Name = "L_Speed_04";
-			this.L_Speed_04.Size = new System.Drawing.Size(32, 18);
+			this.L_Speed_04.Size = new System.Drawing.Size(34, 18);
 			this.L_Speed_04.TabIndex = 35;
 			this.L_Speed_04.Text = "L_S_04";
 			this.L_Speed_04.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// L_Speed_03
 			// 
-			this.L_Speed_03.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_03.Location = new System.Drawing.Point(80, 296);
+			this.L_Speed_03.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Speed_03.Location = new System.Drawing.Point(60, 288);
 			this.L_Speed_03.Name = "L_Speed_03";
-			this.L_Speed_03.Size = new System.Drawing.Size(32, 18);
+			this.L_Speed_03.Size = new System.Drawing.Size(34, 18);
 			this.L_Speed_03.TabIndex = 36;
 			this.L_Speed_03.Text = "L_S_03";
 			this.L_Speed_03.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// L_Speed_02
 			// 
-			this.L_Speed_02.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_02.Location = new System.Drawing.Point(80, 320);
+			this.L_Speed_02.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Speed_02.Location = new System.Drawing.Point(60, 315);
 			this.L_Speed_02.Name = "L_Speed_02";
-			this.L_Speed_02.Size = new System.Drawing.Size(32, 18);
+			this.L_Speed_02.Size = new System.Drawing.Size(34, 18);
 			this.L_Speed_02.TabIndex = 37;
 			this.L_Speed_02.Text = "L_S_02";
 			this.L_Speed_02.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// L_Speed_01
 			// 
-			this.L_Speed_01.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Speed_01.Location = new System.Drawing.Point(80, 344);
+			this.L_Speed_01.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Speed_01.Location = new System.Drawing.Point(60, 342);
 			this.L_Speed_01.Name = "L_Speed_01";
-			this.L_Speed_01.Size = new System.Drawing.Size(32, 18);
+			this.L_Speed_01.Size = new System.Drawing.Size(34, 18);
 			this.L_Speed_01.TabIndex = 28;
 			this.L_Speed_01.Text = "L_S_01";
 			this.L_Speed_01.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -840,122 +756,102 @@ namespace MMI.EBuLa
 			// L_Ops_01
 			// 
 			this.L_Ops_01.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_01.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_01.Location = new System.Drawing.Point(232, 344);
+			this.L_Ops_01.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Ops_01.Location = new System.Drawing.Point(232, 342);
 			this.L_Ops_01.Name = "L_Ops_01";
-			this.L_Ops_01.Size = new System.Drawing.Size(184, 18);
+			this.L_Ops_01.Size = new System.Drawing.Size(210, 18);
 			this.L_Ops_01.TabIndex = 49;
 			this.L_Ops_01.Text = "L_Ops_01";
 			// 
 			// L_Ops_02
 			// 
 			this.L_Ops_02.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_02.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_02.Location = new System.Drawing.Point(232, 320);
+			this.L_Ops_02.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Ops_02.Location = new System.Drawing.Point(232, 315);
 			this.L_Ops_02.Name = "L_Ops_02";
-			this.L_Ops_02.Size = new System.Drawing.Size(184, 18);
+			this.L_Ops_02.Size = new System.Drawing.Size(210, 18);
 			this.L_Ops_02.TabIndex = 48;
 			this.L_Ops_02.Text = "L_Ops_02";
 			// 
 			// L_Ops_03
 			// 
 			this.L_Ops_03.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_03.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_03.Location = new System.Drawing.Point(232, 296);
+			this.L_Ops_03.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Ops_03.Location = new System.Drawing.Point(232, 288);
 			this.L_Ops_03.Name = "L_Ops_03";
-			this.L_Ops_03.Size = new System.Drawing.Size(184, 18);
+			this.L_Ops_03.Size = new System.Drawing.Size(210, 18);
 			this.L_Ops_03.TabIndex = 47;
 			this.L_Ops_03.Text = "L_Ops_03";
 			// 
 			// L_Ops_04
 			// 
 			this.L_Ops_04.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_04.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_04.Location = new System.Drawing.Point(232, 272);
+			this.L_Ops_04.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Ops_04.Location = new System.Drawing.Point(232, 261);
 			this.L_Ops_04.Name = "L_Ops_04";
-			this.L_Ops_04.Size = new System.Drawing.Size(184, 18);
+			this.L_Ops_04.Size = new System.Drawing.Size(210, 18);
 			this.L_Ops_04.TabIndex = 50;
 			this.L_Ops_04.Text = "L_Ops_04";
 			// 
 			// L_Ops_05
 			// 
 			this.L_Ops_05.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_05.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_05.Location = new System.Drawing.Point(232, 248);
+			this.L_Ops_05.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Ops_05.Location = new System.Drawing.Point(232, 234);
 			this.L_Ops_05.Name = "L_Ops_05";
-			this.L_Ops_05.Size = new System.Drawing.Size(184, 18);
+			this.L_Ops_05.Size = new System.Drawing.Size(210, 18);
 			this.L_Ops_05.TabIndex = 51;
 			this.L_Ops_05.Text = "L_Ops_05";
 			// 
 			// L_Ops_06
 			// 
 			this.L_Ops_06.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_06.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_06.Location = new System.Drawing.Point(232, 224);
+			this.L_Ops_06.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Ops_06.Location = new System.Drawing.Point(232, 207);
 			this.L_Ops_06.Name = "L_Ops_06";
-			this.L_Ops_06.Size = new System.Drawing.Size(184, 18);
+			this.L_Ops_06.Size = new System.Drawing.Size(210, 18);
 			this.L_Ops_06.TabIndex = 52;
 			this.L_Ops_06.Text = "L_Ops_06";
 			// 
 			// L_Ops_07
 			// 
 			this.L_Ops_07.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_07.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_07.Location = new System.Drawing.Point(232, 200);
+			this.L_Ops_07.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Ops_07.Location = new System.Drawing.Point(232, 180);
 			this.L_Ops_07.Name = "L_Ops_07";
-			this.L_Ops_07.Size = new System.Drawing.Size(184, 18);
+			this.L_Ops_07.Size = new System.Drawing.Size(210, 18);
 			this.L_Ops_07.TabIndex = 53;
 			this.L_Ops_07.Text = "L_Ops_07";
 			// 
 			// L_Ops_08
 			// 
 			this.L_Ops_08.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_08.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_08.Location = new System.Drawing.Point(232, 176);
+			this.L_Ops_08.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Ops_08.Location = new System.Drawing.Point(232, 153);
 			this.L_Ops_08.Name = "L_Ops_08";
-			this.L_Ops_08.Size = new System.Drawing.Size(184, 18);
+			this.L_Ops_08.Size = new System.Drawing.Size(210, 18);
 			this.L_Ops_08.TabIndex = 54;
 			this.L_Ops_08.Text = "L_Ops_08";
 			// 
 			// L_Ops_09
 			// 
 			this.L_Ops_09.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_09.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_09.Location = new System.Drawing.Point(232, 152);
+			this.L_Ops_09.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Ops_09.Location = new System.Drawing.Point(232, 126);
 			this.L_Ops_09.Name = "L_Ops_09";
-			this.L_Ops_09.Size = new System.Drawing.Size(184, 18);
+			this.L_Ops_09.Size = new System.Drawing.Size(210, 18);
 			this.L_Ops_09.TabIndex = 55;
 			this.L_Ops_09.Text = "L_Ops_09";
 			// 
 			// L_Ops_10
 			// 
 			this.L_Ops_10.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_10.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_10.Location = new System.Drawing.Point(232, 128);
+			this.L_Ops_10.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_Ops_10.Location = new System.Drawing.Point(232, 99);
 			this.L_Ops_10.Name = "L_Ops_10";
-			this.L_Ops_10.Size = new System.Drawing.Size(184, 18);
+			this.L_Ops_10.Size = new System.Drawing.Size(210, 18);
 			this.L_Ops_10.TabIndex = 56;
 			this.L_Ops_10.Text = "L_Ops_10";
-			// 
-			// L_Ops_11
-			// 
-			this.L_Ops_11.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_11.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_11.Location = new System.Drawing.Point(232, 104);
-			this.L_Ops_11.Name = "L_Ops_11";
-			this.L_Ops_11.Size = new System.Drawing.Size(184, 18);
-			this.L_Ops_11.TabIndex = 46;
-			this.L_Ops_11.Text = "L_Ops_11";
-			// 
-			// L_Ops_12
-			// 
-			this.L_Ops_12.BackColor = System.Drawing.Color.Transparent;
-			this.L_Ops_12.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_Ops_12.Location = new System.Drawing.Point(232, 80);
-			this.L_Ops_12.Name = "L_Ops_12";
-			this.L_Ops_12.Size = new System.Drawing.Size(184, 18);
-			this.L_Ops_12.TabIndex = 45;
-			this.L_Ops_12.Text = "L_Ops_12";
 			// 
 			// L_DOWN
 			// 
@@ -977,8 +873,8 @@ namespace MMI.EBuLa
 			// 
 			// L_A_01
 			// 
-			this.L_A_01.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_01.Location = new System.Drawing.Point(480, 344);
+			this.L_A_01.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_01.Location = new System.Drawing.Point(480, 342);
 			this.L_A_01.Name = "L_A_01";
 			this.L_A_01.Size = new System.Drawing.Size(50, 18);
 			this.L_A_01.TabIndex = 59;
@@ -987,8 +883,8 @@ namespace MMI.EBuLa
 			// 
 			// L_A_02
 			// 
-			this.L_A_02.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_02.Location = new System.Drawing.Point(480, 320);
+			this.L_A_02.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_02.Location = new System.Drawing.Point(480, 315);
 			this.L_A_02.Name = "L_A_02";
 			this.L_A_02.Size = new System.Drawing.Size(50, 18);
 			this.L_A_02.TabIndex = 61;
@@ -997,8 +893,8 @@ namespace MMI.EBuLa
 			// 
 			// L_A_03
 			// 
-			this.L_A_03.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_03.Location = new System.Drawing.Point(480, 296);
+			this.L_A_03.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_03.Location = new System.Drawing.Point(480, 288);
 			this.L_A_03.Name = "L_A_03";
 			this.L_A_03.Size = new System.Drawing.Size(50, 18);
 			this.L_A_03.TabIndex = 62;
@@ -1007,8 +903,8 @@ namespace MMI.EBuLa
 			// 
 			// L_A_04
 			// 
-			this.L_A_04.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_04.Location = new System.Drawing.Point(480, 272);
+			this.L_A_04.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_04.Location = new System.Drawing.Point(480, 261);
 			this.L_A_04.Name = "L_A_04";
 			this.L_A_04.Size = new System.Drawing.Size(50, 18);
 			this.L_A_04.TabIndex = 63;
@@ -1017,8 +913,8 @@ namespace MMI.EBuLa
 			// 
 			// L_A_05
 			// 
-			this.L_A_05.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_05.Location = new System.Drawing.Point(480, 248);
+			this.L_A_05.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_05.Location = new System.Drawing.Point(480, 234);
 			this.L_A_05.Name = "L_A_05";
 			this.L_A_05.Size = new System.Drawing.Size(50, 18);
 			this.L_A_05.TabIndex = 64;
@@ -1027,8 +923,8 @@ namespace MMI.EBuLa
 			// 
 			// L_A_06
 			// 
-			this.L_A_06.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_06.Location = new System.Drawing.Point(480, 224);
+			this.L_A_06.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_06.Location = new System.Drawing.Point(480, 207);
 			this.L_A_06.Name = "L_A_06";
 			this.L_A_06.Size = new System.Drawing.Size(50, 18);
 			this.L_A_06.TabIndex = 65;
@@ -1037,8 +933,8 @@ namespace MMI.EBuLa
 			// 
 			// L_A_07
 			// 
-			this.L_A_07.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_07.Location = new System.Drawing.Point(480, 200);
+			this.L_A_07.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_07.Location = new System.Drawing.Point(480, 180);
 			this.L_A_07.Name = "L_A_07";
 			this.L_A_07.Size = new System.Drawing.Size(50, 18);
 			this.L_A_07.TabIndex = 66;
@@ -1047,8 +943,8 @@ namespace MMI.EBuLa
 			// 
 			// L_A_08
 			// 
-			this.L_A_08.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_08.Location = new System.Drawing.Point(480, 176);
+			this.L_A_08.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_08.Location = new System.Drawing.Point(480, 153);
 			this.L_A_08.Name = "L_A_08";
 			this.L_A_08.Size = new System.Drawing.Size(50, 18);
 			this.L_A_08.TabIndex = 67;
@@ -1057,8 +953,8 @@ namespace MMI.EBuLa
 			// 
 			// L_A_09
 			// 
-			this.L_A_09.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_09.Location = new System.Drawing.Point(480, 152);
+			this.L_A_09.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_09.Location = new System.Drawing.Point(480, 126);
 			this.L_A_09.Name = "L_A_09";
 			this.L_A_09.Size = new System.Drawing.Size(50, 18);
 			this.L_A_09.TabIndex = 68;
@@ -1067,58 +963,18 @@ namespace MMI.EBuLa
 			// 
 			// L_A_10
 			// 
-			this.L_A_10.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_10.Location = new System.Drawing.Point(480, 128);
+			this.L_A_10.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_10.Location = new System.Drawing.Point(480, 99);
 			this.L_A_10.Name = "L_A_10";
 			this.L_A_10.Size = new System.Drawing.Size(50, 18);
 			this.L_A_10.TabIndex = 69;
 			this.L_A_10.Text = "L_A_10";
 			this.L_A_10.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// L_A_11
-			// 
-			this.L_A_11.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_11.Location = new System.Drawing.Point(480, 104);
-			this.L_A_11.Name = "L_A_11";
-			this.L_A_11.Size = new System.Drawing.Size(50, 18);
-			this.L_A_11.TabIndex = 70;
-			this.L_A_11.Text = "L_A_11";
-			this.L_A_11.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
-			// L_A_12
-			// 
-			this.L_A_12.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_12.Location = new System.Drawing.Point(480, 80);
-			this.L_A_12.Name = "L_A_12";
-			this.L_A_12.Size = new System.Drawing.Size(50, 18);
-			this.L_A_12.TabIndex = 60;
-			this.L_A_12.Text = "L_A_12";
-			this.L_A_12.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
-			// L_D_12
-			// 
-			this.L_D_12.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_12.Location = new System.Drawing.Point(560, 80);
-			this.L_D_12.Name = "L_D_12";
-			this.L_D_12.Size = new System.Drawing.Size(50, 18);
-			this.L_D_12.TabIndex = 71;
-			this.L_D_12.Text = "L_D_12";
-			this.L_D_12.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
-			// L_D_11
-			// 
-			this.L_D_11.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_11.Location = new System.Drawing.Point(560, 104);
-			this.L_D_11.Name = "L_D_11";
-			this.L_D_11.Size = new System.Drawing.Size(50, 18);
-			this.L_D_11.TabIndex = 73;
-			this.L_D_11.Text = "L_D_11";
-			this.L_D_11.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
 			// L_D_10
 			// 
-			this.L_D_10.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_10.Location = new System.Drawing.Point(560, 128);
+			this.L_D_10.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_10.Location = new System.Drawing.Point(560, 99);
 			this.L_D_10.Name = "L_D_10";
 			this.L_D_10.Size = new System.Drawing.Size(50, 18);
 			this.L_D_10.TabIndex = 74;
@@ -1127,8 +983,8 @@ namespace MMI.EBuLa
 			// 
 			// L_D_09
 			// 
-			this.L_D_09.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_09.Location = new System.Drawing.Point(560, 152);
+			this.L_D_09.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_09.Location = new System.Drawing.Point(560, 126);
 			this.L_D_09.Name = "L_D_09";
 			this.L_D_09.Size = new System.Drawing.Size(50, 18);
 			this.L_D_09.TabIndex = 75;
@@ -1137,8 +993,8 @@ namespace MMI.EBuLa
 			// 
 			// L_D_08
 			// 
-			this.L_D_08.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_08.Location = new System.Drawing.Point(560, 176);
+			this.L_D_08.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_08.Location = new System.Drawing.Point(560, 153);
 			this.L_D_08.Name = "L_D_08";
 			this.L_D_08.Size = new System.Drawing.Size(50, 18);
 			this.L_D_08.TabIndex = 76;
@@ -1147,8 +1003,8 @@ namespace MMI.EBuLa
 			// 
 			// L_D_07
 			// 
-			this.L_D_07.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_07.Location = new System.Drawing.Point(560, 200);
+			this.L_D_07.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_07.Location = new System.Drawing.Point(560, 180);
 			this.L_D_07.Name = "L_D_07";
 			this.L_D_07.Size = new System.Drawing.Size(50, 18);
 			this.L_D_07.TabIndex = 77;
@@ -1157,8 +1013,8 @@ namespace MMI.EBuLa
 			// 
 			// L_D_06
 			// 
-			this.L_D_06.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_06.Location = new System.Drawing.Point(560, 224);
+			this.L_D_06.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_06.Location = new System.Drawing.Point(560, 207);
 			this.L_D_06.Name = "L_D_06";
 			this.L_D_06.Size = new System.Drawing.Size(50, 18);
 			this.L_D_06.TabIndex = 78;
@@ -1167,8 +1023,8 @@ namespace MMI.EBuLa
 			// 
 			// L_D_05
 			// 
-			this.L_D_05.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_05.Location = new System.Drawing.Point(560, 248);
+			this.L_D_05.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_05.Location = new System.Drawing.Point(560, 234);
 			this.L_D_05.Name = "L_D_05";
 			this.L_D_05.Size = new System.Drawing.Size(50, 18);
 			this.L_D_05.TabIndex = 79;
@@ -1177,8 +1033,8 @@ namespace MMI.EBuLa
 			// 
 			// L_D_04
 			// 
-			this.L_D_04.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_04.Location = new System.Drawing.Point(560, 272);
+			this.L_D_04.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_04.Location = new System.Drawing.Point(560, 261);
 			this.L_D_04.Name = "L_D_04";
 			this.L_D_04.Size = new System.Drawing.Size(50, 18);
 			this.L_D_04.TabIndex = 80;
@@ -1187,8 +1043,8 @@ namespace MMI.EBuLa
 			// 
 			// L_D_03
 			// 
-			this.L_D_03.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_03.Location = new System.Drawing.Point(560, 296);
+			this.L_D_03.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_03.Location = new System.Drawing.Point(560, 288);
 			this.L_D_03.Name = "L_D_03";
 			this.L_D_03.Size = new System.Drawing.Size(50, 18);
 			this.L_D_03.TabIndex = 81;
@@ -1197,8 +1053,8 @@ namespace MMI.EBuLa
 			// 
 			// L_D_02
 			// 
-			this.L_D_02.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_02.Location = new System.Drawing.Point(560, 320);
+			this.L_D_02.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_02.Location = new System.Drawing.Point(560, 315);
 			this.L_D_02.Name = "L_D_02";
 			this.L_D_02.Size = new System.Drawing.Size(50, 18);
 			this.L_D_02.TabIndex = 82;
@@ -1207,8 +1063,8 @@ namespace MMI.EBuLa
 			// 
 			// L_D_01
 			// 
-			this.L_D_01.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_01.Location = new System.Drawing.Point(560, 344);
+			this.L_D_01.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_01.Location = new System.Drawing.Point(560, 342);
 			this.L_D_01.Name = "L_D_01";
 			this.L_D_01.Size = new System.Drawing.Size(50, 18);
 			this.L_D_01.TabIndex = 72;
@@ -1218,7 +1074,7 @@ namespace MMI.EBuLa
 			// L_AK_01
 			// 
 			this.L_AK_01.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_01.Location = new System.Drawing.Point(528, 344);
+			this.L_AK_01.Location = new System.Drawing.Point(528, 342);
 			this.L_AK_01.Name = "L_AK_01";
 			this.L_AK_01.Size = new System.Drawing.Size(20, 18);
 			this.L_AK_01.TabIndex = 83;
@@ -1228,7 +1084,7 @@ namespace MMI.EBuLa
 			// L_AK_02
 			// 
 			this.L_AK_02.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_02.Location = new System.Drawing.Point(528, 320);
+			this.L_AK_02.Location = new System.Drawing.Point(528, 315);
 			this.L_AK_02.Name = "L_AK_02";
 			this.L_AK_02.Size = new System.Drawing.Size(20, 18);
 			this.L_AK_02.TabIndex = 85;
@@ -1238,7 +1094,7 @@ namespace MMI.EBuLa
 			// L_AK_03
 			// 
 			this.L_AK_03.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_03.Location = new System.Drawing.Point(528, 296);
+			this.L_AK_03.Location = new System.Drawing.Point(528, 288);
 			this.L_AK_03.Name = "L_AK_03";
 			this.L_AK_03.Size = new System.Drawing.Size(20, 18);
 			this.L_AK_03.TabIndex = 86;
@@ -1248,7 +1104,7 @@ namespace MMI.EBuLa
 			// L_AK_04
 			// 
 			this.L_AK_04.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_04.Location = new System.Drawing.Point(528, 272);
+			this.L_AK_04.Location = new System.Drawing.Point(528, 261);
 			this.L_AK_04.Name = "L_AK_04";
 			this.L_AK_04.Size = new System.Drawing.Size(20, 18);
 			this.L_AK_04.TabIndex = 87;
@@ -1258,7 +1114,7 @@ namespace MMI.EBuLa
 			// L_AK_05
 			// 
 			this.L_AK_05.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_05.Location = new System.Drawing.Point(528, 248);
+			this.L_AK_05.Location = new System.Drawing.Point(528, 234);
 			this.L_AK_05.Name = "L_AK_05";
 			this.L_AK_05.Size = new System.Drawing.Size(20, 18);
 			this.L_AK_05.TabIndex = 88;
@@ -1268,7 +1124,7 @@ namespace MMI.EBuLa
 			// L_AK_06
 			// 
 			this.L_AK_06.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_06.Location = new System.Drawing.Point(528, 224);
+			this.L_AK_06.Location = new System.Drawing.Point(528, 207);
 			this.L_AK_06.Name = "L_AK_06";
 			this.L_AK_06.Size = new System.Drawing.Size(20, 18);
 			this.L_AK_06.TabIndex = 89;
@@ -1278,7 +1134,7 @@ namespace MMI.EBuLa
 			// L_AK_07
 			// 
 			this.L_AK_07.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_07.Location = new System.Drawing.Point(528, 200);
+			this.L_AK_07.Location = new System.Drawing.Point(528, 180);
 			this.L_AK_07.Name = "L_AK_07";
 			this.L_AK_07.Size = new System.Drawing.Size(20, 18);
 			this.L_AK_07.TabIndex = 90;
@@ -1288,7 +1144,7 @@ namespace MMI.EBuLa
 			// L_AK_08
 			// 
 			this.L_AK_08.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_08.Location = new System.Drawing.Point(528, 176);
+			this.L_AK_08.Location = new System.Drawing.Point(528, 153);
 			this.L_AK_08.Name = "L_AK_08";
 			this.L_AK_08.Size = new System.Drawing.Size(20, 18);
 			this.L_AK_08.TabIndex = 91;
@@ -1298,7 +1154,7 @@ namespace MMI.EBuLa
 			// L_AK_09
 			// 
 			this.L_AK_09.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_09.Location = new System.Drawing.Point(528, 152);
+			this.L_AK_09.Location = new System.Drawing.Point(528, 126);
 			this.L_AK_09.Name = "L_AK_09";
 			this.L_AK_09.Size = new System.Drawing.Size(20, 18);
 			this.L_AK_09.TabIndex = 92;
@@ -1308,37 +1164,17 @@ namespace MMI.EBuLa
 			// L_AK_10
 			// 
 			this.L_AK_10.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_10.Location = new System.Drawing.Point(528, 128);
+			this.L_AK_10.Location = new System.Drawing.Point(528, 99);
 			this.L_AK_10.Name = "L_AK_10";
 			this.L_AK_10.Size = new System.Drawing.Size(20, 18);
 			this.L_AK_10.TabIndex = 93;
 			this.L_AK_10.Text = "L_AK_10";
 			this.L_AK_10.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
-			// L_AK_11
-			// 
-			this.L_AK_11.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_11.Location = new System.Drawing.Point(528, 104);
-			this.L_AK_11.Name = "L_AK_11";
-			this.L_AK_11.Size = new System.Drawing.Size(20, 18);
-			this.L_AK_11.TabIndex = 94;
-			this.L_AK_11.Text = "L_AK_11";
-			this.L_AK_11.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
-			// L_AK_12
-			// 
-			this.L_AK_12.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_AK_12.Location = new System.Drawing.Point(528, 80);
-			this.L_AK_12.Name = "L_AK_12";
-			this.L_AK_12.Size = new System.Drawing.Size(20, 18);
-			this.L_AK_12.TabIndex = 84;
-			this.L_AK_12.Text = "L_AK_12";
-			this.L_AK_12.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
 			// L_DK_01
 			// 
 			this.L_DK_01.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_01.Location = new System.Drawing.Point(608, 344);
+			this.L_DK_01.Location = new System.Drawing.Point(608, 342);
 			this.L_DK_01.Name = "L_DK_01";
 			this.L_DK_01.Size = new System.Drawing.Size(20, 18);
 			this.L_DK_01.TabIndex = 95;
@@ -1348,7 +1184,7 @@ namespace MMI.EBuLa
 			// L_DK_02
 			// 
 			this.L_DK_02.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_02.Location = new System.Drawing.Point(608, 320);
+			this.L_DK_02.Location = new System.Drawing.Point(608, 315);
 			this.L_DK_02.Name = "L_DK_02";
 			this.L_DK_02.Size = new System.Drawing.Size(20, 18);
 			this.L_DK_02.TabIndex = 97;
@@ -1358,7 +1194,7 @@ namespace MMI.EBuLa
 			// L_DK_03
 			// 
 			this.L_DK_03.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_03.Location = new System.Drawing.Point(608, 296);
+			this.L_DK_03.Location = new System.Drawing.Point(608, 288);
 			this.L_DK_03.Name = "L_DK_03";
 			this.L_DK_03.Size = new System.Drawing.Size(20, 18);
 			this.L_DK_03.TabIndex = 98;
@@ -1368,7 +1204,7 @@ namespace MMI.EBuLa
 			// L_DK_04
 			// 
 			this.L_DK_04.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_04.Location = new System.Drawing.Point(608, 272);
+			this.L_DK_04.Location = new System.Drawing.Point(608, 261);
 			this.L_DK_04.Name = "L_DK_04";
 			this.L_DK_04.Size = new System.Drawing.Size(20, 18);
 			this.L_DK_04.TabIndex = 99;
@@ -1378,7 +1214,7 @@ namespace MMI.EBuLa
 			// L_DK_05
 			// 
 			this.L_DK_05.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_05.Location = new System.Drawing.Point(608, 248);
+			this.L_DK_05.Location = new System.Drawing.Point(608, 234);
 			this.L_DK_05.Name = "L_DK_05";
 			this.L_DK_05.Size = new System.Drawing.Size(20, 18);
 			this.L_DK_05.TabIndex = 100;
@@ -1388,7 +1224,7 @@ namespace MMI.EBuLa
 			// L_DK_06
 			// 
 			this.L_DK_06.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_06.Location = new System.Drawing.Point(608, 224);
+			this.L_DK_06.Location = new System.Drawing.Point(608, 207);
 			this.L_DK_06.Name = "L_DK_06";
 			this.L_DK_06.Size = new System.Drawing.Size(20, 18);
 			this.L_DK_06.TabIndex = 101;
@@ -1398,7 +1234,7 @@ namespace MMI.EBuLa
 			// L_DK_07
 			// 
 			this.L_DK_07.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_07.Location = new System.Drawing.Point(608, 200);
+			this.L_DK_07.Location = new System.Drawing.Point(608, 180);
 			this.L_DK_07.Name = "L_DK_07";
 			this.L_DK_07.Size = new System.Drawing.Size(20, 18);
 			this.L_DK_07.TabIndex = 102;
@@ -1408,7 +1244,7 @@ namespace MMI.EBuLa
 			// L_DK_08
 			// 
 			this.L_DK_08.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_08.Location = new System.Drawing.Point(608, 176);
+			this.L_DK_08.Location = new System.Drawing.Point(608, 153);
 			this.L_DK_08.Name = "L_DK_08";
 			this.L_DK_08.Size = new System.Drawing.Size(20, 18);
 			this.L_DK_08.TabIndex = 103;
@@ -1418,7 +1254,7 @@ namespace MMI.EBuLa
 			// L_DK_09
 			// 
 			this.L_DK_09.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_09.Location = new System.Drawing.Point(608, 152);
+			this.L_DK_09.Location = new System.Drawing.Point(608, 126);
 			this.L_DK_09.Name = "L_DK_09";
 			this.L_DK_09.Size = new System.Drawing.Size(20, 18);
 			this.L_DK_09.TabIndex = 104;
@@ -1428,158 +1264,118 @@ namespace MMI.EBuLa
 			// L_DK_10
 			// 
 			this.L_DK_10.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_10.Location = new System.Drawing.Point(608, 128);
+			this.L_DK_10.Location = new System.Drawing.Point(608, 99);
 			this.L_DK_10.Name = "L_DK_10";
 			this.L_DK_10.Size = new System.Drawing.Size(20, 18);
 			this.L_DK_10.TabIndex = 105;
 			this.L_DK_10.Text = "L_DK_10";
 			this.L_DK_10.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
-			// L_DK_11
-			// 
-			this.L_DK_11.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_11.Location = new System.Drawing.Point(608, 104);
-			this.L_DK_11.Name = "L_DK_11";
-			this.L_DK_11.Size = new System.Drawing.Size(20, 18);
-			this.L_DK_11.TabIndex = 106;
-			this.L_DK_11.Text = "L_DK_11";
-			this.L_DK_11.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
-			// L_DK_12
-			// 
-			this.L_DK_12.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_DK_12.Location = new System.Drawing.Point(608, 80);
-			this.L_DK_12.Name = "L_DK_12";
-			this.L_DK_12.Size = new System.Drawing.Size(20, 18);
-			this.L_DK_12.TabIndex = 96;
-			this.L_DK_12.Text = "L_DK_12";
-			this.L_DK_12.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
 			// L_OpsS_01
 			// 
 			this.L_OpsS_01.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_01.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_01.Location = new System.Drawing.Point(416, 344);
+			this.L_OpsS_01.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_01.Location = new System.Drawing.Point(416, 342);
 			this.L_OpsS_01.Name = "L_OpsS_01";
-			this.L_OpsS_01.Size = new System.Drawing.Size(35, 18);
+			this.L_OpsS_01.Size = new System.Drawing.Size(37, 18);
 			this.L_OpsS_01.TabIndex = 107;
 			this.L_OpsS_01.Text = "L_OpsS_01";
 			// 
 			// L_OpsS_02
 			// 
 			this.L_OpsS_02.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_02.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_02.Location = new System.Drawing.Point(416, 320);
+			this.L_OpsS_02.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_02.Location = new System.Drawing.Point(416, 315);
 			this.L_OpsS_02.Name = "L_OpsS_02";
-			this.L_OpsS_02.Size = new System.Drawing.Size(35, 18);
+			this.L_OpsS_02.Size = new System.Drawing.Size(37, 18);
 			this.L_OpsS_02.TabIndex = 109;
 			this.L_OpsS_02.Text = "L_OpsS_02";
 			// 
 			// L_OpsS_03
 			// 
 			this.L_OpsS_03.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_03.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_03.Location = new System.Drawing.Point(416, 296);
+			this.L_OpsS_03.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_03.Location = new System.Drawing.Point(416, 288);
 			this.L_OpsS_03.Name = "L_OpsS_03";
-			this.L_OpsS_03.Size = new System.Drawing.Size(35, 18);
+			this.L_OpsS_03.Size = new System.Drawing.Size(37, 18);
 			this.L_OpsS_03.TabIndex = 110;
 			this.L_OpsS_03.Text = "L_OpsS_03";
 			// 
 			// L_OpsS_04
 			// 
 			this.L_OpsS_04.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_04.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_04.Location = new System.Drawing.Point(416, 272);
+			this.L_OpsS_04.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_04.Location = new System.Drawing.Point(416, 261);
 			this.L_OpsS_04.Name = "L_OpsS_04";
-			this.L_OpsS_04.Size = new System.Drawing.Size(35, 18);
+			this.L_OpsS_04.Size = new System.Drawing.Size(37, 18);
 			this.L_OpsS_04.TabIndex = 111;
 			this.L_OpsS_04.Text = "L_OpsS_04";
 			// 
 			// L_OpsS_05
 			// 
 			this.L_OpsS_05.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_05.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_05.Location = new System.Drawing.Point(416, 248);
+			this.L_OpsS_05.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_05.Location = new System.Drawing.Point(416, 234);
 			this.L_OpsS_05.Name = "L_OpsS_05";
-			this.L_OpsS_05.Size = new System.Drawing.Size(35, 18);
+			this.L_OpsS_05.Size = new System.Drawing.Size(37, 18);
 			this.L_OpsS_05.TabIndex = 112;
 			this.L_OpsS_05.Text = "L_OpsS_05";
 			// 
 			// L_OpsS_06
 			// 
 			this.L_OpsS_06.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_06.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_06.Location = new System.Drawing.Point(416, 224);
+			this.L_OpsS_06.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_06.Location = new System.Drawing.Point(416, 207);
 			this.L_OpsS_06.Name = "L_OpsS_06";
-			this.L_OpsS_06.Size = new System.Drawing.Size(35, 18);
+			this.L_OpsS_06.Size = new System.Drawing.Size(37, 18);
 			this.L_OpsS_06.TabIndex = 113;
 			this.L_OpsS_06.Text = "L_OpsS_06";
 			// 
 			// L_OpsS_07
 			// 
 			this.L_OpsS_07.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_07.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_07.Location = new System.Drawing.Point(416, 200);
+			this.L_OpsS_07.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_07.Location = new System.Drawing.Point(416, 180);
 			this.L_OpsS_07.Name = "L_OpsS_07";
-			this.L_OpsS_07.Size = new System.Drawing.Size(35, 18);
+			this.L_OpsS_07.Size = new System.Drawing.Size(37, 18);
 			this.L_OpsS_07.TabIndex = 114;
 			this.L_OpsS_07.Text = "L_OpsS_07";
 			// 
 			// L_OpsS_08
 			// 
 			this.L_OpsS_08.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_08.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_08.Location = new System.Drawing.Point(416, 176);
+			this.L_OpsS_08.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_08.Location = new System.Drawing.Point(416, 153);
 			this.L_OpsS_08.Name = "L_OpsS_08";
-			this.L_OpsS_08.Size = new System.Drawing.Size(35, 18);
+			this.L_OpsS_08.Size = new System.Drawing.Size(37, 18);
 			this.L_OpsS_08.TabIndex = 115;
 			this.L_OpsS_08.Text = "L_OpsS_08";
 			// 
 			// L_OpsS_09
 			// 
 			this.L_OpsS_09.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_09.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_09.Location = new System.Drawing.Point(416, 152);
+			this.L_OpsS_09.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_09.Location = new System.Drawing.Point(416, 126);
 			this.L_OpsS_09.Name = "L_OpsS_09";
-			this.L_OpsS_09.Size = new System.Drawing.Size(35, 18);
+			this.L_OpsS_09.Size = new System.Drawing.Size(37, 18);
 			this.L_OpsS_09.TabIndex = 116;
 			this.L_OpsS_09.Text = "L_OpsS_09";
 			// 
 			// L_OpsS_10
 			// 
 			this.L_OpsS_10.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_10.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_10.Location = new System.Drawing.Point(416, 128);
+			this.L_OpsS_10.Font = new System.Drawing.Font("Zusi standard", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_OpsS_10.Location = new System.Drawing.Point(416, 99);
 			this.L_OpsS_10.Name = "L_OpsS_10";
-			this.L_OpsS_10.Size = new System.Drawing.Size(35, 18);
+			this.L_OpsS_10.Size = new System.Drawing.Size(37, 18);
 			this.L_OpsS_10.TabIndex = 117;
 			this.L_OpsS_10.Text = "L_OpsS_10";
-			// 
-			// L_OpsS_11
-			// 
-			this.L_OpsS_11.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_11.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_11.Location = new System.Drawing.Point(416, 104);
-			this.L_OpsS_11.Name = "L_OpsS_11";
-			this.L_OpsS_11.Size = new System.Drawing.Size(35, 18);
-			this.L_OpsS_11.TabIndex = 118;
-			this.L_OpsS_11.Text = "L_OpsS_11";
-			// 
-			// L_OpsS_12
-			// 
-			this.L_OpsS_12.BackColor = System.Drawing.Color.Transparent;
-			this.L_OpsS_12.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_OpsS_12.Location = new System.Drawing.Point(416, 80);
-			this.L_OpsS_12.Name = "L_OpsS_12";
-			this.L_OpsS_12.Size = new System.Drawing.Size(35, 18);
-			this.L_OpsS_12.TabIndex = 108;
-			this.L_OpsS_12.Text = "L_OpsS_12";
 			// 
 			// Qu
 			// 
 			this.Qu.BackColor = System.Drawing.Color.Transparent;
 			this.Qu.Image = ((System.Drawing.Image)(resources.GetObject("Qu.Image")));
-			this.Qu.Location = new System.Drawing.Point(119, 78);
+			this.Qu.Location = new System.Drawing.Point(95, 78);
 			this.Qu.Name = "Qu";
 			this.Qu.Size = new System.Drawing.Size(20, 20);
 			this.Qu.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1591,35 +1387,13 @@ namespace MMI.EBuLa
 			this.timer_Position.Interval = 500;
 			this.timer_Position.Tick += new System.EventHandler(this.timer_Position_Tick);
 			// 
-			// PB_12
-			// 
-			this.PB_12.BackColor = System.Drawing.Color.Transparent;
-			this.PB_12.Image = ((System.Drawing.Image)(resources.GetObject("PB_12.Image")));
-			this.PB_12.Location = new System.Drawing.Point(16, 78);
-			this.PB_12.Name = "PB_12";
-			this.PB_12.Size = new System.Drawing.Size(7, 26);
-			this.PB_12.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.PB_12.TabIndex = 125;
-			this.PB_12.TabStop = false;
-			// 
-			// PB_11
-			// 
-			this.PB_11.BackColor = System.Drawing.Color.Transparent;
-			this.PB_11.Image = ((System.Drawing.Image)(resources.GetObject("PB_11.Image")));
-			this.PB_11.Location = new System.Drawing.Point(16, 104);
-			this.PB_11.Name = "PB_11";
-			this.PB_11.Size = new System.Drawing.Size(7, 24);
-			this.PB_11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.PB_11.TabIndex = 126;
-			this.PB_11.TabStop = false;
-			// 
 			// PB_10
 			// 
 			this.PB_10.BackColor = System.Drawing.Color.Transparent;
 			this.PB_10.Image = ((System.Drawing.Image)(resources.GetObject("PB_10.Image")));
-			this.PB_10.Location = new System.Drawing.Point(16, 128);
+			this.PB_10.Location = new System.Drawing.Point(16, 78);
 			this.PB_10.Name = "PB_10";
-			this.PB_10.Size = new System.Drawing.Size(7, 24);
+			this.PB_10.Size = new System.Drawing.Size(7, 43);
 			this.PB_10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PB_10.TabIndex = 127;
 			this.PB_10.TabStop = false;
@@ -1628,9 +1402,9 @@ namespace MMI.EBuLa
 			// 
 			this.PB_09.BackColor = System.Drawing.Color.Transparent;
 			this.PB_09.Image = ((System.Drawing.Image)(resources.GetObject("PB_09.Image")));
-			this.PB_09.Location = new System.Drawing.Point(16, 152);
+			this.PB_09.Location = new System.Drawing.Point(16, 120);
 			this.PB_09.Name = "PB_09";
-			this.PB_09.Size = new System.Drawing.Size(7, 24);
+			this.PB_09.Size = new System.Drawing.Size(7, 27);
 			this.PB_09.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PB_09.TabIndex = 128;
 			this.PB_09.TabStop = false;
@@ -1639,9 +1413,9 @@ namespace MMI.EBuLa
 			// 
 			this.PB_08.BackColor = System.Drawing.Color.Transparent;
 			this.PB_08.Image = ((System.Drawing.Image)(resources.GetObject("PB_08.Image")));
-			this.PB_08.Location = new System.Drawing.Point(16, 176);
+			this.PB_08.Location = new System.Drawing.Point(16, 147);
 			this.PB_08.Name = "PB_08";
-			this.PB_08.Size = new System.Drawing.Size(7, 24);
+			this.PB_08.Size = new System.Drawing.Size(7, 27);
 			this.PB_08.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PB_08.TabIndex = 129;
 			this.PB_08.TabStop = false;
@@ -1650,9 +1424,9 @@ namespace MMI.EBuLa
 			// 
 			this.PB_07.BackColor = System.Drawing.Color.Transparent;
 			this.PB_07.Image = ((System.Drawing.Image)(resources.GetObject("PB_07.Image")));
-			this.PB_07.Location = new System.Drawing.Point(16, 200);
+			this.PB_07.Location = new System.Drawing.Point(16, 174);
 			this.PB_07.Name = "PB_07";
-			this.PB_07.Size = new System.Drawing.Size(7, 24);
+			this.PB_07.Size = new System.Drawing.Size(7, 27);
 			this.PB_07.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PB_07.TabIndex = 130;
 			this.PB_07.TabStop = false;
@@ -1661,9 +1435,9 @@ namespace MMI.EBuLa
 			// 
 			this.PB_06.BackColor = System.Drawing.Color.Transparent;
 			this.PB_06.Image = ((System.Drawing.Image)(resources.GetObject("PB_06.Image")));
-			this.PB_06.Location = new System.Drawing.Point(16, 224);
+			this.PB_06.Location = new System.Drawing.Point(16, 201);
 			this.PB_06.Name = "PB_06";
-			this.PB_06.Size = new System.Drawing.Size(7, 24);
+			this.PB_06.Size = new System.Drawing.Size(7, 27);
 			this.PB_06.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PB_06.TabIndex = 131;
 			this.PB_06.TabStop = false;
@@ -1672,9 +1446,9 @@ namespace MMI.EBuLa
 			// 
 			this.PB_05.BackColor = System.Drawing.Color.Transparent;
 			this.PB_05.Image = ((System.Drawing.Image)(resources.GetObject("PB_05.Image")));
-			this.PB_05.Location = new System.Drawing.Point(16, 248);
+			this.PB_05.Location = new System.Drawing.Point(16, 228);
 			this.PB_05.Name = "PB_05";
-			this.PB_05.Size = new System.Drawing.Size(7, 24);
+			this.PB_05.Size = new System.Drawing.Size(7, 27);
 			this.PB_05.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PB_05.TabIndex = 132;
 			this.PB_05.TabStop = false;
@@ -1683,9 +1457,9 @@ namespace MMI.EBuLa
 			// 
 			this.PB_04.BackColor = System.Drawing.Color.Transparent;
 			this.PB_04.Image = ((System.Drawing.Image)(resources.GetObject("PB_04.Image")));
-			this.PB_04.Location = new System.Drawing.Point(16, 272);
+			this.PB_04.Location = new System.Drawing.Point(16, 255);
 			this.PB_04.Name = "PB_04";
-			this.PB_04.Size = new System.Drawing.Size(7, 24);
+			this.PB_04.Size = new System.Drawing.Size(7, 27);
 			this.PB_04.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PB_04.TabIndex = 133;
 			this.PB_04.TabStop = false;
@@ -1694,9 +1468,9 @@ namespace MMI.EBuLa
 			// 
 			this.PB_03.BackColor = System.Drawing.Color.Transparent;
 			this.PB_03.Image = ((System.Drawing.Image)(resources.GetObject("PB_03.Image")));
-			this.PB_03.Location = new System.Drawing.Point(16, 296);
+			this.PB_03.Location = new System.Drawing.Point(16, 282);
 			this.PB_03.Name = "PB_03";
-			this.PB_03.Size = new System.Drawing.Size(7, 24);
+			this.PB_03.Size = new System.Drawing.Size(7, 27);
 			this.PB_03.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PB_03.TabIndex = 134;
 			this.PB_03.TabStop = false;
@@ -1705,9 +1479,9 @@ namespace MMI.EBuLa
 			// 
 			this.PB_02.BackColor = System.Drawing.Color.Transparent;
 			this.PB_02.Image = ((System.Drawing.Image)(resources.GetObject("PB_02.Image")));
-			this.PB_02.Location = new System.Drawing.Point(16, 320);
+			this.PB_02.Location = new System.Drawing.Point(16, 309);
 			this.PB_02.Name = "PB_02";
-			this.PB_02.Size = new System.Drawing.Size(7, 24);
+			this.PB_02.Size = new System.Drawing.Size(7, 27);
 			this.PB_02.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PB_02.TabIndex = 135;
 			this.PB_02.TabStop = false;
@@ -1716,31 +1490,31 @@ namespace MMI.EBuLa
 			// 
 			this.PB_01.BackColor = System.Drawing.Color.Transparent;
 			this.PB_01.Image = ((System.Drawing.Image)(resources.GetObject("PB_01.Image")));
-			this.PB_01.Location = new System.Drawing.Point(16, 344);
+			this.PB_01.Location = new System.Drawing.Point(16, 336);
 			this.PB_01.Name = "PB_01";
-			this.PB_01.Size = new System.Drawing.Size(7, 24);
+			this.PB_01.Size = new System.Drawing.Size(7, 33);
 			this.PB_01.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PB_01.TabIndex = 136;
 			this.PB_01.TabStop = false;
 			// 
-			// PB_13
+			// PB_11
 			// 
-			this.PB_13.BackColor = System.Drawing.Color.Transparent;
-			this.PB_13.Image = ((System.Drawing.Image)(resources.GetObject("PB_13.Image")));
-			this.PB_13.Location = new System.Drawing.Point(16, 53);
-			this.PB_13.Name = "PB_13";
-			this.PB_13.Size = new System.Drawing.Size(7, 27);
-			this.PB_13.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.PB_13.TabIndex = 137;
-			this.PB_13.TabStop = false;
-			this.PB_13.Visible = false;
+			this.PB_11.BackColor = System.Drawing.Color.Transparent;
+			this.PB_11.Image = ((System.Drawing.Image)(resources.GetObject("PB_11.Image")));
+			this.PB_11.Location = new System.Drawing.Point(16, 53);
+			this.PB_11.Name = "PB_11";
+			this.PB_11.Size = new System.Drawing.Size(7, 27);
+			this.PB_11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.PB_11.TabIndex = 137;
+			this.PB_11.TabStop = false;
+			this.PB_11.Visible = false;
 			// 
 			// PL_04
 			// 
 			this.PL_04.Image = ((System.Drawing.Image)(resources.GetObject("PL_04.Image")));
-			this.PL_04.Location = new System.Drawing.Point(0, 272);
+			this.PL_04.Location = new System.Drawing.Point(0, 255);
 			this.PL_04.Name = "PL_04";
-			this.PL_04.Size = new System.Drawing.Size(128, 1);
+			this.PL_04.Size = new System.Drawing.Size(104, 1);
 			this.PL_04.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PL_04.TabIndex = 138;
 			this.PL_04.TabStop = false;
@@ -1749,9 +1523,9 @@ namespace MMI.EBuLa
 			// PL_01
 			// 
 			this.PL_01.Image = ((System.Drawing.Image)(resources.GetObject("PL_01.Image")));
-			this.PL_01.Location = new System.Drawing.Point(0, 344);
+			this.PL_01.Location = new System.Drawing.Point(0, 336);
 			this.PL_01.Name = "PL_01";
-			this.PL_01.Size = new System.Drawing.Size(128, 1);
+			this.PL_01.Size = new System.Drawing.Size(104, 1);
 			this.PL_01.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PL_01.TabIndex = 139;
 			this.PL_01.TabStop = false;
@@ -1760,9 +1534,9 @@ namespace MMI.EBuLa
 			// PL_02
 			// 
 			this.PL_02.Image = ((System.Drawing.Image)(resources.GetObject("PL_02.Image")));
-			this.PL_02.Location = new System.Drawing.Point(0, 320);
+			this.PL_02.Location = new System.Drawing.Point(0, 309);
 			this.PL_02.Name = "PL_02";
-			this.PL_02.Size = new System.Drawing.Size(128, 1);
+			this.PL_02.Size = new System.Drawing.Size(104, 1);
 			this.PL_02.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PL_02.TabIndex = 140;
 			this.PL_02.TabStop = false;
@@ -1771,9 +1545,9 @@ namespace MMI.EBuLa
 			// PL_03
 			// 
 			this.PL_03.Image = ((System.Drawing.Image)(resources.GetObject("PL_03.Image")));
-			this.PL_03.Location = new System.Drawing.Point(0, 296);
+			this.PL_03.Location = new System.Drawing.Point(0, 282);
 			this.PL_03.Name = "PL_03";
-			this.PL_03.Size = new System.Drawing.Size(128, 1);
+			this.PL_03.Size = new System.Drawing.Size(104, 1);
 			this.PL_03.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PL_03.TabIndex = 141;
 			this.PL_03.TabStop = false;
@@ -1782,9 +1556,9 @@ namespace MMI.EBuLa
 			// PL_05
 			// 
 			this.PL_05.Image = ((System.Drawing.Image)(resources.GetObject("PL_05.Image")));
-			this.PL_05.Location = new System.Drawing.Point(0, 248);
+			this.PL_05.Location = new System.Drawing.Point(0, 228);
 			this.PL_05.Name = "PL_05";
-			this.PL_05.Size = new System.Drawing.Size(128, 1);
+			this.PL_05.Size = new System.Drawing.Size(104, 1);
 			this.PL_05.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PL_05.TabIndex = 142;
 			this.PL_05.TabStop = false;
@@ -1793,9 +1567,9 @@ namespace MMI.EBuLa
 			// PL_06
 			// 
 			this.PL_06.Image = ((System.Drawing.Image)(resources.GetObject("PL_06.Image")));
-			this.PL_06.Location = new System.Drawing.Point(0, 224);
+			this.PL_06.Location = new System.Drawing.Point(0, 201);
 			this.PL_06.Name = "PL_06";
-			this.PL_06.Size = new System.Drawing.Size(128, 1);
+			this.PL_06.Size = new System.Drawing.Size(104, 1);
 			this.PL_06.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PL_06.TabIndex = 143;
 			this.PL_06.TabStop = false;
@@ -1804,9 +1578,9 @@ namespace MMI.EBuLa
 			// PL_07
 			// 
 			this.PL_07.Image = ((System.Drawing.Image)(resources.GetObject("PL_07.Image")));
-			this.PL_07.Location = new System.Drawing.Point(0, 200);
+			this.PL_07.Location = new System.Drawing.Point(0, 174);
 			this.PL_07.Name = "PL_07";
-			this.PL_07.Size = new System.Drawing.Size(128, 1);
+			this.PL_07.Size = new System.Drawing.Size(104, 1);
 			this.PL_07.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PL_07.TabIndex = 144;
 			this.PL_07.TabStop = false;
@@ -1815,9 +1589,9 @@ namespace MMI.EBuLa
 			// PL_08
 			// 
 			this.PL_08.Image = ((System.Drawing.Image)(resources.GetObject("PL_08.Image")));
-			this.PL_08.Location = new System.Drawing.Point(0, 176);
+			this.PL_08.Location = new System.Drawing.Point(0, 147);
 			this.PL_08.Name = "PL_08";
-			this.PL_08.Size = new System.Drawing.Size(128, 1);
+			this.PL_08.Size = new System.Drawing.Size(104, 1);
 			this.PL_08.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PL_08.TabIndex = 145;
 			this.PL_08.TabStop = false;
@@ -1826,35 +1600,13 @@ namespace MMI.EBuLa
 			// PL_09
 			// 
 			this.PL_09.Image = ((System.Drawing.Image)(resources.GetObject("PL_09.Image")));
-			this.PL_09.Location = new System.Drawing.Point(0, 152);
+			this.PL_09.Location = new System.Drawing.Point(0, 120);
 			this.PL_09.Name = "PL_09";
-			this.PL_09.Size = new System.Drawing.Size(128, 1);
+			this.PL_09.Size = new System.Drawing.Size(104, 1);
 			this.PL_09.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.PL_09.TabIndex = 146;
 			this.PL_09.TabStop = false;
 			this.PL_09.Visible = false;
-			// 
-			// PL_10
-			// 
-			this.PL_10.Image = ((System.Drawing.Image)(resources.GetObject("PL_10.Image")));
-			this.PL_10.Location = new System.Drawing.Point(0, 128);
-			this.PL_10.Name = "PL_10";
-			this.PL_10.Size = new System.Drawing.Size(128, 1);
-			this.PL_10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.PL_10.TabIndex = 147;
-			this.PL_10.TabStop = false;
-			this.PL_10.Visible = false;
-			// 
-			// PL_11
-			// 
-			this.PL_11.Image = ((System.Drawing.Image)(resources.GetObject("PL_11.Image")));
-			this.PL_11.Location = new System.Drawing.Point(0, 104);
-			this.PL_11.Name = "PL_11";
-			this.PL_11.Size = new System.Drawing.Size(128, 1);
-			this.PL_11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.PL_11.TabIndex = 148;
-			this.PL_11.TabStop = false;
-			this.PL_11.Visible = false;
 			// 
 			// Deko1
 			// 
@@ -1879,7 +1631,7 @@ namespace MMI.EBuLa
 			// DekoL1
 			// 
 			this.DekoL1.Image = ((System.Drawing.Image)(resources.GetObject("DekoL1.Image")));
-			this.DekoL1.Location = new System.Drawing.Point(128, 76);
+			this.DekoL1.Location = new System.Drawing.Point(104, 76);
 			this.DekoL1.Name = "DekoL1";
 			this.DekoL1.Size = new System.Drawing.Size(2, 290);
 			this.DekoL1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2173,7 +1925,7 @@ namespace MMI.EBuLa
 			// pB_White_Up
 			// 
 			this.pB_White_Up.Image = ((System.Drawing.Image)(resources.GetObject("pB_White_Up.Image")));
-			this.pB_White_Up.Location = new System.Drawing.Point(432, 208);
+			this.pB_White_Up.Location = new System.Drawing.Point(456, 136);
 			this.pB_White_Up.Name = "pB_White_Up";
 			this.pB_White_Up.Size = new System.Drawing.Size(100, 16);
 			this.pB_White_Up.TabIndex = 165;
@@ -2211,7 +1963,7 @@ namespace MMI.EBuLa
 			// J_01
 			// 
 			this.J_01.Image = ((System.Drawing.Image)(resources.GetObject("J_01.Image")));
-			this.J_01.Location = new System.Drawing.Point(128, 341);
+			this.J_01.Location = new System.Drawing.Point(104, 336);
 			this.J_01.Name = "J_01";
 			this.J_01.Size = new System.Drawing.Size(70, 1);
 			this.J_01.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2222,7 +1974,7 @@ namespace MMI.EBuLa
 			// J_02
 			// 
 			this.J_02.Image = ((System.Drawing.Image)(resources.GetObject("J_02.Image")));
-			this.J_02.Location = new System.Drawing.Point(128, 317);
+			this.J_02.Location = new System.Drawing.Point(104, 309);
 			this.J_02.Name = "J_02";
 			this.J_02.Size = new System.Drawing.Size(70, 1);
 			this.J_02.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2233,7 +1985,7 @@ namespace MMI.EBuLa
 			// J_03
 			// 
 			this.J_03.Image = ((System.Drawing.Image)(resources.GetObject("J_03.Image")));
-			this.J_03.Location = new System.Drawing.Point(128, 293);
+			this.J_03.Location = new System.Drawing.Point(104, 282);
 			this.J_03.Name = "J_03";
 			this.J_03.Size = new System.Drawing.Size(70, 1);
 			this.J_03.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2244,7 +1996,7 @@ namespace MMI.EBuLa
 			// J_04
 			// 
 			this.J_04.Image = ((System.Drawing.Image)(resources.GetObject("J_04.Image")));
-			this.J_04.Location = new System.Drawing.Point(128, 269);
+			this.J_04.Location = new System.Drawing.Point(104, 255);
 			this.J_04.Name = "J_04";
 			this.J_04.Size = new System.Drawing.Size(70, 1);
 			this.J_04.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2255,7 +2007,7 @@ namespace MMI.EBuLa
 			// J_05
 			// 
 			this.J_05.Image = ((System.Drawing.Image)(resources.GetObject("J_05.Image")));
-			this.J_05.Location = new System.Drawing.Point(128, 245);
+			this.J_05.Location = new System.Drawing.Point(104, 228);
 			this.J_05.Name = "J_05";
 			this.J_05.Size = new System.Drawing.Size(70, 1);
 			this.J_05.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2266,7 +2018,7 @@ namespace MMI.EBuLa
 			// J_06
 			// 
 			this.J_06.Image = ((System.Drawing.Image)(resources.GetObject("J_06.Image")));
-			this.J_06.Location = new System.Drawing.Point(128, 221);
+			this.J_06.Location = new System.Drawing.Point(104, 201);
 			this.J_06.Name = "J_06";
 			this.J_06.Size = new System.Drawing.Size(70, 1);
 			this.J_06.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2274,21 +2026,10 @@ namespace MMI.EBuLa
 			this.J_06.TabStop = false;
 			this.J_06.Visible = false;
 			// 
-			// J_10
-			// 
-			this.J_10.Image = ((System.Drawing.Image)(resources.GetObject("J_10.Image")));
-			this.J_10.Location = new System.Drawing.Point(128, 125);
-			this.J_10.Name = "J_10";
-			this.J_10.Size = new System.Drawing.Size(70, 1);
-			this.J_10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.J_10.TabIndex = 174;
-			this.J_10.TabStop = false;
-			this.J_10.Visible = false;
-			// 
 			// J_09
 			// 
 			this.J_09.Image = ((System.Drawing.Image)(resources.GetObject("J_09.Image")));
-			this.J_09.Location = new System.Drawing.Point(128, 149);
+			this.J_09.Location = new System.Drawing.Point(104, 120);
 			this.J_09.Name = "J_09";
 			this.J_09.Size = new System.Drawing.Size(70, 1);
 			this.J_09.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2299,7 +2040,7 @@ namespace MMI.EBuLa
 			// J_08
 			// 
 			this.J_08.Image = ((System.Drawing.Image)(resources.GetObject("J_08.Image")));
-			this.J_08.Location = new System.Drawing.Point(128, 173);
+			this.J_08.Location = new System.Drawing.Point(104, 147);
 			this.J_08.Name = "J_08";
 			this.J_08.Size = new System.Drawing.Size(70, 1);
 			this.J_08.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -2310,24 +2051,13 @@ namespace MMI.EBuLa
 			// J_07
 			// 
 			this.J_07.Image = ((System.Drawing.Image)(resources.GetObject("J_07.Image")));
-			this.J_07.Location = new System.Drawing.Point(128, 197);
+			this.J_07.Location = new System.Drawing.Point(104, 174);
 			this.J_07.Name = "J_07";
 			this.J_07.Size = new System.Drawing.Size(70, 1);
 			this.J_07.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.J_07.TabIndex = 177;
 			this.J_07.TabStop = false;
 			this.J_07.Visible = false;
-			// 
-			// J_11
-			// 
-			this.J_11.Image = ((System.Drawing.Image)(resources.GetObject("J_11.Image")));
-			this.J_11.Location = new System.Drawing.Point(128, 101);
-			this.J_11.Name = "J_11";
-			this.J_11.Size = new System.Drawing.Size(70, 1);
-			this.J_11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.J_11.TabIndex = 178;
-			this.J_11.TabStop = false;
-			this.J_11.Visible = false;
 			// 
 			// timer_refresh
 			// 
@@ -2363,39 +2093,47 @@ namespace MMI.EBuLa
 			this.l_ESF_Neg.Text = "- 0 kWh";
 			this.l_ESF_Neg.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// L_A_13
+			// L_A_11
 			// 
-			this.L_A_13.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_A_13.Location = new System.Drawing.Point(480, 56);
-			this.L_A_13.Name = "L_A_13";
-			this.L_A_13.Size = new System.Drawing.Size(50, 18);
-			this.L_A_13.TabIndex = 182;
-			this.L_A_13.Text = "L_A_13";
-			this.L_A_13.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.L_A_11.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_A_11.Location = new System.Drawing.Point(480, 56);
+			this.L_A_11.Name = "L_A_11";
+			this.L_A_11.Size = new System.Drawing.Size(50, 18);
+			this.L_A_11.TabIndex = 182;
+			this.L_A_11.Text = "L_A_11";
+			this.L_A_11.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// L_D_13
+			// L_D_11
 			// 
-			this.L_D_13.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.L_D_13.Location = new System.Drawing.Point(560, 56);
-			this.L_D_13.Name = "L_D_13";
-			this.L_D_13.Size = new System.Drawing.Size(50, 18);
-			this.L_D_13.TabIndex = 183;
-			this.L_D_13.Text = "L_D_13";
-			this.L_D_13.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this.L_D_11.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.L_D_11.Location = new System.Drawing.Point(560, 56);
+			this.L_D_11.Name = "L_D_11";
+			this.L_D_11.Size = new System.Drawing.Size(50, 18);
+			this.L_D_11.TabIndex = 183;
+			this.L_D_11.Text = "L_D_11";
+			this.L_D_11.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// EbulaControl
 			// 
 			this.BackColor = System.Drawing.Color.WhiteSmoke;
-			this.Controls.Add(this.L_D_13);
-			this.Controls.Add(this.L_A_13);
+			this.Controls.Add(this.L_OpsS_01);
+			this.Controls.Add(this.L_OpsS_02);
+			this.Controls.Add(this.L_OpsS_03);
+			this.Controls.Add(this.L_OpsS_04);
+			this.Controls.Add(this.L_OpsS_05);
+			this.Controls.Add(this.L_OpsS_06);
+			this.Controls.Add(this.L_OpsS_07);
+			this.Controls.Add(this.L_OpsS_08);
+			this.Controls.Add(this.L_OpsS_09);
+			this.Controls.Add(this.L_OpsS_10);
+			this.Controls.Add(this.L_D_11);
+			this.Controls.Add(this.L_A_11);
 			this.Controls.Add(this.l_ESF_Neg);
 			this.Controls.Add(this.l_ESF_Pos);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.J_11);
 			this.Controls.Add(this.J_07);
 			this.Controls.Add(this.J_08);
 			this.Controls.Add(this.J_09);
-			this.Controls.Add(this.J_10);
 			this.Controls.Add(this.J_06);
 			this.Controls.Add(this.J_05);
 			this.Controls.Add(this.J_04);
@@ -2418,8 +2156,6 @@ namespace MMI.EBuLa
 			this.Controls.Add(this.DekoL1);
 			this.Controls.Add(this.Deko2);
 			this.Controls.Add(this.Deko1);
-			this.Controls.Add(this.PL_11);
-			this.Controls.Add(this.PL_10);
 			this.Controls.Add(this.PL_09);
 			this.Controls.Add(this.PL_08);
 			this.Controls.Add(this.PL_07);
@@ -2429,7 +2165,7 @@ namespace MMI.EBuLa
 			this.Controls.Add(this.PL_02);
 			this.Controls.Add(this.PL_01);
 			this.Controls.Add(this.PL_04);
-			this.Controls.Add(this.PB_13);
+			this.Controls.Add(this.PB_11);
 			this.Controls.Add(this.PB_01);
 			this.Controls.Add(this.PB_02);
 			this.Controls.Add(this.PB_03);
@@ -2440,21 +2176,7 @@ namespace MMI.EBuLa
 			this.Controls.Add(this.PB_08);
 			this.Controls.Add(this.PB_09);
 			this.Controls.Add(this.PB_10);
-			this.Controls.Add(this.PB_11);
-			this.Controls.Add(this.PB_12);
 			this.Controls.Add(this.Qu);
-			this.Controls.Add(this.L_OpsS_01);
-			this.Controls.Add(this.L_OpsS_02);
-			this.Controls.Add(this.L_OpsS_03);
-			this.Controls.Add(this.L_OpsS_04);
-			this.Controls.Add(this.L_OpsS_05);
-			this.Controls.Add(this.L_OpsS_06);
-			this.Controls.Add(this.L_OpsS_07);
-			this.Controls.Add(this.L_OpsS_08);
-			this.Controls.Add(this.L_OpsS_09);
-			this.Controls.Add(this.L_OpsS_10);
-			this.Controls.Add(this.L_OpsS_11);
-			this.Controls.Add(this.L_OpsS_12);
 			this.Controls.Add(this.L_DK_01);
 			this.Controls.Add(this.L_DK_02);
 			this.Controls.Add(this.L_DK_03);
@@ -2465,8 +2187,6 @@ namespace MMI.EBuLa
 			this.Controls.Add(this.L_DK_08);
 			this.Controls.Add(this.L_DK_09);
 			this.Controls.Add(this.L_DK_10);
-			this.Controls.Add(this.L_DK_11);
-			this.Controls.Add(this.L_DK_12);
 			this.Controls.Add(this.L_AK_01);
 			this.Controls.Add(this.L_AK_02);
 			this.Controls.Add(this.L_AK_03);
@@ -2477,10 +2197,6 @@ namespace MMI.EBuLa
 			this.Controls.Add(this.L_AK_08);
 			this.Controls.Add(this.L_AK_09);
 			this.Controls.Add(this.L_AK_10);
-			this.Controls.Add(this.L_AK_11);
-			this.Controls.Add(this.L_AK_12);
-			this.Controls.Add(this.L_D_12);
-			this.Controls.Add(this.L_D_11);
 			this.Controls.Add(this.L_D_10);
 			this.Controls.Add(this.L_D_09);
 			this.Controls.Add(this.L_D_08);
@@ -2501,8 +2217,6 @@ namespace MMI.EBuLa
 			this.Controls.Add(this.L_A_08);
 			this.Controls.Add(this.L_A_09);
 			this.Controls.Add(this.L_A_10);
-			this.Controls.Add(this.L_A_11);
-			this.Controls.Add(this.L_A_12);
 			this.Controls.Add(this.L_TOP);
 			this.Controls.Add(this.L_DOWN);
 			this.Controls.Add(this.L_Ops_01);
@@ -2515,10 +2229,6 @@ namespace MMI.EBuLa
 			this.Controls.Add(this.L_Ops_08);
 			this.Controls.Add(this.L_Ops_09);
 			this.Controls.Add(this.L_Ops_10);
-			this.Controls.Add(this.L_Ops_11);
-			this.Controls.Add(this.L_Ops_12);
-			this.Controls.Add(this.L_Speed_12);
-			this.Controls.Add(this.L_Speed_11);
 			this.Controls.Add(this.L_Speed_10);
 			this.Controls.Add(this.L_Speed_09);
 			this.Controls.Add(this.L_Speed_08);
@@ -2539,8 +2249,6 @@ namespace MMI.EBuLa
 			this.Controls.Add(this.L_Pos_08);
 			this.Controls.Add(this.L_Pos_09);
 			this.Controls.Add(this.L_Pos_10);
-			this.Controls.Add(this.L_Pos_11);
-			this.Controls.Add(this.L_Pos_12);
 			this.Controls.Add(this.L_Valid);
 			this.Controls.Add(this.L_Zug);
 			this.Controls.Add(this.L_Zeit);
@@ -2705,7 +2413,7 @@ namespace MMI.EBuLa
 
                 this.SuspendLayout();
 
-                int qu_pos = 342 - ( ((int)control.Route.Position - (int)control.Route.Offset) * 24);
+                int qu_pos = 342 - ( ((int)control.Route.Position - (int)control.Route.Offset) * 27);
 
                 SetQu(qu_pos);
 
@@ -2740,6 +2448,7 @@ namespace MMI.EBuLa
 				if (control.left) Down_RW.Text = "RW/l";
 				else Down_RW.Text = "RW/r";
 
+				
                 // DOWN SPEED
                 for (int i = (int)control.Route.Position; i >= 0; i--)
                 {
@@ -2781,20 +2490,21 @@ namespace MMI.EBuLa
                         Down_Radio.Text = "- ZF -";
                     }
                 }
-
+				
                 int speed = 0;
 
                 foreach (System.Windows.Forms.Control cc in this.Controls)
                 {
+
                     if (cc.Name.StartsWith("PB_"))
                     {
                         PictureBox pb = (PictureBox)cc;
                         int pos = Convert.ToInt32(cc.Name.Remove(0,3));
                         speed = control.Route.SearchForSpeed(pos, control.gnt);
-                        double s = speed/2.2;
+                        double s = speed/2.9d;
                         speed = (int)s;
                         pb.Location = new Point( speed , cc.Location.Y-firsttime);
-						if (s > 0d && cc.Name.IndexOf("13") < 0) 
+						if (s > 0d && cc.Name.IndexOf("11") < 0) 
 							pb.Visible = true;
 						else
 							pb.Visible = false;
@@ -2902,8 +2612,8 @@ namespace MMI.EBuLa
                         }
                         else 
                         { 
-							l.Size = new Size(184, l.Height);
-							if (e == control.Marker)
+							l.Size = new Size(204, l.Height);
+							if (e.m_etd != "" || e.m_eta != "")
 								l.Font = new Font(l.Font.FontFamily, l.Font.Size, FontStyle.Bold);
 							else
 								l.Font = new Font(l.Font.FontFamily, l.Font.Size, FontStyle.Regular);
@@ -2930,14 +2640,14 @@ namespace MMI.EBuLa
                             continue;
                         }
                         Entry e = (Entry)control.Route.Entrys[pos-1+(int)control.Route.Offset];
-                        if (e == control.Marker || e.m_type == EntryType.RADIO_MARKER)
+                        if (e.m_etd != "" || e.m_eta != "" || e.m_ops_speed != "")
                         { 
-                            l.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+                            l.Font = new System.Drawing.Font(l.Font.FontFamily, l.Font.Size, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
                             //l.Font.Bold = true;
                         }
                         else 
                         { 
-                            l.Font = new System.Drawing.Font("Zusi standard", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+                            l.Font = new System.Drawing.Font(l.Font.FontFamily, l.Font.Size, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
                             //l.Font.Bold = false; 
                         }
                         l.Text = e.m_ops_speed;
@@ -2948,9 +2658,21 @@ namespace MMI.EBuLa
                         int offset2 = 0;
                         do
                         {
-                            if (control.Route.Entrys.Count >=  (13 + (int)control.Route.Offset + offset2))
+                            if (control.Route.Entrys.Count >=  (11 + (int)control.Route.Offset + offset2))
                             {
-                                String s = ((Entry)control.Route.Entrys[12+(int)control.Route.Offset+offset2]).m_ops_name;
+								Entry e = null;
+								try
+								{
+									e = ((Entry)control.Route.Entrys[10+(int)control.Route.Offset+offset2]);
+								}
+								catch(Exception ex){MessageBox.Show(ex.Message);}
+
+								if (e.m_etd != "" || e.m_eta != "")
+									L_TOP.Font = new Font(L_TOP.Font.FontFamily, L_TOP.Font.Size, FontStyle.Bold);
+								else
+									L_TOP.Font = new Font(L_TOP.Font.FontFamily, L_TOP.Font.Size, FontStyle.Regular);
+
+                                String s = e.m_ops_name;
                                 if (s == "")
                                 {
                                     offset2++;
@@ -2967,6 +2689,7 @@ namespace MMI.EBuLa
                             }
                         }
                         while(true);
+						
                     }
                     if (cc.Name.StartsWith("L_DOWN"))
                     {
@@ -3038,7 +2761,7 @@ namespace MMI.EBuLa
                         int pos = System.Convert.ToInt32(cc.Name.Substring(4));
                         Label l = (Label)cc;
 						l.Text = "";
-                        if (pos > control.Route.Entrys.Count)
+                        if ((pos-1+(int)control.Route.Offset) > control.Route.Entrys.Count)
                         {
                             //l.Text = "";
                             continue;
@@ -3071,6 +2794,7 @@ namespace MMI.EBuLa
                         }
                     
                     }
+					
                 }
 
                 //LINE
@@ -3164,26 +2888,6 @@ namespace MMI.EBuLa
                 {
                     PL_09.Visible = false;
                 }
-                // 10 <-> 11
-                if ( PB_10.Location.X != PB_11.Location.X)
-                {
-                    // we need a Line 
-                    PL_10.Visible = true;
-                }
-                else
-                {
-                    PL_10.Visible = false;
-                }
-                // 11 <-> 12
-                if ( PB_11.Location.X != PB_12.Location.X)
-                {
-                    // we need a Line 
-                    PL_11.Visible = true;
-                }
-                else
-                {
-                    PL_11.Visible = false;
-                }
 
 				int newsize = 1; 
 				if (control.Route.one_track) newsize = 0;
@@ -3221,6 +2925,7 @@ namespace MMI.EBuLa
 					Down_Verspaetung.Visible = true;
 				}
 
+				
 				// alte Geschwindigkeit anzeigen
 				if (L_Speed_01.Text == "" && control.Route.Offset > 0 && control.Route.Entrys.Count > 0)
 				{
@@ -3511,8 +3216,36 @@ namespace MMI.EBuLa
             if (control.sound) Sound.PlayErrorSound();
             if (kh.Form == null)
             {
-                control.Marker = null;
-                control.Route.Position = -1;
+				/*if (control.move_via_time && Math.Abs(control.Route.Position - (long)control.Route.Offset) > 11)
+				{
+					bool moved = false;
+					if (control.Route.Position < (long)control.Route.Offset)
+					{
+						while(control.Route.Position < (long)control.Route.Offset)
+						{
+							control.PrevPage();
+							moved = true;
+						}
+					}
+					else
+					{
+						while(control.Route.Position > (long)control.Route.Offset)
+						{
+							control.NextPage();
+							moved = true;
+						}
+					}
+					if (!moved) 
+					{
+						control.Marker = null;
+						control.Route.Position = -1;
+					}
+				}
+				else*/
+				{
+					control.Marker = null;
+					control.Route.Position = -1;
+				}
                 UpdateControl();
                 if (control.XMLConf.FocusToZusi) control.SetFocusToZusi();
             }
@@ -3662,8 +3395,6 @@ namespace MMI.EBuLa
             PB_09.Location = new Point(0, PB_09.Location.Y);
             PB_10.Location = new Point(0, PB_10.Location.Y);
             PB_11.Location = new Point(0, PB_11.Location.Y);
-            PB_12.Location = new Point(0, PB_12.Location.Y);
-            PB_13.Location = new Point(0, PB_13.Location.Y);
         }
 
         private void SetButtons(bool numbers)
@@ -3793,8 +3524,9 @@ namespace MMI.EBuLa
 					{
 						if (rk.OpenSubKey("Zusi").GetValue("ZugSteht").ToString() == "0" && !control.use_network)
 						{
+							
 							time = Convert.ToDouble(rk.OpenSubKey("Zusi").GetValue("SimZeit").ToString());
-							control.vtime = control.ConvertToDateTime(time);
+							control.vtime = MMI.EBuLa.Tools.State.ConvertToDateTime(time);
 							control.vtime = control.vtime.AddSeconds(2);
 						}
 					}
@@ -3815,12 +3547,13 @@ namespace MMI.EBuLa
 
 			if (control.move_via_time)
 			{
-				control.MoveViaTime(control.vtime, control.verspaetung);
-				UpdateControl();
+				if (control.MoveViaTime(control.vtime, control.verspaetung))
+					UpdateControl();
 			}
 
 			else if (control.timer_on)
 			{
+				bool somethingDone = false;
 				if (control.Route.Position == -1)
 				{
 					return;
@@ -3880,8 +3613,10 @@ namespace MMI.EBuLa
                     
 					if ( (pos <= d_km && next_pos > d_km) || (pos >= d_km && next_pos < d_km) || (pos >= d_km && control.Route.Position == 0 && aufsteigend) || (pos <= d_km && control.Route.Position == 0 && !aufsteigend) )
 					{
+						if (control.Route.Position != i) somethingDone = true;
 						control.Route.Position = i;
 						control.Marker = (Entry)control.Route.Entrys[i];
+						
 						// now 11
 
 						int counter = 0;
@@ -3896,10 +3631,11 @@ namespace MMI.EBuLa
 							control.NextPage();
 							counter++;
 						}
-						UpdateControl();
+						
 						break;
 					}
 				}
+				if (somethingDone) UpdateControl();
 			}
             if (rk != null) rk.Close();
         }
@@ -3911,6 +3647,7 @@ namespace MMI.EBuLa
 
 		private string RemoveDrehung(string text)
 		{
+			text = text.Replace("|", "");
 			int ind = text.IndexOf("##DREHUNG##");
 			if (ind >= 0)
 			{
@@ -4073,65 +3810,79 @@ namespace MMI.EBuLa
 				if (s != "")
 				{
 					Font f2 = new Font("Arial", 3, GraphicsUnit.Millimeter);
-					g.DrawRectangle(p, 230, 80+(12-pos)*24, 28, 18);
-					g.DrawString(s, f2, new SolidBrush(BLACK), 232, 82+(12-pos)*24); 
+					g.DrawRectangle(p, 230, 99+(10-pos)*27, 28, 18);
+					g.DrawString(s, f2, new SolidBrush(BLACK), 232, 101+(10-pos)*27); 
 
 					if (type == EntryType.GNT_ENDING || type == EntryType.LZB_ENDING)
 					{
-						g.DrawLine(p, 230, 80+(12-pos)*24+18, 230+28, 80+(12-pos)*24);
+						g.DrawLine(p, 230, 99+(10-pos)*27+18, 230+28, 99+(10-pos)*27);
 					}
 				}
 				if (type == EntryType.VERKUERTZT)
 				{
 					Font f3 = new Font("Zusi standard", 14F, System.Drawing.GraphicsUnit.Point);
-					g.DrawString("º", f3, new SolidBrush(BLACK), 230, 78+(12-pos)*24); 
+					g.DrawString("º", f3, new SolidBrush(BLACK), 230, 78+(10-pos)*27); 
 				}
 				else if (type == EntryType.RADIO_MARKER || type == EntryType.RADIO_MARKER_ENDING)
 				{
-					g.FillEllipse(new SolidBrush(BLACK), 232-2, 80+(12-pos)*24-3, 7, 9);
-					g.FillEllipse(new SolidBrush(BLACK), 232+5, 80+(12-pos)*24+6, 9, 7);
-					g.DrawLine(new Pen(BLACK, 4), 232-1, 80+(12-pos)*24, 232+6, 80+(12-pos)*24-3+6+7);
+					g.FillEllipse(new SolidBrush(BLACK), 232-2, 99+(10-pos)*27-3, 7, 9);
+					g.FillEllipse(new SolidBrush(BLACK), 232+5, 99+(10-pos)*27+6, 9, 7);
+					g.DrawLine(new Pen(BLACK, 4), 232-1, 99+(10-pos)*27, 232+6, 99+(10-pos)*27-3+6+7);
 					if (type == EntryType.RADIO_MARKER_ENDING)
 					{
-						g.DrawLine(p, 232-2, 80+(12-pos)*24+6+7, 232+5+7, 80+(12-pos)*24-1);
+						g.DrawLine(p, 232-2, 99+(10-pos)*27+6+7, 232+5+7, 99+(10-pos)*27-1);
 					}
 				}
 				else if (type == EntryType.NE2)
 				{
+					
 					//S8090.txt
-					//230, 78+(12-pos)*24 
-					g.DrawRectangle(new Pen(BLACK), 230+2, 77+(12-pos)*24, 16, 20);
+					//230, 78+(10-pos)*27 
+					g.FillRectangle(Brushes.WhiteSmoke, 230, 96+(10-pos)*27-2, 21, 25);
+					g.DrawRectangle(Pens.Black, 230+2, 96+(10-pos)*27, 16, 20);
 
-					Pen pen = new Pen(BLACK, 1f);
-					g.DrawLine(pen, new Point(230+2, 77+(12-pos)*24), new Point(230+2+8, 77+(12-pos)*24+9));
-					g.DrawLine(pen, new Point(230+2+8, 77+(12-pos)*24+9), new Point(230+2+16, 77+(12-pos)*24));
+					g.SmoothingMode = SmoothingMode.AntiAlias;
+					Pen pen2 = new Pen(Color.Black, 1f);
+					g.DrawLine(pen2, new Point(230+2, 96+(10-pos)*27), new Point(230+2+8, 96+(10-pos)*27+9));
+					g.DrawLine(pen2, new Point(230+2+8, 96+(10-pos)*27+9), new Point(230+2+16, 96+(10-pos)*27));
 
-					g.DrawLine(pen, new Point(230+2, 77+(12-pos)*24+20), new Point(230+2+8, 77+(12-pos)*24+11));
-					g.DrawLine(pen, new Point(230+2+16, 77+(12-pos)*24+20), new Point(230+2+8, 77+(12-pos)*24+11));
+					g.DrawLine(pen2, new Point(230+2, 96+(10-pos)*27+20), new Point(230+2+8, 96+(10-pos)*27+11));
+					g.DrawLine(pen2, new Point(230+2+16, 96+(10-pos)*27+20), new Point(230+2+8, 96+(10-pos)*27+11));
 
+					g.SmoothingMode = SMOOTHING_MODE;
 				}
 				else if (type == EntryType.NE4)
 				{
-					g.DrawRectangle(new Pen(BLACK), 230+2, 77+(12-pos)*24, 16, 20);
-					if (control.inverse)
-					{
-						g.FillRectangle(new SolidBrush(BLACK), 230+2+8, 77+(12-pos)*24, 8, 10);
-						g.FillRectangle(new SolidBrush(BLACK), 230+2, 77+(12-pos)*24+10, 8, 10);
-					}
-					else
-					{
-						g.FillRectangle(new SolidBrush(BLACK), 230+2, 77+(12-pos)*24, 8, 10);
-						g.FillRectangle(new SolidBrush(BLACK), 230+2+8, 77+(12-pos)*24+10, 8, 10);
-					}
+					g.FillRectangle(Brushes.WhiteSmoke, 230, 96+(10-pos)*27-2, 21, 25);
+					
+					g.FillRectangle(new SolidBrush(Color.WhiteSmoke), 230+2+8, 96+(10-pos)*27, 8, 10);
+					g.FillRectangle(new SolidBrush(Color.WhiteSmoke), 230+2, 96+(10-pos)*27+10, 8, 10);
+
+					g.FillRectangle(new SolidBrush(Color.Black), 230+2, 96+(10-pos)*27, 8, 10);
+					g.FillRectangle(new SolidBrush(Color.Black), 230+2+8, 96+(10-pos)*27+10, 8, 10);
+
+					g.DrawRectangle(new Pen(Color.Black), 230+2, 96+(10-pos)*27, 16, 20);
 				}
 				else if (type == EntryType.EL1)
 				{
 					DrawElSignalBackground_Part1(ref g, pos);
+					
+					g.FillRectangle(new SolidBrush(Color.WhiteSmoke), 232+5, 96+(10-pos)*27+8, 2, 2);
+					g.FillRectangle(new SolidBrush(Color.WhiteSmoke), 232+10, 96+(10-pos)*27+8, 2, 2);
+					
+					g.FillRectangle(new SolidBrush(Color.WhiteSmoke), 232+5, 96+(10-pos)*27+12, 7, 2);
+
 					DrawElSignalBackground_Part2(ref g, pos);
 				}
 				else if (type == EntryType.EL2)
 				{
 					DrawElSignalBackground_Part1(ref g, pos);
+					
+					g.FillRectangle(new SolidBrush(Color.WhiteSmoke), 232+5, 96+(10-pos)*27+8, 2, 2);
+					g.FillRectangle(new SolidBrush(Color.WhiteSmoke), 232+10, 96+(10-pos)*27+8, 2, 2);
+
+					g.FillRectangle(new SolidBrush(Color.WhiteSmoke), 232+5, 96+(10-pos)*27+10, 7, 2);
+
 					DrawElSignalBackground_Part2(ref g, pos);
 				}
 				else if (type == EntryType.EL4)
@@ -4140,7 +3891,7 @@ namespace MMI.EBuLa
 					Pen el_pen = new Pen(Color.WhiteSmoke, 3f);
 					el_pen.EndCap = LineCap.Triangle;
 					el_pen.StartCap = LineCap.Triangle;
-					g.DrawLine(el_pen, 232, 77+(12-pos)*24+10, 231+18, 77+(12-pos)*24+10);
+					g.DrawLine(el_pen, 232, 96+(10-pos)*27+10, 231+18, 96+(10-pos)*27+10);
 					DrawElSignalBackground_Part2(ref g, pos);
 				}
 				else if (type == EntryType.EL5)
@@ -4149,7 +3900,7 @@ namespace MMI.EBuLa
 					Pen el_pen = new Pen(Color.WhiteSmoke, 3f);
 					el_pen.EndCap = LineCap.Triangle;
 					el_pen.StartCap = LineCap.Triangle;
-					g.DrawLine(el_pen, 231+9, 77+(12-pos)*24+1, 231+9, 77+(12-pos)*24+18);
+					g.DrawLine(el_pen, 231+9, 96+(10-pos)*27+1, 231+9, 96+(10-pos)*27+18);
 					DrawElSignalBackground_Part2(ref g, pos);
 				}
 			}
@@ -4158,9 +3909,9 @@ namespace MMI.EBuLa
 			{
 				//Zacken
 
-				Pen pen = new Pen(BLACK, 2);
-				int maxpos = 12;
-				if (control.Route.Entrys.Count < 12) maxpos = control.Route.Entrys.Count;
+				Pen pen = new Pen(BLACK, 1);
+				int maxpos = 10;
+				if (control.Route.Entrys.Count < 10) maxpos = control.Route.Entrys.Count;
 
 				for (int i = (int)control.Route.Offset; i < (int)control.Route.Offset+maxpos; i++)
 				{
@@ -4169,14 +3920,14 @@ namespace MMI.EBuLa
 					int width = 6;
 					int x = 451+5;
 					int i_pos = i - (int)control.Route.Offset;
-					int y = 80+(12-i_pos)*24 - 28;
-					Point[] pp = {new Point(x+width, y), new Point(x, y+6), new Point(x+width, y+12), new Point(x, y+18), new Point(x+width, y+24)};
+					int y = 99+(12-i_pos)*27 - 28;
+					PointF[] pp = {new PointF(x+width, y), new PointF(x, y+6.75f), new PointF(x+width, y+13.5f), new PointF(x, y+20.25f), new PointF(x+width, y+27)};
 					g.DrawLines(pen, pp);
 
 					if ( s < 2) continue;
 					x = x-4;
-					Point[] pp2 = {new Point(x+width, y), new Point(x, y+6), new Point(x+width, y+12), new Point(x, y+18), new Point(x+width, y+24)};
-					g.DrawLines(pen, pp2);
+					PointF[] pp2 = {new PointF(x+width, y), new PointF(x, y+6.75f), new PointF(x+width, y+13.5f), new PointF(x, y+20.25f), new PointF(x+width, y+27)};
+					g.DrawLines(pen, pp2);																										  
 
 				}
 			}
@@ -4210,30 +3961,30 @@ namespace MMI.EBuLa
 		private void DrawElSignalBackground_Part1(ref Graphics g, int pos)
 		{
 			Point[] points = {
-								 new Point(230+10, 77+(12-pos)*24),
-								 new Point(230+20, 77+(12-pos)*24+10),
-								 new Point(230+10, 77+(12-pos)*24+20),
-								 new Point(230, 77+(12-pos)*24+10)};
+								 new Point(230+10, 96+(10-pos)*27),
+								 new Point(230+20, 96+(10-pos)*27+10),
+								 new Point(230+10, 96+(10-pos)*27+20),
+								 new Point(230, 96+(10-pos)*27+10)};
 			Point[] points2 = {
-								 new Point(230+10, 77+(12-pos)*24+1),
-								 new Point(230+19, 77+(12-pos)*24+10),
-								 new Point(230+10, 77+(12-pos)*24+19),
-								 new Point(230+1, 77+(12-pos)*24+10)};
+								 new Point(230+10, 96+(10-pos)*27+1),
+								 new Point(230+19, 96+(10-pos)*27+10),
+								 new Point(230+10, 96+(10-pos)*27+19),
+								 new Point(230+1, 96+(10-pos)*27+10)};
 
 			g.FillPolygon(new SolidBrush(Color.Blue), points, FillMode.Alternate);
 		}
 		private void DrawElSignalBackground_Part2(ref Graphics g, int pos)
 		{
 			Point[] points = {
-								 new Point(230+10, 77+(12-pos)*24),
-								 new Point(230+20, 77+(12-pos)*24+10),
-								 new Point(230+10, 77+(12-pos)*24+20),
-								 new Point(230, 77+(12-pos)*24+10)};
+								 new Point(230+10, 96+(10-pos)*27),
+								 new Point(230+20, 96+(10-pos)*27+10),
+								 new Point(230+10, 96+(10-pos)*27+20),
+								 new Point(230, 96+(10-pos)*27+10)};
 			Point[] points2 = {
-								  new Point(230+10, 77+(12-pos)*24+1),
-								  new Point(230+19, 77+(12-pos)*24+10),
-								  new Point(230+10, 77+(12-pos)*24+19),
-								  new Point(230+1, 77+(12-pos)*24+10)};
+								  new Point(230+10, 96+(10-pos)*27+1),
+								  new Point(230+19, 96+(10-pos)*27+10),
+								  new Point(230+10, 96+(10-pos)*27+19),
+								  new Point(230+1, 96+(10-pos)*27+10)};
 
 			g.DrawPolygon(new Pen(Color.WhiteSmoke), points);
 			g.DrawPolygon(new Pen(Color.Black), points2);
